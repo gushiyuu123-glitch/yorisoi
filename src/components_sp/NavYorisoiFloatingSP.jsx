@@ -1,4 +1,7 @@
-// src/components_sp/NavYorisoiFloatingSP.jsx
+// ============================================================================
+// NavYorisoiFloatingSP — 完全版（視認性 × UX × iOS安定 × 世界観）
+// GUSHIKEN DESIGN × NOA
+// ============================================================================
 import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 
@@ -6,12 +9,14 @@ export default function NavYorisoiFloatingSP() {
   const navRef = useRef(null);
   const [active, setActive] = useState("");
 
-  // ---- 安定化用 refs ----
+  // ---- 安定化 refs ----
   const lastYRef = useRef(0);
   const hiddenRef = useRef(false);
   const rafRef = useRef(0);
 
-  /* 初回フェードイン（柔光） */
+  /* ----------------------------------------------------
+        初回フェードイン（blur 0.18px / 呼吸）
+  ---------------------------------------------------- */
   useEffect(() => {
     const nav = navRef.current;
     if (!nav) return;
@@ -21,51 +26,50 @@ export default function NavYorisoiFloatingSP() {
 
     gsap.fromTo(
       items,
-      { opacity: 0, y: 10, filter: "blur(0.3px)" },
+      { opacity: 0, y: 10, filter: "blur(0.18px)" },
       {
         opacity: 1,
         y: 0,
         filter: "blur(0px)",
         duration: 0.9,
         ease: "power3.out",
-        stagger: 0.06,
-        delay: 1.35,
+        stagger: 0.065,
+        delay: 1.2,
         overwrite: "auto",
       }
     );
   }, []);
 
-  /* スクロールで隠れる（安定版） */
+  /* ----------------------------------------------------
+        スクロールで隠れる（iOS安定版）
+  ---------------------------------------------------- */
   useEffect(() => {
     const nav = navRef.current;
     if (!nav) return;
 
-    // 初期値
     lastYRef.current = window.scrollY || 0;
 
     const SHOW_Y = 0;
-    const HIDE_Y = 70;
-    const THRESHOLD = 6; // 微小スクロールで反転しないための遊び
+    const HIDE_Y = 72;
+    const THRESHOLD = 7;
 
     const animateTo = (hide) => {
       if (!navRef.current) return;
 
-      // 既に同じ状態なら何もしない
       if (hiddenRef.current === hide) return;
       hiddenRef.current = hide;
 
       gsap.killTweensOf(navRef.current);
       gsap.to(navRef.current, {
         y: hide ? HIDE_Y : SHOW_Y,
-        opacity: hide ? 0 : 1, // ← ここでフェードも同期
-        duration: hide ? 0.28 : 0.34,
+        opacity: hide ? 0 : 1,
+        duration: hide ? 0.24 : 0.32,
         ease: "power3.out",
         overwrite: "auto",
       });
     };
 
     const onScroll = () => {
-      // 1フレームに1回だけ判定
       if (rafRef.current) return;
 
       rafRef.current = window.requestAnimationFrame(() => {
@@ -74,12 +78,9 @@ export default function NavYorisoiFloatingSP() {
         const currentY = window.scrollY || 0;
         const diff = currentY - lastYRef.current;
 
-        // iOSバウンスや微小揺れを無視
         if (Math.abs(diff) < THRESHOLD) return;
 
         const isDown = diff > 0;
-
-        // 下に一定以上動いたら隠す / 上に動いたら出す
         animateTo(isDown);
 
         lastYRef.current = currentY;
@@ -95,7 +96,9 @@ export default function NavYorisoiFloatingSP() {
     };
   }, []);
 
-  /* 現在地ハイライト（安定版：active依存を外して無限再登録を防ぐ） */
+  /* ----------------------------------------------------
+        現在地ハイライト（安定・最適化）
+  ---------------------------------------------------- */
   useEffect(() => {
     const sections = ["#about", "#profile", "#menu", "#access", "#reserve"];
 
@@ -107,7 +110,7 @@ export default function NavYorisoiFloatingSP() {
         if (!el) continue;
 
         const rect = el.getBoundingClientRect();
-        if (rect.top < window.innerHeight * 0.35 && rect.bottom > 60) {
+        if (rect.top < window.innerHeight * 0.33 && rect.bottom > 70) {
           current = id;
         }
       }
@@ -121,7 +124,9 @@ export default function NavYorisoiFloatingSP() {
     return () => window.removeEventListener("scroll", checkPosition);
   }, []);
 
-  /* NAV LIST */
+  /* ----------------------------------------------------
+        NAV LIST
+  ---------------------------------------------------- */
   const navList = [
     {
       label: "お店",
@@ -178,20 +183,25 @@ export default function NavYorisoiFloatingSP() {
     },
   ];
 
+  /* ----------------------------------------------------
+        JSX
+  ---------------------------------------------------- */
   return (
     <nav
       ref={navRef}
       className="
         fixed bottom-0 left-0 right-0 z-[80]
+
         bg-[linear-gradient(
           to_top,
-          rgba(247,244,239,0.80) 0%,
-          rgba(247,244,239,0.74) 40%,
-          rgba(247,244,239,0.66) 70%,
+          rgba(247,244,239,0.82) 0%,
+          rgba(247,244,239,0.74) 35%,
+          rgba(247,244,239,0.66) 68%,
           rgba(247,244,239,0.58) 100%
         )]
+
         backdrop-blur-[9px]
-        border-t border-[rgba(96,78,62,0.16)]
+        border-t border-[rgba(96,78,62,0.15)]
         px-[4vw] py-[10px]
         flex justify-between
         will-change-transform
@@ -213,11 +223,11 @@ export default function NavYorisoiFloatingSP() {
               nav-sp-item
               relative
               flex flex-col items-center justify-center
-              w-[18vw]
-              text-[11.4px]
+              w-[17.5vw]
+              text-[11.2px]
               tracking-[0.10em]
               font-medium
-              ${isActive ? "text-[rgba(96,78,62,0.95)]" : "text-[rgba(96,78,62,0.72)]"}
+              ${isActive ? "text-[rgba(96,78,62,0.96)]" : "text-[rgba(96,78,62,0.70)]"}
               transition-all
             `}
           >
@@ -225,7 +235,7 @@ export default function NavYorisoiFloatingSP() {
               className={`
                 w-[20px] h-[20px] mb-[3px]
                 transition-all
-                ${isActive ? "opacity-100 scale-[1.07]" : "opacity-80 scale-[1]"}
+                ${isActive ? "opacity-100 scale-[1.08]" : "opacity-85 scale-[1]"}
               `}
               viewBox="0 0 24 24"
               fill="none"
@@ -244,7 +254,7 @@ export default function NavYorisoiFloatingSP() {
                 className="
                   absolute bottom-0 left-1/2 -translate-x-1/2
                   w-[22px] h-[2px]
-                  bg-[rgba(96,78,62,0.42)]
+                  bg-[rgba(96,78,62,0.40)]
                   rounded-full
                 "
               />
