@@ -177,7 +177,7 @@ export default function HeroSP() {
       ==================================================== */}
       <div
         className="
-          absolute left-0 right-0 top-[34vh]
+          absolute left-0 right-0 top-[30vh]
           px-[6vw]
           z-[100]
         "
@@ -205,7 +205,7 @@ export default function HeroSP() {
             className="
               text-[15px]
               tracking-[0.23em]
-              text-[rgba(80,65,55,0.92)]
+             text-[rgba(135,118,105,0.92)]
               font-light
             "
           >
@@ -221,7 +221,7 @@ export default function HeroSP() {
             leading-[1.32]
             tracking-[0.01em]
             font-medium
-            text-[#3f332b]
+           text-[#62564A]
             drop-shadow-[0_1px_3px_rgba(0,0,0,0.35)]
             drop-shadow-[0_0.5px_1.3px_rgba(255,255,255,0.38)]
             mb-[2vh]
@@ -238,7 +238,7 @@ export default function HeroSP() {
           className="
             text-[clamp(13px,3.6vw,15px)]
             leading-[1.9]
-            text-[rgba(66,55,47,0.94)]
+           text-[rgba(118,102,88,0.92)]
             drop-shadow-[0_1px_2.2px_rgba(0,0,0,0.33)]
             drop-shadow-[0_0.45px_1px_rgba(255,255,255,0.34)]
           "
