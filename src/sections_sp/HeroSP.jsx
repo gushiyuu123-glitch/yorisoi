@@ -177,76 +177,60 @@ export default function HeroSP() {
       ==================================================== */}
       <div
         className="
-          absolute left-0 right-0 top-[30vh]
+          absolute left-0 right-0 top-[33vh]
           px-[6vw]
           z-[100]
         "
       >
 
-        {/* ロゴ行 */}
-        <div className="flex items-center gap-3 mb-4">
-          <svg
-            className="w-[16px] h-[16px] text-[rgba(96,78,62,0.60)]"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.4"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <circle cx="6" cy="6" r="3" />
-            <circle cx="6" cy="18" r="3" />
-            <line x1="20" y1="4" x2="8.12" y2="10.12" />
-            <line x1="8.12" y1="13.88" x2="20" y2="20" />
-          </svg>
+      {/* ロゴ行 */}
+<div
+  ref={logoRef}
+  className="
+    text-[15px]
+    tracking-[0.23em]
+    text-[rgba(155,138,123,0.92)]
+    font-light
+  "
+>
+  ヨリソイ
+</div>
 
-          <div
-            ref={logoRef}
-            className="
-              text-[15px]
-              tracking-[0.23em]
-             text-[rgba(135,118,105,0.92)]
-              font-light
-            "
-          >
-            ヨリソイ
-          </div>
-        </div>
+{/* H1 */}
+<h1
+  ref={titleRef}
+  className="
+    text-[clamp(18px,5.8vw,24px)]
+    leading-[1.32]
+    tracking-[0.01em]
+    font-medium
+    text-[#7A6A5A]
+    drop-shadow-[0_1px_3px_rgba(0,0,0,0.28)]
+    drop-shadow-[0_0.5px_1.3px_rgba(255,255,255,0.32)]
+    mb-[2vh]
+  "
+>
+  {splitText("話しすぎない、でも寄り添う。")}
+  <br />
+  {splitText("あなたに合わせて整える美容室。")}
+</h1>
 
-        {/* H1 */}
-        <h1
-          ref={titleRef}
-          className="
-            text-[clamp(18px,5.8vw,24px)]
-            leading-[1.32]
-            tracking-[0.01em]
-            font-medium
-           text-[#62564A]
-            drop-shadow-[0_1px_3px_rgba(0,0,0,0.35)]
-            drop-shadow-[0_0.5px_1.3px_rgba(255,255,255,0.38)]
-            mb-[2vh]
-          "
-        >
-          {splitText("話しすぎない、でも寄り添う。")}
-          <br />
-          {splitText("あなたに合わせて整える美容室。")}
-        </h1>
+{/* サブコピー */}
+<p
+  ref={subRef}
+  className="
+    text-[clamp(13px,3.6vw,15px)]
+    leading-[1.9]
+    text-[rgba(140,124,110,0.92)]
+    drop-shadow-[0_1px_2px_rgba(0,0,0,0.25)]
+    drop-shadow-[0_0.45px_1px_rgba(255,255,255,0.26)]
+  "
+>
+  無理なく相談できて、自然に任せられる距離感で。
+  <br />
+  あなたの日常に合うスタイルを、丁寧に仕上げていきます。
+</p>
 
-        {/* サブコピー */}
-        <p
-          ref={subRef}
-          className="
-            text-[clamp(13px,3.6vw,15px)]
-            leading-[1.9]
-           text-[rgba(118,102,88,0.92)]
-            drop-shadow-[0_1px_2.2px_rgba(0,0,0,0.33)]
-            drop-shadow-[0_0.45px_1px_rgba(255,255,255,0.34)]
-          "
-        >
-          無理なく相談できて、自然に任せられる距離感で。
-          <br />
-          あなたの日常に合うスタイルを、丁寧に仕上げていきます。
-        </p>
 
       </div>
     </section>
