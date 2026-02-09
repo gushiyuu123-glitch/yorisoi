@@ -1,4 +1,7 @@
-// src/components_sp/LogoYorisoiFloatingSP.jsx
+// ============================================================================
+// LogoYorisoiFloatingSP — 右上常駐（HotPepper と水平揃え）
+// GUSHIKEN DESIGN × NOA
+// ============================================================================
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 
@@ -61,7 +64,7 @@ export default function LogoYorisoiFloatingSP() {
   }, []);
 
   /* ==================================
-        ロゴをクリック → Heroへ戻る
+        ロゴクリック → Heroへ戻る
   ================================== */
   const scrollToHero = () => {
     document.querySelector("#home")?.scrollIntoView({
@@ -75,7 +78,8 @@ export default function LogoYorisoiFloatingSP() {
       ref={wrapRef}
       onClick={scrollToHero}
       className="
-        fixed bottom-[85vh] right-[4vw] z-[90]
+        fixed top-[20px] right-[20px] z-[110]   /* ← ★ HotPepper と完全に揃えた */
+
         w-[58px] h-[58px]
 
         /* 背景膜（自然光） */

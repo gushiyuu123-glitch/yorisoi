@@ -31,36 +31,12 @@ export default function ReserveFloatingSP() {
   ---------------------------------------------------- */
   useEffect(() => {
     gsap.to(ref.current, {
-      scale: 1.0022,        // ★ “気配だけの呼吸”
+      scale: 1.0022,        // “気配だけの呼吸”
       duration: 3.6,
       ease: "power1.inOut",
       yoyo: true,
       repeat: -1,
     });
-  }, []);
-
-  /* ----------------------------------------------------
-        スクロールで自然に消える（ナビと同期挙動）
-  ---------------------------------------------------- */
-  useEffect(() => {
-    let lastY = window.scrollY;
-
-    const onScroll = () => {
-      const currentY = window.scrollY;
-      const isDown = currentY > lastY;
-
-      gsap.to(ref.current, {
-        opacity: isDown ? 0 : 1,
-        y: isDown ? -14 : 0,
-        duration: 0.35,
-        ease: "power3.out",
-      });
-
-      lastY = currentY;
-    };
-
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
   return (
