@@ -12,7 +12,7 @@ import FooterSP from "./sections_sp/FooterSP";
 
 import LogoYorisoiFloatingSP from "./components_sp/LogoYorisoiFloatingSP";
 import NavYorisoiFloatingSP from "./components_sp/NavYorisoiFloatingSP";
-import ReserveFloatingSP from "./components_sp/ReserveFloatingSP";
+// import ReserveFloatingSP from "./components_sp/ReserveFloatingSP";
 
 export default function AppSP() {
   return (
@@ -20,7 +20,7 @@ export default function AppSP() {
 
       {/* 予約 & ロゴ（最前面） */}
       <LogoYorisoiFloatingSP />
-      <ReserveFloatingSP />
+      {/* <ReserveFloatingSP /> */}
 
       {/* HERO */}
       <section id="home">
