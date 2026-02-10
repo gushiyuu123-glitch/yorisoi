@@ -213,25 +213,27 @@ export default function MenuSP() {
 
         {/* 予約導線（1つだけのボタン） */}
         <div className="mnSP text-center mt-[9vh]">
-          <a
-            href="#reserve"
-            className="
-              inline-block
-              px-8 py-3
-              text-[14.5px]
-              text-[#5d4c3f]
-              bg-[rgba(96,78,62,0.10)]
-              hover:bg-[rgba(96,78,62,0.16)]
-              backdrop-blur-[2px]
-              rounded-[6px]
-              tracking-[0.08em]
-              shadow-[0_3px_10px_rgba(0,0,0,0.06)]
-              hover:shadow-[0_6px_18px_rgba(0,0,0,0.10)]
-              transition-all
-            "
-          >
-            メニュー詳細を見る
-          </a>
+  <p
+  className="
+    mnSP text-center mt-6 mb-4
+    text-[12px]
+    leading-[1.8]
+    text-[rgba(96,78,62,0.50)]
+  "
+>
+  ※ メニュー・価格・クーポン内容は変動する場合がございます。<br />
+  最新情報は  
+  <a
+    href="https://beauty.hotpepper.jp/"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="underline decoration-[rgba(96,78,62,0.40)] hover:opacity-80 transition"
+  >
+    HotPepper Beauty
+  </a>
+  をご確認ください。
+</p>
+
         </div>
 
       </div>

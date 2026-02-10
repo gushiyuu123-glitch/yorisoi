@@ -243,25 +243,27 @@ export default function Menu() {
           最後に “1つだけのボタン”
       =============================== */}
       <div className="mn text-center mt-[10vh]">
-        <a
-          href="#reserve"  
-          className="
-            inline-block
-            px-8 py-3
-            text-[15px]
-            text-[#5d4c3f]
-            bg-[rgba(96,78,62,0.10)]
-            hover:bg-[rgba(96,78,62,0.18)]
-            backdrop-blur-[2px]
-            rounded-[6px]
-            tracking-[0.08em]
-            shadow-[0_4px_10px_rgba(0,0,0,0.06)]
-            hover:shadow-[0_6px_18px_rgba(0,0,0,0.10)]
-            transition-all cursor-pointer
-          "
-        >
-          メニュー詳細
-        </a>
+  <p
+  className="
+    mn text-center mt-8
+    text-[13px]
+    leading-[1.85]
+    text-[rgba(96,78,62,0.55)]
+  "
+>
+  ※ メニュー・価格・クーポン内容は変動する場合がございます。<br />
+  最新情報は こちらの 
+  <a
+    href="https://beauty.hotpepper.jp/"
+    target="_blank"
+    rel="noopener noreferrer"
+    className="underline decoration-[rgba(96,78,62,0.45)] hover:opacity-80 transition"
+  >
+    HotPepper Beauty
+  </a>
+  をご確認ください。
+</p>
+
       </div>
     </section>
   );
