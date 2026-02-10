@@ -192,7 +192,7 @@ tl.fromTo(
     translate-y-[-6px]
   "
 >
-  {splitText("話しすぎない、でも寄り添う。")} <br />
+  {splitText("話しすぎない、でも〇〇〇。")} <br />
   {splitText("あなたに合わせて整えるサロンです。")}
 </h1>
 
