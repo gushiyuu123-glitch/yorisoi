@@ -60,7 +60,7 @@ export default function Footer() {
             font-medium
           "
         >
-          YORISOI — hair salon
+          〇〇〇〇 — hair salon
         </h3>
 
         <p
@@ -122,7 +122,7 @@ export default function Footer() {
       {/* コピーライト */}
       <div className="text-center">
         <p className="text-[12px] tracking-wide text-[rgba(96,78,62,0.55)]">
-          © YORISOI hair salon
+          © 〇〇〇 hair salon
         </p>
       </div>
     </footer>

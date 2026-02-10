@@ -193,7 +193,7 @@ export default function HeroSP() {
     font-light
   "
 >
-  ヨリソイ
+  〇〇〇〇
 </div>
 
 {/* H1 */}

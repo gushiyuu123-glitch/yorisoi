@@ -72,7 +72,7 @@ export default function FooterSP() {
             font-medium
           "
         >
-          YORISOI — hair salon
+          〇〇〇〇 — hair salon
         </h3>
 
         <p
@@ -140,7 +140,7 @@ export default function FooterSP() {
       =============================== */}
       <div className="text-center">
         <p className="text-[11.5px] tracking-wide text-[rgba(96,78,62,0.55)]">
-          © YORISOI hair salon
+          © 〇〇〇 hair salon
         </p>
       </div>
     </footer>

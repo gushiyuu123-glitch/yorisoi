@@ -135,7 +135,7 @@ export default function ProfileSP() {
           "
         >
           <p><span className="font-medium text-[#5d4c3f]">名前：</span>山田 聡</p>
-          <p><span className="font-medium text-[#5d4c3f]">経験：</span>美容師歴18年（東京・沖縄）</p>
+          <p><span className="font-medium text-[#5d4c3f]">経験：</span>美容師歴〇〇〇年（東京・沖縄）</p>
           <p><span className="font-medium text-[#5d4c3f]">得意：</span>扱いやすいナチュラルカット</p>
         </div>
 

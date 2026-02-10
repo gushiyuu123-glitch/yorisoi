@@ -65,7 +65,7 @@ export default function ConceptSP() {
       {/* 見出し */}
       <div className="cpSP mx-auto max-w-[480px] text-center mb-10">
         <p className="text-[11px] tracking-[0.28em] text-[rgba(96,78,62,0.55)] mb-5">
-          YORISOI / SALON PHILOSOPHY
+          〇〇〇 / SALON PHILOSOPHY
         </p>
 
         <h2
@@ -76,7 +76,7 @@ export default function ConceptSP() {
             font-medium
           "
         >
-          YORISOI が大切にしていること
+          〇〇〇 が大切にしていること
         </h2>
       </div>
 

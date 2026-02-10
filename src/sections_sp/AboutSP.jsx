@@ -46,7 +46,7 @@ export default function AboutSP() {
 
         {/* 見出し */}
         <p className="about-sp-fade text-[11px] tracking-[0.26em] text-[rgba(96,78,62,0.50)] mb-3">
-          ABOUT ／ 寄り添いの理由
+          ABOUT ／ 〇〇〇の理由
         </p>
 
         {/* タイトル */}

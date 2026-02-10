@@ -167,7 +167,7 @@ tl.fromTo(
             ref={logoRef}
             className="text-[19px] tracking-[0.36em] text-[rgba(96,78,62,0.80)] font-light"
           >
-            ヨリソイ
+            〇〇〇〇
           </div>
 
           <div

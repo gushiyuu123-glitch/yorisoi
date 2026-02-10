@@ -83,7 +83,7 @@ export default function Concept() {
             mb-8
           "
         >
-          YORISOI / SALON PHILOSOPHY
+          〇〇〇 / SALON PHILOSOPHY
         </p>
 
         <h2
@@ -94,7 +94,7 @@ export default function Concept() {
             font-medium
           "
         >
-          YORISOI が大切にしていること
+          〇〇〇 が大切にしていること
         </h2>
       </div>
 
