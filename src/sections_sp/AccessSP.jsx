@@ -289,7 +289,7 @@ export default function AccessSP() {
       <div className="mt-[12vh] text-center text-[13px] text-[rgba(96,78,62,0.65)] leading-[1.8]">
         <p>口コミ評価 ★5.00（56件）</p>
         <p>完全マンツーマン・半個室サロン</p>
-        <p>朝7時OPEN / メンズ比率 94%</p>
+        <p>朝7時OPEN / メンズ専門</p>
       </div>
     </section>
   );
