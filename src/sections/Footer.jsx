@@ -99,7 +99,7 @@ export default function Footer() {
             rel="noopener noreferrer"
             className="hover:text-[rgba(96,78,62,0.95)] transition-all"
           >
-            Site Design : GUSHIKEN
+            サイト制作 : GUSHIKEN DESIGN
           </a>
 
           <span className="text-[rgba(96,78,62,0.35)]">｜</span>
