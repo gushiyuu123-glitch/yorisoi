@@ -58,13 +58,13 @@ export default function Menu() {
             font-medium
           "
         >
-          初めての方も通いやすいよう、<br />
-          クーポンをご用意しています。
+          初めての方でも安心して通えるように、<br />
+          特別クーポンをご用意しています。
         </h2>
       </div>
 
       {/* ===============================
-          クーポン（カードのみ・ボタンなし）
+          クーポン（ベスト3だけ抜粋）
       =============================== */}
       <div
         className="
@@ -75,14 +75,24 @@ export default function Menu() {
       >
         {[
           {
-            title: "カット + シンプルトリートメント",
-            price: "¥4,500 → ¥4,000",
-            desc: "髪のまとまりが欲しい方に。初回来店限定のクーポンです。",
+            title: "【人気No.1】カット + シャンプー + 眉シェービング",
+            price: "¥4,280 → ¥3,880",
+            desc: "骨格と癖を見極め、長持ちするメンズカット。第一印象を整えたい方に。",
           },
           {
-            title: "カット + フルカラー",
-            price: "¥9,700 → ¥8,800",
-            desc: "透明感と自然なツヤを引き出す人気メニュー。",
+            title: "【早朝限定】カット + シャンプー + 眉シェービング",
+            price: "¥4,280 → ¥3,780",
+            desc: "平日6〜7時限定。朝の時間を有効活用したいお客様におすすめ。",
+          },
+          {
+            title: "【極上ヘッドスパ】+ カット + シャンプー",
+            price: "¥6,680",
+            desc: "頭皮ケア・コリ改善・深いリラックスを求める方へ。人気の上位メニュー。",
+          },
+          {
+            title: "【カット + シンプルトリートメント】",
+            price: "¥4,500 → ¥4,000",
+            desc: "髪のまとまりが欲しい方に。初回限定のクーポン。",
           },
         ].map((cp, i) => (
           <div
@@ -101,12 +111,10 @@ export default function Menu() {
             <h3 className="text-[17px] text-[#5d4c3f] font-medium mb-2">
               {cp.title}
             </h3>
-
             <p className="text-[15px] text-[#5d4c3f] font-semibold mb-3">
               {cp.price}
             </p>
-
-            <p className="text-[14.5px] leading-[1.85] text-[rgba(96,78,62,0.78)] mb-2 flex-grow">
+            <p className="text-[14.5px] leading-[1.85] text-[rgba(96,78,62,0.78)] flex-grow">
               {cp.desc}
             </p>
           </div>
@@ -114,7 +122,7 @@ export default function Menu() {
       </div>
 
       {/* ===============================
-          通常メニュー（そのまま）
+          通常メニュー（HotPepper構造準拠）
       =============================== */}
       <div
         className="
@@ -132,8 +140,10 @@ export default function Menu() {
 
             <div className="text-[15px] leading-[1.9] text-[rgba(96,78,62,0.82)]">
               {[
-                ["カット（一般）", "¥4,500"],
-                ["学生カット", "¥3,500"],
+                ["カット（一般）", "¥3,980"],
+                ["眉剃り＆眉整え + カット", "¥4,280"],
+                ["トータルシェービング + カット", "¥4,800"],
+                ["学生カット（小～大学）", "¥3,780"],
                 ["前髪カット", "¥800"],
               ].map(([n, p]) => (
                 <div
@@ -159,9 +169,9 @@ export default function Menu() {
 
             <div className="text-[15px] leading-[1.9] text-[rgba(96,78,62,0.82)]">
               {[
-                ["リタッチ", "¥4,200"],
-                ["フルカラー", "¥5,200"],
-                ["ダブルカラー", "¥9,000〜"],
+                ["白髪染め / 白髪ぼかし", "¥7,700"],
+                ["ファッションカラー（カット込）", "¥7,700"],
+                ["ファッションカラー + シェービング", "¥8,800"],
               ].map(([n, p]) => (
                 <div
                   key={n}
@@ -189,18 +199,17 @@ export default function Menu() {
 
             <div className="text-[15px] leading-[1.9] text-[rgba(96,78,62,0.82)]">
               {[
-                ["ナチュラルパーマ", "¥6,200"],
-                ["ポイントパーマ", "¥3,200"],
-                ["", ""],
-              ].map(([n, p], idx) => (
+                ["パーマ（カット込）", "¥9,980"],
+                ["パーマ ＋ シェービング", "¥11,000"],
+                ["ポイントパーマ", "¥8,800"],
+              ].map(([n, p]) => (
                 <div
-                  key={idx}
-                  className={`
+                  key={n}
+                  className="
                     flex justify-between
                     border-b border-[rgba(96,78,62,0.18)]
                     py-2
-                    ${n === "" ? "opacity-0" : "opacity-100"}
-                  `}
+                  "
                 >
                   <span>{n}</span>
                   <span className="font-medium text-[#5d4c3f]">{p}</span>
@@ -209,26 +218,25 @@ export default function Menu() {
             </div>
           </div>
 
-          {/* ---- トリートメント ---- */}
+          {/* ---- スパ / その他 ---- */}
           <div>
             <h3 className="text-[17px] text-[#5d4c3f] font-medium mb-10">
-              トリートメント
+              ヘッドスパ・その他
             </h3>
 
             <div className="text-[15px] leading-[1.9] text-[rgba(96,78,62,0.82)]">
               {[
-                ["シンプルトリートメント", "¥2,500"],
-                ["集中ケアトリートメント", "¥3,800"],
-                ["", ""],
-              ].map(([n, p], idx) => (
+                ["ヘッドスパ", "¥3,880"],
+                ["ヘアセット / シェービング", "¥3,300"],
+                ["追加シェービング", "¥1,100"],
+              ].map(([n, p]) => (
                 <div
-                  key={idx}
-                  className={`
+                  key={n}
+                  className="
                     flex justify-between
                     border-b border-[rgba(96,78,62,0.18)]
                     py-2
-                    ${n === "" ? "opacity-0" : "opacity-100"}
-                  `}
+                  "
                 >
                   <span>{n}</span>
                   <span className="font-medium text-[#5d4c3f]">{p}</span>
@@ -240,30 +248,28 @@ export default function Menu() {
       </div>
 
       {/* ===============================
-          最後に “1つだけのボタン”
+          注意書き（静かに世界観維持）
       =============================== */}
       <div className="mn text-center mt-[10vh]">
-  <p
-  className="
-    mn text-center mt-8
-    text-[13px]
-    leading-[1.85]
-    text-[rgba(96,78,62,0.55)]
-  "
->
-  ※ メニュー・価格・クーポン内容は変動する場合がございます。<br />
-  最新情報は こちらの 
-  <a
-    href="https://beauty.hotpepper.jp/"
-    target="_blank"
-    rel="noopener noreferrer"
-    className="underline decoration-[rgba(96,78,62,0.45)] hover:opacity-80 transition"
-  >
-    HotPepper Beauty
-  </a>
-  をご確認ください。
-</p>
-
+        <p
+          className="
+            text-[13px]
+            leading-[1.85]
+            text-[rgba(96,78,62,0.55)]
+          "
+        >
+          ※ メニュー・価格・クーポン内容は変動する場合がございます。<br />
+          最新情報は{" "}
+          <a
+            href="https://beauty.hotpepper.jp/slnH000706136/coupon/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline decoration-[rgba(96,78,62,0.45)] hover:opacity-80 transition"
+          >
+            HotPepper Beauty
+          </a>
+          をご確認ください。
+        </p>
       </div>
     </section>
   );

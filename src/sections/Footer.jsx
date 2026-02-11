@@ -60,7 +60,7 @@ export default function Footer() {
             font-medium
           "
         >
-          〇〇〇〇 — hair salon
+          ヨリソイ — Hair & Spa
         </h3>
 
         <p
@@ -78,8 +78,9 @@ export default function Footer() {
       {/* 店舗情報 */}
       <div className="max-w-[680px] mx-auto text-center mb-10">
         <p className="text-[14px] text-[rgba(96,78,62,0.78)] leading-[1.85]">
-          沖縄県 ○○市 ○○町 1-2-3（駐車場あり）<br />
-          営業時間：10:00〜19:00（定休日：火曜）
+          沖縄県浦添市内間2丁目20-3（駐車場2台＋バイク1台）<br />
+          営業時間：7:00〜19:00（最終受付：カット18:00）<br />
+          定休日：毎週月曜日
         </p>
       </div>
 
@@ -122,9 +123,83 @@ export default function Footer() {
       {/* コピーライト */}
       <div className="text-center">
         <p className="text-[12px] tracking-wide text-[rgba(96,78,62,0.55)]">
-          © 〇〇〇 hair salon
+          © ヨリソイ Hair & Spa
         </p>
       </div>
+
+      {/* ===============================
+          ★ SEO（JSON-LD）- Google に制作実績の関連性を通知
+      =============================== */}
+
+      {/* ① GUSHIKEN DESIGN の定義 */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "ProfessionalService",
+            "name": "GUSHIKEN DESIGN",
+            "url": "https://gushikendesign.com/",
+            "image": "https://gushikendesign.com/ogp.png",
+            "description":
+              "世界観×構造で魅せるWeb制作スタジオ。美容室・EC・ブランドサイトなど高品質なLP制作を行っています。",
+            "address": {
+              "@type": "PostalAddress",
+              "addressRegion": "沖縄県",
+              "addressCountry": "JP",
+            },
+            "sameAs": ["https://www.instagram.com/gushiken_design/"],
+          }),
+        }}
+      />
+
+      {/* ② このサイトが “GUSHIKEN DESIGN の制作実績” である証明 */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "CreativeWork",
+            "name": "YORISOI Hair & Spa Webサイト",
+            "url": "https://yorisoi-nine.vercel.app",
+            "creator": {
+              "@type": "Organization",
+              "name": "GUSHIKEN DESIGN",
+              "url": "https://gushikendesign.com/",
+            },
+            "about": {
+              "@type": "HairSalon",
+              "name": "ヨリソイ Hair & Spa",
+              "address": {
+                "@type": "PostalAddress",
+                "addressLocality": "浦添市",
+                "addressRegion": "沖縄県",
+                "streetAddress": "内間2丁目20-3",
+              },
+              "sameAs": "https://www.instagram.com/yorisoi_salon/",
+            },
+          }),
+        }}
+      />
+
+      {/* ③ 制作実績の ItemList（Google が評価しやすくなる） */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "ItemList",
+            "name": "制作実績",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "url": "https://yorisoi-nine.vercel.app",
+              },
+            ],
+          }),
+        }}
+      />
     </footer>
   );
 }

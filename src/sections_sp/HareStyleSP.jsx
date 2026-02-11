@@ -47,7 +47,7 @@ export default function HareStyleSP() {
         </h2>
       </div>
 
-      {/* 横スクロール（SP専用：ゆっくり・大きめサムネ） */}
+      {/* 横スクロール */}
       <div className="relative w-full overflow-hidden mb-[6vh]">
         <div
           className="
@@ -61,7 +61,7 @@ export default function HareStyleSP() {
               key={i}
               className="
                 relative
-                min-w-[68vw] 
+                min-w-[68vw]
                 aspect-[4/5]
                 rounded-[14px]
                 overflow-hidden
@@ -98,10 +98,12 @@ export default function HareStyleSP() {
         </div>
       </div>
 
-      {/* CTA（SPは丸くて軽い） */}
+      {/* CTA（HotPepperへの導線） */}
       <div className="text-center">
         <a
-          href="#gallery"
+          href="https://beauty.hotpepper.jp/slnH000706136/style/"
+          target="_blank"
+          rel="noopener noreferrer"
           className="
             inline-block
             px-8 py-3
@@ -119,16 +121,16 @@ export default function HareStyleSP() {
           他のスタイルを見る
         </a>
       </div>
-<style>{`
-  @keyframes scrollLoopSP {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
-  }
-  .animate-scrollLoopSP {
-    animation: scrollLoopSP 15s linear infinite;
-  }
-`}</style>
 
+      <style>{`
+        @keyframes scrollLoopSP {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+        .animate-scrollLoopSP {
+          animation: scrollLoopSP 15s linear infinite;
+        }
+      `}</style>
     </section>
   );
 }

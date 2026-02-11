@@ -42,17 +42,17 @@ export default function HareStyle() {
             font-medium
           "
         >
-          仕上がりが“自然に綺麗”な、実際のスタイルを<br/>
+          仕上がりが“自然に綺麗”な、実際のスタイルを<br />
           お届けします。
         </h2>
       </div>
 
-      {/* 横スクロール */}
+      {/* 横スクロール（PC版） */}
       <div className="relative w-full overflow-hidden mb-[10vh]">
         <div
           className="
-            flex gap-[3vw] 
-            animate-scrollLoop 
+            flex gap-[3vw]
+            animate-scrollLoop
             whitespace-nowrap
           "
         >
@@ -60,7 +60,7 @@ export default function HareStyle() {
             <div
               key={i}
               className="
-                relative 
+                relative
                 min-w-[32vw] max-w-[420px]
                 aspect-[4/5]
                 rounded-[16px]
@@ -98,13 +98,15 @@ export default function HareStyle() {
         </div>
       </div>
 
-      {/* ---- 他のヘアスタイルを見る CTA ---- */}
+      {/* ---- HotPepper 公式のスタイル一覧へ ---- */}
       <div className="text-center">
         <a
-          href="#gallery"  /* ← 後で作品一覧 id をここに合わせる */
+          href="https://beauty.hotpepper.jp/slnH000706136/style/"
+          target="_blank"
+          rel="noopener noreferrer"
           className="
             inline-block
-            px-8 py-3
+            px-9 py-3.5
             rounded-full
             text-[15px]
             text-[#5d4c3f]

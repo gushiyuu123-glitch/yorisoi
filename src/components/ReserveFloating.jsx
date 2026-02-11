@@ -25,31 +25,32 @@ export default function ReserveFloating() {
   }, []);
 
   return (
-    <a
-      ref={ref}
-      href="https://beauty.hotpepper.jp/" // ← 本番では正式URLを入れる
-      target="_blank"
-      rel="noopener noreferrer"
-      className="
-        fixed top-[4vh] right-[6vw] z-[50]
-        px-6 py-2.5
-        text-[14px]
-        tracking-[0.14em]
-        rounded-[8px]
+<a
+  ref={ref}
+  href="https://beauty.hotpepper.jp/slnH000706136/"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="
+    fixed top-[4vh] right-[6vw] z-[50]
+    px-6 py-2.5
+    text-[14px]
+    tracking-[0.14em]
+    rounded-[8px]
 
-        bg-[rgba(96,78,62,0.14)]
-        text-[#5d4c3f]
-        backdrop-blur-[5px]
+    bg-[rgba(96,78,62,0.14)]
+    text-[#5d4c3f]
+    backdrop-blur-[5px]
 
-        shadow-[0_4px_14px_rgba(0,0,0,0.07)]
-        hover:bg-[rgba(96,78,62,0.22)]
-        hover:shadow-[0_6px_18px_rgba(0,0,0,0.12)]
-        hover:text-[#4f3f33]
+    shadow-[0_4px_14px_rgba(0,0,0,0.07)]
+    hover:bg-[rgba(96,78,62,0.22)]
+    hover:shadow-[0_6px_18px_rgba(0,0,0,0.12)]
+    hover:text-[#4f3f33]
 
-        transition-all cursor-pointer
-      "
-    >
-      予約する
-    </a>
+    transition-all cursor-pointer
+  "
+>
+  予約する
+</a>
+
   );
 }

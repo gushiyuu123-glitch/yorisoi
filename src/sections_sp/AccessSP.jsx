@@ -70,7 +70,10 @@ export default function AccessSP() {
             <h3 className="text-[16px] text-[#5d4c3f] font-medium mb-1">
               住所
             </h3>
-            <p>沖縄県○○市○○町 1-2-3（YORISOI）</p>
+            <p>
+              沖縄県浦添市内間2丁目20-3<br />
+              （パイプライン沿い / 年金事務所向かい）
+            </p>
           </div>
         </div>
 
@@ -82,9 +85,10 @@ export default function AccessSP() {
               営業時間
             </h3>
             <p>
-              平日 10:00〜19:00<br />
-              土日祝 09:00〜18:00<br />
-              定休日：火曜日
+              平日・土日祝 7:00〜19:00<br />
+              ※7時台のご予約はWEB限定<br />
+              最終受付：カット18:00 / カラー17:00 / パーマ16:30<br />
+              定休日：毎週月曜日
             </p>
           </div>
         </div>
@@ -97,8 +101,8 @@ export default function AccessSP() {
               駐車場
             </h3>
             <p>
-              店舗前に専用駐車場が2台ございます。<br />
-              満車の場合は近隣パーキングをご利用ください。
+              専用駐車場：2台（＋バイク1台）<br />
+              満車時は近隣パーキングをご利用ください。
             </p>
           </div>
         </div>
@@ -140,7 +144,7 @@ export default function AccessSP() {
         </p>
 
         <a
-          href="https://beauty.hotpepper.jp/"
+          href="https://beauty.hotpepper.jp/slnH000706136/"
           target="_blank"
           rel="noopener noreferrer"
           className="
@@ -159,6 +163,13 @@ export default function AccessSP() {
         >
           日程を確認する
         </a>
+      </div>
+
+      {/* ---- サロン強み（UX最適化ブロック） ---- */}
+      <div className="mt-[12vh] text-center text-[13px] text-[rgba(96,78,62,0.65)] leading-[1.8]">
+        <p>口コミ評価 ★5.00（56件）</p>
+        <p>完全マンツーマン・半個室サロン</p>
+        <p>朝7時OPEN / メンズ比率 94%</p>
       </div>
     </section>
   );

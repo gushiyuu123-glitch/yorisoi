@@ -4,19 +4,34 @@ import React from "react";
 export default function Review() {
   const reviews = [
     {
-      name: "30代 女性",
-      text: "初めての来店でしたが、とても丁寧にカウンセリングしてくださり、仕上がりも自然で大満足です。家でも扱いやすくなりました。",
+      name: "20代後半 男性（会社員）",
+      text: "毎回同じスタイルを正確に再現してくれるので安心して任せられます。落ち着いた空間で居心地もよく、細かな要望にも丁寧に対応してくれます。",
       stars: 5,
     },
     {
-      name: "20代 女性",
-      text: "静かで落ち着くサロンでした。カラーの色味も綺麗で、髪がつるんとまとまります。また伺います。",
+      name: "30代後半 男性（会社員）",
+      text: "カットもスパも非常に丁寧でリラックスできる時間でした。仕上がりも満足で、今後も通いたいと思えるサロンです。",
       stars: 5,
     },
     {
-      name: "40代 男性",
-      text: "短時間で丁寧に仕上げていただきました。セットしやすく、家族にも好評です。",
+      name: "40代 男性（会社員）",
+      text: "照明や空間の気遣いが心地よく、施術中に眠りそうになるほどリラックスできます。技術も安定していて、毎回安心して任せられます。",
+      stars: 5,
+    },
+    {
+      name: "20代後半 男性（会社員）",
+      text: "初めてパーマをお願いしましたが、理想的な仕上がりでした。待ち時間の配慮など細かなサービスも良かったです。",
+      stars: 5,
+    },
+    {
+      name: "40代 男性（会社員）",
+      text: "カウンセリングが丁寧で、細かい部分まで確認してくれます。仕上がりも扱いやすく、信頼できるサロンです。",
       stars: 4,
+    },
+    {
+      name: "30代後半 男性（自営業）",
+      text: "朝早くからの予約にも対応してくれて助かります。落ち着いた店内で丁寧にカットしてくれて、気持ちが整います。",
+      stars: 5,
     },
   ];
 
@@ -44,6 +59,7 @@ export default function Review() {
         className="
           mx-auto max-w-[900px]
           grid grid-cols-3 gap-[2.4vw]
+          md:grid-cols-2 sm:grid-cols-1
         "
       >
         {reviews.map((r, i) => (
@@ -84,6 +100,30 @@ export default function Review() {
             </p>
           </div>
         ))}
+      </div>
+
+      {/* HOTPEPPER：全口コミへの導線 */}
+      <div className="text-center mt-[8vh]">
+        <a
+          href="https://beauty.hotpepper.jp/slnH000706136/review/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="
+            inline-block
+            px-8 py-3
+            rounded-full
+            text-[14px]
+            text-[#5d4c3f]
+            bg-[rgba(96,78,62,0.12)]
+            backdrop-blur-[2px]
+            tracking-[0.08em]
+            hover:bg-[rgba(96,78,62,0.18)]
+            transition-all duration-300
+            shadow-[0_4px_14px_rgba(0,0,0,0.05)]
+          "
+        >
+          すべての口コミを見る（HotPepper Beauty）
+        </a>
       </div>
     </section>
   );

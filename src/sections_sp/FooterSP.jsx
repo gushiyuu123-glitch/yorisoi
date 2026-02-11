@@ -29,7 +29,7 @@ export default function FooterSP() {
       "
     >
       {/* ===============================
-          背景：上質な“白膜 × 木漏れ日”
+          背景（白膜 × こもれび）
       =============================== */}
       <div aria-hidden className="absolute inset-0 -z-10">
         <img
@@ -55,7 +55,7 @@ export default function FooterSP() {
       </div>
 
       {/* ===============================
-          ロゴ & コピー（世界観の核）
+          ロゴ & コピー
       =============================== */}
       <div className="max-w-[480px] mx-auto text-center mb-10">
         <img
@@ -72,7 +72,7 @@ export default function FooterSP() {
             font-medium
           "
         >
-          〇〇〇〇 — hair salon
+          ヨリソイ — Hair & Spa
         </h3>
 
         <p
@@ -88,12 +88,13 @@ export default function FooterSP() {
       </div>
 
       {/* ===============================
-          店舗情報（SP 読みやすさ最適化）
+          店舗情報（公式データ）
       =============================== */}
       <div className="max-w-[420px] mx-auto text-center mb-10">
-        <p className="text-[13.5px] text-[rgba(96,78,62,0.78)] leading-[1.85]">
-          沖縄県 ○○市 ○○町 1-2-3（駐車場あり）<br />
-          営業時間：10:00〜19:00（定休日：火曜）
+        <p className="text-[13.5px] text-[rgba(96,78,62,0.80)] leading-[1.85]">
+          沖縄県浦添市内間2丁目20-3（駐車場2台＋バイク1台）<br />
+          営業時間：7:00〜19:00（最終受付：カット18:00）<br />
+          定休日：毎週月曜日
         </p>
       </div>
 
@@ -140,9 +141,83 @@ export default function FooterSP() {
       =============================== */}
       <div className="text-center">
         <p className="text-[11.5px] tracking-wide text-[rgba(96,78,62,0.55)]">
-          © 〇〇〇 hair salon
+          © ヨリソイ Hair＆Spa
         </p>
       </div>
+
+      {/* ===============================
+          ★ Google に“制作実績”を伝える SEO（JSON-LD）
+      =============================== */}
+
+      {/* --- ① GUSHIKEN DESIGN の定義 --- */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "ProfessionalService",
+            "name": "GUSHIKEN DESIGN",
+            "url": "https://gushikendesign.com/",
+            "image": "https://gushikendesign.com/ogp.png",
+            "description":
+              "世界観と構造で魅せるWeb制作スタジオ。美容室・EC・ブランドサイトを中心に高品質LPを制作。",
+            "address": {
+              "@type": "PostalAddress",
+              "addressRegion": "沖縄県",
+              "addressCountry": "JP",
+            },
+            "sameAs": ["https://www.instagram.com/gushiken_design/"],
+          }),
+        }}
+      />
+
+      {/* --- ② このサイトが “GUSHIKEN DESIGN 制作” という証明 --- */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "CreativeWork",
+            "name": "YORISOI Hair & Spa Webサイト",
+            "url": "https://yorisoi-nine.vercel.app",
+            "creator": {
+              "@type": "Organization",
+              "name": "GUSHIKEN DESIGN",
+              "url": "https://gushikendesign.com/",
+            },
+            "about": {
+              "@type": "HairSalon",
+              "name": "ヨリソイ Hair & Spa",
+              "address": {
+                "@type": "PostalAddress",
+                "addressLocality": "浦添市",
+                "addressRegion": "沖縄県",
+                "streetAddress": "内間2丁目20-3",
+              },
+              "sameAs": "https://www.instagram.com/yorisoi_salon/",
+            },
+          }),
+        }}
+      />
+
+      {/* --- ③（任意だけど強い）制作実績リスト --- */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "ItemList",
+            "name": "制作実績",
+            "itemListElement": [
+              {
+                "@type": "ListItem",
+                "position": 1,
+                "url": "https://yorisoi-nine.vercel.app",
+              },
+            ],
+          }),
+        }}
+      />
     </footer>
   );
 }

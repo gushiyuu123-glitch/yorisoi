@@ -4,21 +4,33 @@ import React from "react";
 export default function ReviewSP() {
   const reviews = [
     {
-      name: "30代 女性",
-      text: "初めての来店でしたが、とても丁寧にカウンセリングしてくださり、仕上がりも自然で大満足です。家でも扱いやすくなりました。",
+      name: "20代後半 男性（会社員）",
+      text: "毎回同じ仕上がりで整えてくれるので、自分でも扱いやすく助かっています。落ち着いた空間で過ごせるところも気に入っています。",
       stars: 5,
     },
     {
-      name: "20代 女性",
-      text: "静かで落ち着くサロンでした。カラーの色味も綺麗で、髪がつるんとまとまります。また伺います。",
+      name: "30代後半 男性（会社員）",
+      text: "カットもスパも丁寧で、静かに過ごしたい自分に合うサロンでした。仕上がりも良く、またお願いしたいです。",
       stars: 5,
     },
     {
-      name: "40代 男性",
-      text: "短時間で丁寧に仕上げていただきました。セットしやすく、家族にも好評です。",
-      stars: 4,
+      name: "40代 男性（会社員）",
+      text: "毎回安定した技術で任せられます。施術中はとてもリラックスできる居心地の良さがあります。",
+      stars: 5,
+    },
+    {
+      name: "20代後半 男性（会社員）",
+      text: "初めてのパーマでしたが丁寧に説明してくれて安心できました。理想通りの仕上がりで満足です。",
+      stars: 5,
+    },
+    {
+      name: "30代後半 男性（自営業）",
+      text: "朝の時間も対応してくれて助かります。落ち着く空気感で心地よく、仕上がりにも満足しています。",
+      stars: 5,
     },
   ];
+
+  const loop = [...reviews, ...reviews]; // 無限スクロール用
 
   return (
     <section
@@ -63,7 +75,7 @@ export default function ReviewSP() {
             animate-reviewScrollSP
           "
         >
-          {reviews.concat(reviews).map((r, i) => (
+          {loop.map((r, i) => (
             <div
               key={i}
               className="
@@ -74,6 +86,7 @@ export default function ReviewSP() {
                 rounded-[14px]
                 shadow-[0_4px_16px_rgba(0,0,0,0.06)]
                 p-6
+                relative
                 overflow-hidden
               "
             >
@@ -110,10 +123,12 @@ export default function ReviewSP() {
                 ))}
               </div>
 
+              {/* TEXT */}
               <p className="text-[14px] leading-[1.85] text-[rgba(96,78,62,0.87)] mb-4 relative z-[5]">
                 {r.text}
               </p>
 
+              {/* name */}
               <p className="text-[12px] text-[rgba(96,78,62,0.58)] tracking-wide relative z-[5]">
                 {r.name}
               </p>
@@ -122,6 +137,31 @@ export default function ReviewSP() {
         </div>
       </div>
 
+      {/* HotPepperへの導線 */}
+      <div className="text-center mt-[8vh]">
+        <a
+          href="https://beauty.hotpepper.jp/slnH000706136/review/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="
+            inline-block
+            px-7 py-3
+            rounded-full
+            text-[12.5px]
+            text-[#5d4c3f]
+            bg-[rgba(96,78,62,0.12)]
+            backdrop-blur-[2px]
+            tracking-[0.1em]
+            hover:bg-[rgba(96,78,62,0.18)]
+            transition-all duration-300
+            shadow-[0_4px_14px_rgba(0,0,0,0.05)]
+          "
+        >
+          すべての口コミを見る（HotPepper）
+        </a>
+      </div>
+
+      {/* アニメーション */}
       <style>{`
         @keyframes reviewScrollSP {
           0% { transform: translateX(0); }

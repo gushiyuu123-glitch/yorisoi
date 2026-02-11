@@ -49,7 +49,7 @@ export default function About() {
             mb-6
           "
         >
-          ABOUT / なぜ“〇〇〇”なのか
+          ABOUT / なぜ“寄り添い”なのか
         </p>
 
         {/* タイトル */}

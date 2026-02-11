@@ -79,7 +79,7 @@ export default function LogoYorisoiFloating() {
           select-none
         "
       >
-        〇〇〇
+        ヨリソイ Hair＆Spa
       </span>
     </div>
   );
