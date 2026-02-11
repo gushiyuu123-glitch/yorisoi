@@ -1,5 +1,6 @@
 // ============================================================================
-// NavYorisoiFloatingSP — 最強完全版（静止復帰 / iOS対策 / 予約強調）
+// NavYorisoiFloatingSP — FINAL EDITION
+// - 静止復帰 / iOSバウンス無視 / 予約ボタン強調 / 光膜統一 / GSAP最適化
 // GUSHIKEN DESIGN × NOA
 // ============================================================================
 
@@ -10,28 +11,24 @@ export default function NavYorisoiFloatingSP() {
   const navRef = useRef(null);
   const [active, setActive] = useState("");
 
-  // ---- 安定用 refs ----
   const lastYRef = useRef(0);
   const hiddenRef = useRef(false);
   const rafRef = useRef(0);
   const stopTimerRef = useRef(null);
-
-  // ---- 初回 show 時の “呼吸” を一度だけ抑制 ----
   const hasShownOnceRef = useRef(false);
 
-  // ---------------------------------------------
-  // ★ 復帰遅延（0.15〜0.40 の間で調整可能）
-  // ---------------------------------------------
-  const RESTORE_DELAY = 250; // ← 0.25s（最も自然）
+  // 復帰ディレイ（自然な戻り）
+  const RESTORE_DELAY = 250;
 
   /* ----------------------------------------------------
-        初回フェードイン（blur は 0.18px）
+      初回フェードイン（GSAP最適化版）
   ---------------------------------------------------- */
   useEffect(() => {
     const nav = navRef.current;
     if (!nav) return;
 
     const items = nav.querySelectorAll(".nav-sp-item");
+
     gsap.killTweensOf(items);
 
     gsap.fromTo(
@@ -41,18 +38,20 @@ export default function NavYorisoiFloatingSP() {
         opacity: 1,
         y: 0,
         filter: "blur(0px)",
-        duration: 0.9,
+        duration: 0.75,
         ease: "power3.out",
         stagger: 0.06,
-        delay: 1.1,
+        delay: 1.0,
+        overwrite: "auto",
       }
     );
   }, []);
 
   /* ----------------------------------------------------
-        隠れる/出る（スクロール方向）
-        + 停止 → 遅延で出る（完全版）
-        + iOS overscroll 無視
+      スクロール方向で出入り（iOS 安定版）
+      - THRESHOLD: 微振動
+      - BOUNCE_LIMIT: iOS の戻り防止
+      - 停止後 → 遅延復帰
   ---------------------------------------------------- */
   useEffect(() => {
     const nav = navRef.current;
@@ -63,9 +62,8 @@ export default function NavYorisoiFloatingSP() {
     const SHOW_Y = 0;
     const HIDE_Y = 72;
 
-    // ★ 微揺れ除去 + iOSバウンス除去（2段階）
-    const THRESHOLD = 6;     // 微小揺れ
-    const BOUNCE_LIMIT = 22; // iOSの大きな跳ね返りも無視
+    const THRESHOLD = 5;       // ← 感度UP（5px以上で反応）
+    const BOUNCE_LIMIT = 26;   // ← iOSスロー戻り無視強化
 
     const animateTo = (hide) => {
       const el = navRef.current;
@@ -79,7 +77,7 @@ export default function NavYorisoiFloatingSP() {
       gsap.to(el, {
         y: hide ? HIDE_Y : SHOW_Y,
         opacity: hide ? 0 : 1,
-        duration: hide ? 0.24 : 0.32,
+        duration: hide ? 0.23 : 0.30,
         ease: "power3.out",
         overwrite: "auto",
         onComplete: () => {
@@ -88,7 +86,7 @@ export default function NavYorisoiFloatingSP() {
               hasShownOnceRef.current = true;
               return;
             }
-            // ★ 表示直後の呼吸（0.8px） — 裕人の世界観
+            // 呼吸（0.8px）
             gsap.fromTo(
               el,
               { y: SHOW_Y + 0.8 },
@@ -113,13 +111,14 @@ export default function NavYorisoiFloatingSP() {
         const currentY = window.scrollY || 0;
         const diff = currentY - lastYRef.current;
 
-        // ---- 停止後の復帰（ここが最重要） ----
+        // 停止 → 復帰
         clearTimeout(stopTimerRef.current);
-        stopTimerRef.current = setTimeout(() => {
-          animateTo(false); // show
-        }, RESTORE_DELAY);
+        stopTimerRef.current = setTimeout(
+          () => animateTo(false),
+          RESTORE_DELAY
+        );
 
-        // ---- overscroll 対策：iOS大揺れ無視 ----
+        // 微振動 / iOS戻り 無視
         if (Math.abs(diff) < THRESHOLD) return;
         if (Math.abs(diff) > BOUNCE_LIMIT) return;
 
@@ -141,58 +140,61 @@ export default function NavYorisoiFloatingSP() {
   }, []);
 
   /* ----------------------------------------------------
-        現在地ハイライト
+      現在地ハイライト
   ---------------------------------------------------- */
   useEffect(() => {
     const sections = ["#about", "#profile", "#menu", "#access", "#reserve"];
 
     const check = () => {
-      let current = "";
+      let cur = "";
       for (const id of sections) {
         const el = document.querySelector(id);
         if (!el) continue;
 
         const rect = el.getBoundingClientRect();
         if (rect.top < window.innerHeight * 0.33 && rect.bottom > 80) {
-          current = id;
+          cur = id;
         }
       }
-      setActive((prev) => (prev === current ? prev : current));
+      setActive((p) => (p === cur ? p : cur));
     };
 
     window.addEventListener("scroll", check, { passive: true });
     check();
+
     return () => window.removeEventListener("scroll", check);
   }, []);
 
   /* ----------------------------------------------------
-        click: スムーススクロール
+      click
   ---------------------------------------------------- */
   const scrollToTarget = (selector) => {
     const el = document.querySelector(selector);
     if (!el) return;
 
     const nav = navRef.current;
-    const navH = nav ? nav.getBoundingClientRect().height : 0;
+    const navH = nav?.getBoundingClientRect().height || 0;
 
     window.scrollTo({
       top:
         window.scrollY +
         el.getBoundingClientRect().top -
-        Math.min(14, navH * 0.22),
+        Math.min(16, navH * 0.22),
       behavior: "smooth",
     });
   };
 
   /* ----------------------------------------------------
-        NAV LIST（予約だけ光膜強化）
+      nav items
+      - 予約だけ 0.5% ボタン感追加（scale/光膜）
+      - 全体の光膜・影を世界観で統一
   ---------------------------------------------------- */
-  const navList = [
+  const list = [
     { label: "お店", target: "#about", key: "about" },
     { label: "店主", target: "#profile", key: "profile" },
     { label: "menu", target: "#menu", key: "menu" },
     { label: "地図", target: "#access", key: "access" },
-    { label: "予約", target: "#reserve", key: "reserve" }, // ← 特別扱い
+    { label: "予約", target: "#reserve", key: "reserve" }, // ← 主役
   ];
 
   return (
@@ -201,23 +203,27 @@ export default function NavYorisoiFloatingSP() {
       className="
         fixed bottom-0 left-0 right-0 z-[80]
 
+        /* 光膜を全体で統一（色相180°の木漏れ日） */
         bg-[linear-gradient(
           to_top,
           rgba(247,244,239,0.86) 0%,
           rgba(247,244,239,0.76) 36%,
-          rgba(247,244,239,0.64) 70%,
-          rgba(247,244,239,0.54) 100%
+          rgba(247,244,239,0.66) 70%,
+          rgba(247,244,239,0.52) 100%
         )]
 
         backdrop-blur-[9px]
         border-t border-[rgba(96,78,62,0.14)]
         px-[4vw] py-[10px]
         flex justify-between
+
         will-change-transform
+        [transform:translateZ(0)]
       "
     >
-      {navList.map((item) => {
+      {list.map((item) => {
         const isActive = active === item.target;
+        const isReserve = item.key === "reserve";
 
         return (
           <button
@@ -225,49 +231,53 @@ export default function NavYorisoiFloatingSP() {
             onClick={() => scrollToTarget(item.target)}
             className={`
               nav-sp-item relative flex flex-col items-center
-              w-[17vw] text-[11.3px]
-              tracking-[0.10em] font-medium
+              w-[17vw] text-[11.3px] tracking-[0.10em]
+              font-medium select-none
+
               ${
                 isActive
                   ? "text-[rgba(96,78,62,0.94)]"
                   : "text-[rgba(96,78,62,0.70)]"
               }
-              active:scale-[0.93]
-              select-none
+
+              ${
+                isReserve
+                  ? "active:scale-[0.915]" // 予約だけ微ボタン感
+                  : "active:scale-[0.93]"
+              }
+
             `}
           >
-            {/* アイコン */}
+            {/* アイコン（あなたの元のを入れる） */}
             <div
               className={`
                 w-[22px] h-[22px] mb-[3px]
-                ${item.key === "reserve" ? "opacity-100" : "opacity-85"}
+                transition-all
+                ${
+                  isReserve
+                    ? "scale-[1.012] opacity-[0.97]" // ★ 0.5% ボタン感
+                    : "scale-[1] opacity-[0.88]"
+                }
               `}
-            >
-              {/* アイコンは省略（既存のものをそのまま） */}
-            </div>
+            />
 
             <span>{item.label}</span>
 
-            {/* アクティブ下線 */}
             {isActive && (
               <div
-                className="
-                  absolute bottom-0 left-1/2 -translate-x-1/2
-                  w-[22px] h-[1.7px]
-                  bg-[rgba(96,78,62,0.36)]
-                  rounded-full
-                "
+                className="absolute bottom-0 left-1/2 -translate-x-1/2
+                           w-[22px] h-[1.7px] bg-[rgba(96,78,62,0.36)]
+                           rounded-full"
               />
             )}
 
-            {/* ★ 予約だけ光膜を少し強化（+15%） */}
-            {item.key === "reserve" && (
+            {/* ★ 予約だけ光膜 +5%（気づかれないレベル） */}
+            {isReserve && (
               <div
                 className="
-                  absolute inset-0 -z-10
-                  rounded-full
-                  opacity-[0.20]
-                  bg-[rgba(255,205,150,0.25)]
+                  absolute inset-0 -z-10 rounded-full
+                  bg-[rgba(255,220,180,0.18)]
+                  opacity-[0.22]
                 "
               />
             )}
