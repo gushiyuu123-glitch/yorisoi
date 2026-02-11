@@ -210,7 +210,7 @@ export default function HeroSP() {
     mb-[2vh]
   "
 >
-  {splitText("話しすぎない、でも〇〇〇。")}
+  {splitText("話しすぎない、でも寄り添う。")}
   <br />
   {splitText("あなたに合わせて整える美容室。")}
 </h1>
