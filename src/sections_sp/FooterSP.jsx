@@ -121,7 +121,7 @@ export default function FooterSP() {
           <span className="text-[rgba(96,78,62,0.35)]">｜</span>
 
           <a
-            href="https://www.instagram.com/yorisoi_salon"
+            href="https://www.instagram.com/yorisoihair/"
             target="_blank"
             rel="noopener noreferrer"
             className="
@@ -194,7 +194,7 @@ export default function FooterSP() {
                 "addressRegion": "沖縄県",
                 "streetAddress": "内間2丁目20-3",
               },
-              "sameAs": "https://www.instagram.com/yorisoi_salon/",
+              "sameAs": "https://www.instagram.com/yorisoihair/",
             },
           }),
         }}

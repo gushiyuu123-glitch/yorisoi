@@ -107,7 +107,9 @@ export default function FinalCTA_SP() {
             ボタン（光膜 × 高級感 × ふわ浮き）
         =============================== */}
         <a
-          href="#"
+          href="https://beauty.hotpepper.jp/slnH000706136/"
+          target="_blank"
+          rel="noopener noreferrer"
           className="
             inline-block
             w-full

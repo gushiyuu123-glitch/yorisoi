@@ -42,7 +42,11 @@ export default function FinalCTA() {
         className="
           absolute inset-0 pointer-events-none
           opacity-[0.32]
-          [background:radial-gradient(900px_600px_at_50%_30%,rgba(180,150,120,0.08),transparent_70%)]
+          [background:radial-gradient(
+            900px_600px_at_50%_30%,
+            rgba(180,150,120,0.08),
+            transparent_70%
+          )]
         "
       />
 
@@ -81,7 +85,6 @@ export default function FinalCTA() {
           shadow-[0_8px_28px_rgba(0,0,0,0.12)]
           border border-[rgba(96,78,62,0.12)]
           p-10 text-center
-          translate-y-0
         "
       >
         <p
@@ -92,14 +95,16 @@ export default function FinalCTA() {
             mb-7
           "
         >
-          予約はHotPepper Beautyより承っております。
+          予約は HotPepper Beauty より承っております。
           <br />
           ご希望のメニューをお選びいただけます。
         </p>
 
         {/* ---- ボタン：光膜 × 微blur × ふわ浮き ---- */}
         <a
-          href="#"
+          href="https://beauty.hotpepper.jp/slnH000706136/"
+          target="_blank"
+          rel="noopener noreferrer"
           className="
             inline-block
             px-10 py-3
@@ -113,12 +118,15 @@ export default function FinalCTA() {
             hover:-translate-y-[2px]
           "
         >
-          {/* 光膜 */}
           <span
             className="
               absolute inset-0 pointer-events-none
               opacity-[0.22]
-              [background:linear-gradient(135deg,rgba(255,255,255,0.25),rgba(255,255,255,0))]
+              [background:linear-gradient(
+                135deg,
+                rgba(255,255,255,0.25),
+                rgba(255,255,255,0)
+              )]
               mix-blend-screen
             "
           />
