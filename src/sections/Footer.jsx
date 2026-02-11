@@ -115,7 +115,7 @@ export default function Footer() {
             "
           >
             <InstaIcon />
-            Instagram
+            ヨリソイ : Instagram
           </a>
         </div>
       </div>
