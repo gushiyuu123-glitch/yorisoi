@@ -1,6 +1,7 @@
 // ============================================================================
-// NavYorisoiFloatingSP — FINAL EDITION
-// - 静止復帰 / iOSバウンス無視 / 予約ボタン強調 / 光膜統一 / GSAP最適化
+// NavYorisoiFloatingSP — Ultimate Final Edition
+// - アイコン完全版 / 予約ボタン強化 / 光膜統一 / GSAP負荷最小
+// - iOSバウンス耐性 / 停止復帰最適化
 // GUSHIKEN DESIGN × NOA
 // ============================================================================
 
@@ -12,92 +13,80 @@ export default function NavYorisoiFloatingSP() {
   const [active, setActive] = useState("");
 
   const lastYRef = useRef(0);
-  const hiddenRef = useRef(false);
   const rafRef = useRef(0);
+  const hiddenRef = useRef(false);
   const stopTimerRef = useRef(null);
   const hasShownOnceRef = useRef(false);
 
-  // 復帰ディレイ（自然な戻り）
-  const RESTORE_DELAY = 250;
+  const RESTORE_DELAY = 240;
 
   /* ----------------------------------------------------
-      初回フェードイン（GSAP最適化版）
+      初回フェード（世界観の“静けさ”1秒）
   ---------------------------------------------------- */
   useEffect(() => {
-    const nav = navRef.current;
-    if (!nav) return;
-
-    const items = nav.querySelectorAll(".nav-sp-item");
+    const items = navRef.current?.querySelectorAll(".nav-sp-item");
+    if (!items) return;
 
     gsap.killTweensOf(items);
 
     gsap.fromTo(
       items,
-      { opacity: 0, y: 10, filter: "blur(0.18px)" },
+      { opacity: 0, y: 10, filter: "blur(0.12px)" },
       {
         opacity: 1,
         y: 0,
         filter: "blur(0px)",
-        duration: 0.75,
+        duration: 0.78,
         ease: "power3.out",
-        stagger: 0.06,
+        stagger: 0.065,
         delay: 1.0,
-        overwrite: "auto",
       }
     );
   }, []);
 
   /* ----------------------------------------------------
-      スクロール方向で出入り（iOS 安定版）
-      - THRESHOLD: 微振動
-      - BOUNCE_LIMIT: iOS の戻り防止
-      - 停止後 → 遅延復帰
+      スクロール方向で出入り（完全最適化）
   ---------------------------------------------------- */
   useEffect(() => {
     const nav = navRef.current;
     if (!nav) return;
 
-    lastYRef.current = window.scrollY || 0;
-
     const SHOW_Y = 0;
-    const HIDE_Y = 72;
+    const HIDE_Y = 70;
 
-    const THRESHOLD = 5;       // ← 感度UP（5px以上で反応）
-    const BOUNCE_LIMIT = 26;   // ← iOSスロー戻り無視強化
+    const THRESHOLD = 5;
+    const BOUNCE_LIMIT = 28;
 
     const animateTo = (hide) => {
       const el = navRef.current;
-      if (!el) return;
+      if (!el || hiddenRef.current === hide) return;
 
-      if (hiddenRef.current === hide) return;
       hiddenRef.current = hide;
-
       gsap.killTweensOf(el);
 
       gsap.to(el, {
         y: hide ? HIDE_Y : SHOW_Y,
         opacity: hide ? 0 : 1,
-        duration: hide ? 0.23 : 0.30,
+        duration: hide ? 0.22 : 0.32,
         ease: "power3.out",
         overwrite: "auto",
         onComplete: () => {
-          if (!hide) {
-            if (!hasShownOnceRef.current) {
-              hasShownOnceRef.current = true;
-              return;
-            }
-            // 呼吸（0.8px）
-            gsap.fromTo(
-              el,
-              { y: SHOW_Y + 0.8 },
-              {
-                y: SHOW_Y,
-                duration: 0.12,
-                ease: "power2.out",
-                overwrite: "auto",
-              }
-            );
+          if (hide) return;
+
+          if (!hasShownOnceRef.current) {
+            hasShownOnceRef.current = true;
+            return;
           }
+
+          gsap.fromTo(
+            el,
+            { y: SHOW_Y + 1 },
+            {
+              y: SHOW_Y,
+              duration: 0.12,
+              ease: "power2.out",
+            }
+          );
         },
       });
     };
@@ -105,20 +94,15 @@ export default function NavYorisoiFloatingSP() {
     const onScroll = () => {
       if (rafRef.current) return;
 
-      rafRef.current = window.requestAnimationFrame(() => {
+      rafRef.current = requestAnimationFrame(() => {
         rafRef.current = 0;
 
         const currentY = window.scrollY || 0;
         const diff = currentY - lastYRef.current;
 
-        // 停止 → 復帰
         clearTimeout(stopTimerRef.current);
-        stopTimerRef.current = setTimeout(
-          () => animateTo(false),
-          RESTORE_DELAY
-        );
+        stopTimerRef.current = setTimeout(() => animateTo(false), RESTORE_DELAY);
 
-        // 微振動 / iOS戻り 無視
         if (Math.abs(diff) < THRESHOLD) return;
         if (Math.abs(diff) > BOUNCE_LIMIT) return;
 
@@ -133,9 +117,9 @@ export default function NavYorisoiFloatingSP() {
 
     return () => {
       window.removeEventListener("scroll", onScroll);
+      gsap.killTweensOf(navRef.current);
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
       if (stopTimerRef.current) clearTimeout(stopTimerRef.current);
-      gsap.killTweensOf(navRef.current);
     };
   }, []);
 
@@ -143,19 +127,17 @@ export default function NavYorisoiFloatingSP() {
       現在地ハイライト
   ---------------------------------------------------- */
   useEffect(() => {
-    const sections = ["#about", "#profile", "#menu", "#access", "#reserve"];
+    const ids = ["#about", "#profile", "#menu", "#access", "#reserve"];
 
     const check = () => {
       let cur = "";
-      for (const id of sections) {
+      ids.forEach((id) => {
         const el = document.querySelector(id);
-        if (!el) continue;
+        if (!el) return;
 
-        const rect = el.getBoundingClientRect();
-        if (rect.top < window.innerHeight * 0.33 && rect.bottom > 80) {
-          cur = id;
-        }
-      }
+        const r = el.getBoundingClientRect();
+        if (r.top < window.innerHeight * 0.33 && r.bottom > 80) cur = id;
+      });
       setActive((p) => (p === cur ? p : cur));
     };
 
@@ -166,14 +148,13 @@ export default function NavYorisoiFloatingSP() {
   }, []);
 
   /* ----------------------------------------------------
-      click
-  ---------------------------------------------------- */
+      スクロール移動
+  ----------------------------------------------------*/
   const scrollToTarget = (selector) => {
     const el = document.querySelector(selector);
     if (!el) return;
 
-    const nav = navRef.current;
-    const navH = nav?.getBoundingClientRect().height || 0;
+    const navH = navRef.current?.getBoundingClientRect().height || 0;
 
     window.scrollTo({
       top:
@@ -185,16 +166,51 @@ export default function NavYorisoiFloatingSP() {
   };
 
   /* ----------------------------------------------------
-      nav items
-      - 予約だけ 0.5% ボタン感追加（scale/光膜）
-      - 全体の光膜・影を世界観で統一
+      Icons（完全版）
   ---------------------------------------------------- */
+
+  const Icons = {
+    about: (
+      <>
+        <path d="M3 9l9-6 9 6" />
+        <path d="M9 21V12h6v9" />
+      </>
+    ),
+    profile: (
+      <>
+        <circle cx="12" cy="7" r="4" />
+        <path d="M5.5 21a6.5 6.5 0 0 1 13 0" />
+      </>
+    ),
+    menu: (
+      <>
+        <line x1="3" y1="7" x2="21" y2="7" />
+        <line x1="3" y1="12" x2="21" y2="12" />
+        <line x1="3" y1="17" x2="21" y2="17" />
+      </>
+    ),
+    access: (
+      <>
+        <circle cx="12" cy="10" r="3" />
+        <path d="M12 2C7.5 2 4 5.6 4 10c0 6.5 8 12 8 12s8-5.5 8-12c0-4.4-3.5-8-8-8z" />
+      </>
+    ),
+    reserve: (
+      <>
+        <rect x="3" y="4" width="18" height="17" rx="2" />
+        <line x1="16" y1="2" x2="16" y2="6" />
+        <line x1="8" y1="2" x2="8" y2="6" />
+        <line x1="3" y1="10" x2="21" y2="10" />
+      </>
+    ),
+  };
+
   const list = [
-    { label: "お店", target: "#about", key: "about" },
-    { label: "店主", target: "#profile", key: "profile" },
-    { label: "menu", target: "#menu", key: "menu" },
-    { label: "地図", target: "#access", key: "access" },
-    { label: "予約", target: "#reserve", key: "reserve" }, // ← 主役
+    { label: "お店", key: "about", target: "#about" },
+    { label: "店主", key: "profile", target: "#profile" },
+    { label: "menu", key: "menu", target: "#menu" },
+    { label: "地図", key: "access", target: "#access" },
+    { label: "予約", key: "reserve", target: "#reserve" },
   ];
 
   return (
@@ -203,20 +219,18 @@ export default function NavYorisoiFloatingSP() {
       className="
         fixed bottom-0 left-0 right-0 z-[80]
 
-        /* 光膜を全体で統一（色相180°の木漏れ日） */
         bg-[linear-gradient(
           to_top,
-          rgba(247,244,239,0.86) 0%,
-          rgba(247,244,239,0.76) 36%,
-          rgba(247,244,239,0.66) 70%,
-          rgba(247,244,239,0.52) 100%
+          rgba(247,244,239,0.88) 0%,
+          rgba(247,244,239,0.74) 38%,
+          rgba(247,244,239,0.62) 70%,
+          rgba(247,244,239,0.50) 100%
         )]
 
         backdrop-blur-[9px]
-        border-t border-[rgba(96,78,62,0.14)]
+        border-t border-[rgba(96,78,62,0.13)]
         px-[4vw] py-[10px]
         flex justify-between
-
         will-change-transform
         [transform:translateZ(0)]
       "
@@ -231,53 +245,62 @@ export default function NavYorisoiFloatingSP() {
             onClick={() => scrollToTarget(item.target)}
             className={`
               nav-sp-item relative flex flex-col items-center
-              w-[17vw] text-[11.3px] tracking-[0.10em]
-              font-medium select-none
+              w-[17vw] text-[11.2px] tracking-[0.10em] font-medium
+              select-none
 
               ${
                 isActive
-                  ? "text-[rgba(96,78,62,0.94)]"
+                  ? "text-[rgba(96,78,62,0.95)]"
                   : "text-[rgba(96,78,62,0.70)]"
               }
 
+              active:opacity-[0.82]
               ${
                 isReserve
-                  ? "active:scale-[0.915]" // 予約だけ微ボタン感
+                  ? "active:scale-[0.90]"
                   : "active:scale-[0.93]"
               }
-
             `}
           >
-            {/* アイコン（あなたの元のを入れる） */}
-            <div
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.28"
+              strokeLinecap="round"
+              strokeLinejoin="round"
               className={`
-                w-[22px] h-[22px] mb-[3px]
+                w-[21px] h-[21px] mb-[3px]
                 transition-all
                 ${
                   isReserve
-                    ? "scale-[1.012] opacity-[0.97]" // ★ 0.5% ボタン感
-                    : "scale-[1] opacity-[0.88]"
+                    ? "scale-[1.017] opacity-[0.97]"
+                    : "scale-[1] opacity-[0.87]"
                 }
               `}
-            />
+            >
+              {Icons[item.key]}
+            </svg>
 
             <span>{item.label}</span>
 
+            {/* アクティブライン */}
             {isActive && (
-              <div
-                className="absolute bottom-0 left-1/2 -translate-x-1/2
-                           w-[22px] h-[1.7px] bg-[rgba(96,78,62,0.36)]
-                           rounded-full"
-              />
+              <div className="
+                absolute bottom-0 left-1/2 -translate-x-1/2
+                w-[22px] h-[1.7px]
+                bg-[rgba(96,78,62,0.36)]
+                rounded-full
+              " />
             )}
 
-            {/* ★ 予約だけ光膜 +5%（気づかれないレベル） */}
+            {/* 予約だけ光膜 5% アップ */}
             {isReserve && (
               <div
                 className="
                   absolute inset-0 -z-10 rounded-full
-                  bg-[rgba(255,220,180,0.18)]
-                  opacity-[0.22]
+                  bg-[rgba(255,225,190,0.20)]
+                  opacity-[0.24]
                 "
               />
             )}
