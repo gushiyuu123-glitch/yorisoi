@@ -42,7 +42,7 @@ export default function ReserveFloatingSP() {
   return (
     <a
       ref={ref}
-      href="https://beauty.hotpepper.jp/"
+      href="https://beauty.hotpepper.jp/slnH000706136/"
       target="_blank"
       rel="noopener noreferrer"
       className="
