@@ -1,11 +1,12 @@
 // ============================================================================
-// AccessSP — Accordion Edition（世界観 × 情報量 × UX）
+// AccessSP — 重要3つは即表示 × その他は最小4項目アコーデオン
+// （SP情報密度 最適化版）
 // GUSHIKEN DESIGN × NOA
 // ============================================================================
 
 import React, { useState } from "react";
 
-// ---- 小鳥アイコン ----
+// ---- Icons ----
 const BirdIcon = () => (
   <svg
     viewBox="0 0 24 24"
@@ -20,7 +21,6 @@ const BirdIcon = () => (
   </svg>
 );
 
-// ---- 車アイコン ----
 const CarIcon = () => (
   <svg
     viewBox="0 0 24 24"
@@ -38,7 +38,6 @@ const CarIcon = () => (
   </svg>
 );
 
-// ---- 矢印（アコーディオン用） ----
 const Arrow = ({ open }) => (
   <svg
     viewBox="0 0 24 24"
@@ -59,56 +58,19 @@ const Arrow = ({ open }) => (
 
 export default function AccessSP() {
   const [open, setOpen] = useState(null);
+  const toggle = (key) => setOpen((prev) => (prev === key ? null : key));
 
-  const toggle = (key) => {
-    setOpen((prev) => (prev === key ? null : key));
-  };
-
+  // ---- アコーデオン（SP向けに4項目に削減） ----
   const accordionItems = [
-    {
-      key: "address",
-      title: "住所",
-      icon: <BirdIcon />,
-      content: (
-        <>
-          沖縄県浦添市内間2丁目20-3<br />
-          （パイプライン沿い / 年金事務所向かい）
-        </>
-      ),
-    },
     {
       key: "guide",
       title: "アクセス・道案内",
       icon: <BirdIcon />,
       content: (
         <>
-          【青いお店】古島駅より徒歩7分。<br />
+          【青いお店です】古島駅より徒歩7分。<br />
           近隣：セブン内間2丁目店 / 東公園 / 内間バス停。<br />
           向かいに年金事務所があります。
-        </>
-      ),
-    },
-    {
-      key: "hours",
-      title: "営業時間",
-      icon: <BirdIcon />,
-      content: (
-        <>
-          平日・土日祝 7:00〜19:00<br />
-          7時台のご予約：WEB限定<br />
-          最終受付：カット18:00 / カラー17:00 / パーマ16:30<br />
-          定休日：毎週月曜日
-        </>
-      ),
-    },
-    {
-      key: "parking",
-      title: "駐車場",
-      icon: <CarIcon />,
-      content: (
-        <>
-          専用駐車場：2台（＋バイク1台）<br />
-          満車時は近隣パーキングをご利用ください。
         </>
       ),
     },
@@ -118,8 +80,8 @@ export default function AccessSP() {
       icon: <BirdIcon />,
       content: (
         <>
-          Visa / Mastercard / JCB / Amex / Diners / Discover /
-          PayPay / QUICPay / iD / Suica / PASMO / ApplePay
+          Visa / Mastercard / JCB / Amex / PayPay / QUICPay /
+          iD / Suica / PASMO / ApplePay
         </>
       ),
     },
@@ -137,24 +99,12 @@ export default function AccessSP() {
     },
     {
       key: "kodawari",
-      title: "サロンのこだわり",
+      title: "こだわり・特徴",
       icon: <BirdIcon />,
       content: (
         <>
-          4席以下の小型サロン / 駐車場あり / マンツーマン施術 /
-          朝10時前受付OK / カード決済OK / 男性比率高め /
-          お子さま同伴OK / 漫画充実 / 半個室あり
-        </>
-      ),
-    },
-    {
-      key: "note",
-      title: "備考",
-      icon: <BirdIcon />,
-      content: (
-        <>
-          ＜理容室＞ / 浦添 / 那覇 / 宜野湾 / 内間 / バーバー / メンズ /
-          スキンフェード / シェービング / 早朝OK
+          マンツーマン施術 / 半個室 / 男性比率高め / お子さま同伴OK /
+          早朝OK / 駐車場あり
         </>
       ),
     },
@@ -177,6 +127,50 @@ export default function AccessSP() {
         <h2 className="text-[24px] text-[#5d4c3f] leading-[1.45] font-medium">
           お店へのアクセスと<br />営業時間のご案内
         </h2>
+      </div>
+
+      {/* ---- IMPORTANT TOP 3（SP強化） ---- */}
+      <div
+        className="
+          mx-auto max-w-[520px]
+          space-y-8 mb-14
+          text-[14.5px] leading-[1.9]
+          text-[rgba(96,78,62,0.82)]
+        "
+      >
+        {/* 住所 */}
+        <div className="flex items-start gap-3">
+          <BirdIcon />
+          <div>
+            <h3 className="text-[16px] text-[#5d4c3f] font-medium">住所</h3>
+            <p>
+              沖縄県浦添市内間2丁目20-3<br />
+              （パイプライン沿い / 年金事務所向かい）
+            </p>
+          </div>
+        </div>
+
+        {/* 営業時間 */}
+        <div className="flex items-start gap-3">
+          <BirdIcon />
+          <div>
+            <h3 className="text-[16px] text-[#5d4c3f] font-medium">営業時間</h3>
+            <p>
+              AM7:00〜19:00<br />
+              最終受付：カット18:00 / カラー17:00<br />
+              定休日：毎週月曜
+            </p>
+          </div>
+        </div>
+
+        {/* 駐車場 */}
+        <div className="flex items-start gap-3">
+          <CarIcon />
+          <div>
+            <h3 className="text-[16px] text-[#5d4c3f] font-medium">駐車場</h3>
+            <p>2台＋バイク1台（満車時は近隣Pをご利用ください）</p>
+          </div>
+        </div>
       </div>
 
       {/* ---- Accordion ---- */}
@@ -247,8 +241,8 @@ export default function AccessSP() {
         />
 
         <img
-          src='/yorisoi/outside.png'
-          alt='YORISOI 外観'
+          src="/yorisoi/outside.png"
+          alt="YORISOI 外観"
           className="
             w-full h-[300px] object-cover
             [filter:saturate(0.9)_contrast(0.92)]
