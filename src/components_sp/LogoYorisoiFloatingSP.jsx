@@ -1,15 +1,19 @@
 // ============================================================================
 // LogoYorisoiFloatingSP — 右上常駐（HotPepper と水平揃え）
+// 完全版：どのページにいても Home に帰還できる
 // GUSHIKEN DESIGN × NOA
 // ============================================================================
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
+import { ScrollToPlugin } from "gsap/ScrollToPlugin";
+
+gsap.registerPlugin(ScrollToPlugin);
 
 export default function LogoYorisoiFloatingSP() {
   const wrapRef = useRef(null);
 
   /* ==================================
-        初回フェードイン（静けさ）
+        初回フェードイン
   ================================== */
   useEffect(() => {
     gsap.fromTo(
@@ -27,7 +31,7 @@ export default function LogoYorisoiFloatingSP() {
   }, []);
 
   /* ==================================
-        呼吸アニメ（ゆらぎ 0.4%）
+        呼吸アニメ（ゆらぎ）
   ================================== */
   useEffect(() => {
     gsap.to(wrapRef.current, {
@@ -40,7 +44,7 @@ export default function LogoYorisoiFloatingSP() {
   }, []);
 
   /* ==================================
-        スクロールで隠れる（ナビ同期）
+        スクロールで隠す
   ================================== */
   useEffect(() => {
     let lastY = window.scrollY;
@@ -64,12 +68,22 @@ export default function LogoYorisoiFloatingSP() {
   }, []);
 
   /* ==================================
-        ロゴクリック → Heroへ戻る
+        ★ 完全版：どのページでも Hero へ帰還
   ================================== */
   const scrollToHero = () => {
-    document.querySelector("#home")?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
+    const hero = document.getElementById("home");
+
+    // ▼ Home セクションが存在しないページ（NewsDetail 等）
+    if (!hero) {
+      window.location.href = "/";
+      return;
+    }
+
+    // ▼ Home にいる時はスムーススクロール
+    gsap.to(window, {
+      duration: 0,
+      scrollTo: hero,
+      ease: "power3.out",
     });
   };
 
@@ -78,11 +92,10 @@ export default function LogoYorisoiFloatingSP() {
       ref={wrapRef}
       onClick={scrollToHero}
       className="
-        fixed top-[20px] right-[20px] z-[110]   /* ← ★ HotPepper と完全に揃えた */
+        fixed top-[20px] right-[20px] z-[110]
 
         w-[58px] h-[58px]
 
-        /* 背景膜（自然光） */
         bg-[linear-gradient(
           to_bottom,
           rgba(255,255,255,0.65) 0%,
@@ -97,6 +110,7 @@ export default function LogoYorisoiFloatingSP() {
         flex items-center justify-center
         active:scale-[0.94]
         transition-all
+        cursor-pointer
       "
     >
       {/* 内側の淡い光膜 */}

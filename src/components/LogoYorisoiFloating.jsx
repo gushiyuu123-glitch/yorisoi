@@ -1,10 +1,17 @@
 // src/components/LogoYorisoiFloating.jsx
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
+import { ScrollToPlugin } from "gsap/ScrollToPlugin";
+
+// ScrollTo Plugin を有効化
+gsap.registerPlugin(ScrollToPlugin);
 
 export default function LogoYorisoiFloating() {
   const wrapRef = useRef(null);
 
+  /* ================================
+      初期フェードイン（静けさ × 高級感）
+  ================================ */
   useEffect(() => {
     const el = wrapRef.current;
     if (!el) return;
@@ -24,16 +31,25 @@ export default function LogoYorisoiFloating() {
   }, []);
 
   /* ================================
-     ロゴクリック → Hero に戻る
+        ★ 帰還：どこにいても Hero に戻る
   ================================ */
   const scrollToHero = () => {
-    const target = document.getElementById("home");
-    if (target) {
-      target.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
+    // 1) Hero セクションを取得
+    const hero = document.getElementById("home");
+
+    // 2) Hero が存在しない（記事ページなど）→ トップへ遷移
+    if (!hero) {
+      // いったんトップに遷移
+      window.location.href = "/";
+      return;
     }
+
+    // 3) Hero セクションがある → スクロールで戻す
+    gsap.to(window, {
+      duration: 0,
+      scrollTo: hero,
+      ease: "power3.out",
+    });
   };
 
   return (
@@ -43,40 +59,30 @@ export default function LogoYorisoiFloating() {
       className="
         fixed top-[4vh] left-[3vw] z-[50]
         flex items-center gap-3
-        cursor-pointer   /* ← 追加 */
+        cursor-pointer
       "
     >
-      {/* 薄い光膜 */}
+      {/* 光膜 */}
       <div
         className="
-          absolute inset-0 -z-10
-          pointer-events-none
-          opacity-[0.35]
-          blur-[18px]
-          rounded-full
+          absolute inset-0 -z-10 opacity-[0.35]
+          blur-[18px] rounded-full pointer-events-none
           bg-[rgba(255,255,255,0.45)]
         "
       />
 
-      {/* 小鳥ロゴ画像 */}
+      {/* 鳥ロゴ */}
       <img
         src="/yorisoi/bird-logo.png"
         alt="YORISOI Bird Logo"
-        className="
-          w-[52px] h-[52px]
-          opacity-85
-          select-none pointer-events-none
-        "
+        className="w-[52px] h-[52px] opacity-85 select-none pointer-events-none"
       />
 
       {/* 文字ロゴ */}
       <span
         className="
-          text-[17px]
-          tracking-[0.18em]
-          font-medium
-          text-[rgba(96,78,62,0.82)]
-          select-none
+          text-[17px] tracking-[0.18em] font-medium
+          text-[rgba(96,78,62,0.82)] select-none
         "
       >
         ヨリソイ Hair＆Spa
