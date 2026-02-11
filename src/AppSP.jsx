@@ -10,6 +10,8 @@ import AccessSP from "./sections_sp/AccessSP";
 import FinalCTA_SP from "./sections_sp/FinalCTA_SP";
 import FooterSP from "./sections_sp/FooterSP";
 
+import NewsSP from "./sections_sp/NewsSP.jsx";
+
 import LogoYorisoiFloatingSP from "./components_sp/LogoYorisoiFloatingSP";
 import NavYorisoiFloatingSP from "./components_sp/NavYorisoiFloatingSP";
 import ReserveFloatingSP from "./components_sp/ReserveFloatingSP";
@@ -38,6 +40,8 @@ export default function AppSP() {
             <section id="profile">
         <ProfileSP />
       </section>
+
+      <section id="news"><NewsSP /></section>
 
           <section id="concept">
         <ConceptSP />

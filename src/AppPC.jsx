@@ -11,6 +11,8 @@ import FinalCTA from "./sections/FinalCTA";
 import Footer from "./sections/Footer";
 import LogoYorisoiFloating from "./components/LogoYorisoiFloating";
 import ReserveFloating from "./components/ReserveFloating";
+import News from "./sections/News"; // ← microCMS用に作る
+
 
 export default function AppPC() {
   return (
@@ -21,6 +23,7 @@ export default function AppPC() {
       <section id="home"><Hero /></section>
       <section id="about"><About /></section>
       <section id="profile"><Profile /></section>
+            <section id="news"><News /></section>
       <section id="concept"><Concept /></section>
       <section id="menu"><Menu /></section>
       <section id="gallery"><Gallery /></section>
