@@ -17,6 +17,22 @@ const InstaIcon = () => (
     <circle cx="17" cy="7" r="1" />
   </svg>
 );
+// Design icon（極細ライン）
+const DesignIcon = () => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.3"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className="w-[14px] h-[14px]"
+  >
+    <rect x="3" y="4" width="18" height="12" rx="2" />
+    <line x1="8" y1="20" x2="16" y2="20" />
+    <line x1="12" y1="16" x2="12" y2="20" />
+  </svg>
+);
 
 export default function FooterSP() {
   return (
@@ -98,43 +114,59 @@ export default function FooterSP() {
         </p>
       </div>
 
-      {/* ===============================
-          Instagram & 制作クレジット
-      =============================== */}
-      <div className="max-w-[420px] mx-auto text-center mb-10">
-        <div
-          className="
-            flex items-center justify-center gap-5
-            text-[13px]
-            text-[rgba(96,78,62,0.70)]
-          "
-        >
-          <a
-            href="https://gushikendesign.com/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:text-[rgba(96,78,62,0.95)] transition-all"
-          >
-            サイト制作 : GUSHIKEN DESIGN
-          </a>
+{/* ===============================
+    Instagram & 制作クレジット（平等設計）
+================================ */}
+<div className="max-w-[420px] mx-auto text-center mb-10">
 
-          <span className="text-[rgba(96,78,62,0.35)]">｜</span>
+  {/* 小さなラベルで整理感を出す */}
+  <p className="text-[10.5px] tracking-[0.18em] text-[rgba(96,78,62,0.45)] mb-4">
+    OFFICIAL LINKS
+  </p>
 
-          <a
-            href="https://www.instagram.com/yorisoihair/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="
-              flex items-center gap-1
-              hover:text-[rgba(96,78,62,0.95)]
-              transition-all
-            "
-          >
-            <InstaIcon />
-            ヨリソイ : Instagram
-          </a>
-        </div>
-      </div>
+  <div className="flex items-center justify-center gap-3 flex-wrap text-[13px]">
+
+    {/* --- 制作 --- */}
+<a
+  href="https://gushikendesign.com/"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="
+    flex items-center gap-1.5
+    px-3.5 py-1.5
+    rounded-full
+    border border-[rgba(96,78,62,0.18)]
+    text-[rgba(96,78,62,0.85)]
+    hover:bg-[rgba(96,78,62,0.06)]
+    transition-all duration-300
+  "
+>
+  <DesignIcon />
+  サイト制作 — GUSHIKEN DESIGN
+</a>
+
+    {/* --- Instagram --- */}
+    <a
+      href="https://www.instagram.com/yorisoihair/"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="
+        flex items-center gap-1
+        px-3.5 py-1.5
+        rounded-full
+        border border-[rgba(96,78,62,0.18)]
+        text-[rgba(96,78,62,0.85)]
+        hover:bg-[rgba(96,78,62,0.06)]
+        transition-all duration-300
+      "
+    >
+      <InstaIcon />
+      YORISOI — Instagram
+    </a>
+
+  </div>
+</div>
+
 
       {/* ===============================
           コピーライト
