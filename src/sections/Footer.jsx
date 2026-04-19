@@ -303,7 +303,7 @@ export default function Footer() {
             aria-label="ヨリソイ Instagram（外部サイト）"
           >
             <InstaIcon />
-            YORISOI — Instagram
+            Instagram — YORISO
           </a>
         </div>
       </div>
@@ -321,7 +321,7 @@ export default function Footer() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdWebSite) }}
       />
       <script
-        type="application/ld+json"
+        typIe="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdSalon) }}
       />
       <script
