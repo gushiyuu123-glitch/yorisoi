@@ -1,4 +1,4 @@
-// src/sections_sp/FAQSP.jsx
+// src/sections/FAQ.jsx
 import { Reveal } from "../components/Reveal";
 
 const FAQS = [
@@ -26,26 +26,21 @@ const FAQS = [
 
 const pad2 = (n) => String(n).padStart(2, "0");
 
-export default function FAQSP() {
+export default function FAQ() {
   return (
     <section
-      className="
-        w-full bg-base
-        pt-[14vh]
-        pb-[calc(14vh+env(safe-area-inset-bottom))]
-        px-[6vw]
-      "
+      className="w-full bg-base pt-[16vh] pb-[16vh] px-[6vw]"
       aria-label="よくある質問"
     >
-      <div className="mx-auto max-w-[520px]">
+      <div className="mx-auto max-w-[980px]">
         {/* Head */}
-        <div className="text-center mb-10">
+        <header className="mx-auto max-w-[820px] text-center">
           <Reveal
             as="p"
-            y={10}
-            blur={0.12}
-            duration={0.62}
-            className="text-[11px] tracking-[0.26em] text-ink/55 mb-5"
+            y={12}
+            blur={0.14}
+            duration={0.66}
+            className="text-[12px] tracking-[0.28em] text-ink/55 mb-6"
           >
             FAQ
           </Reveal>
@@ -53,79 +48,77 @@ export default function FAQSP() {
           <Reveal
             as="h2"
             delay={0.06}
-            y={10}
-            blur={0.12}
-            duration={0.62}
-            className="text-[24px] leading-[1.45] text-ink/90 font-medium"
+            y={12}
+            blur={0.14}
+            duration={0.66}
+            className="text-[clamp(26px,3vw,34px)] text-ink/90 leading-[1.42] font-medium"
           >
-            初めての方が
-            <br />
-            気になるところ
+            初めての方が気になるところ
           </Reveal>
 
           <Reveal
             delay={0.12}
-            y={10}
-            blur={0.12}
-            duration={0.62}
-            className="mt-4 text-[13.5px] leading-[1.9] text-ink/72"
+            y={12}
+            blur={0.14}
+            duration={0.66}
+            className="mt-6 text-[14.5px] leading-[1.95] text-ink/72"
           >
-            予約前に迷いがちな点を、
-            <br />
-            先にまとめました。
+            予約前に迷いがちな点を、先にまとめました。
           </Reveal>
 
+          {/* 仕切り線（中央で締める） */}
           <Reveal
             delay={0.18}
             y={10}
-            blur={0.10}
-            duration={0.58}
-            className="mx-auto mt-8 h-px w-[62%] bg-ink/14"
+            blur={0.12}
+            duration={0.60}
+            className="mx-auto mt-10 h-px w-[58%] bg-ink/14"
             aria-hidden
           />
-        </div>
+        </header>
 
-        {/* List */}
-        <div className="border-y border-ink/14">
+        {/* List（誌面っぽく：質問＝見出し、回答＝本文。Q/Aは主張させない） */}
+        <div className="mt-12 border-y border-ink/14">
           {FAQS.map((item, i) => (
             <Reveal
               key={i}
-              delay={0.03 * i}
-              y={10}
-              blur={0.10}
-              duration={0.62}
-              className="py-7 border-b border-ink/12 last:border-b-0"
+              delay={0.02 * i}
+              y={12}
+              blur={0.12}
+              duration={0.66}
+              className="py-9 md:py-10 border-b border-ink/12 last:border-b-0"
             >
-              {/* Question */}
-              <div className="mb-4">
-                <p className="text-[10.5px] tracking-[0.22em] text-ink/48 mb-2">
-                  {pad2(i + 1)} / QUESTION
-                </p>
-                <h3 className="text-[15px] leading-[1.85] text-ink/90 font-medium">
-                  {item.q}
-                </h3>
-              </div>
+              <div className="grid grid-cols-1 md:grid-cols-[260px,1fr] gap-y-4 md:gap-10 items-start">
+                {/* Question */}
+                <div className="min-w-0">
+                  <p className="text-[11px] tracking-[0.22em] text-ink/48 mb-2">
+                    {pad2(i + 1)} / QUESTION
+                  </p>
+                  <h3 className="text-[15.5px] md:text-[16px] leading-[1.8] text-ink/90 font-medium">
+                    {item.q}
+                  </h3>
+                </div>
 
-              {/* Answer */}
-              <div className="pt-4 border-t border-ink/10">
-                <p className="text-[14.5px] leading-[1.95] text-ink/80">
-                  {item.a}
-                </p>
+                {/* Answer（md以上で“縦の罫線”） */}
+                <div className="min-w-0 md:border-l md:border-ink/10 md:pl-10">
+                  <p className="text-[15px] leading-[2.0] text-ink/80">
+                    {item.a}
+                  </p>
+                </div>
               </div>
             </Reveal>
           ))}
         </div>
 
-        {/* 余韻 */}
+        {/* 余韻（押し売りしない） */}
         <Reveal
-          delay={0.08}
+          delay={0.10}
           y={10}
           blur={0.10}
           duration={0.62}
-          className="mt-8 text-center text-[11px] tracking-[0.16em] text-ink/50 leading-[1.8]"
+          className="mt-10 text-center text-[12px] tracking-[0.16em] text-ink/50"
         >
-          ほかにも気になる点があれば、<br />
-          ご予約時に一言で大丈夫です。
+          ほかにも気になる点があれば、ご予約時に一言で大丈夫です。
         </Reveal>
       </div>
     </section>
