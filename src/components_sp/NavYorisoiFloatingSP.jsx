@@ -1,3 +1,4 @@
+// src/components_sp/NavYorisoiFloatingSP.jsx
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import gsap from "gsap";
@@ -70,11 +71,10 @@ export default function NavYorisoiFloatingSP() {
     gsap.killTweensOf(items);
     gsap.fromTo(
       items,
-      { opacity: 0, y: 6, filter: "blur(0.10px)" },
+      { opacity: 0, y: 6 },
       {
         opacity: 1,
         y: 0,
-        filter: "blur(0px)",
         duration: 0.52,
         ease: "power3.out",
         stagger: 0.04,
@@ -115,7 +115,6 @@ export default function NavYorisoiFloatingSP() {
     return () => obs.disconnect();
   }, [pathname]);
 
-  // hash更新だけ（スクロールは HashScroll が担当）
   const go = (hash) => {
     if (pathname !== "/") {
       navigate({ pathname: "/", hash }, { replace: true });
@@ -131,12 +130,16 @@ export default function NavYorisoiFloatingSP() {
         fixed bottom-0 left-0 right-0 z-[80]
         bg-[linear-gradient(
           to_top,
-          rgba(247,244,239,0.90) 0%,
-          rgba(247,244,239,0.78) 40%,
-          rgba(247,244,239,0.62) 74%,
-          rgba(247,244,239,0.46) 100%
+          rgba(247,244,239,0.94) 0%,
+          rgba(247,244,239,0.88) 40%,
+          rgba(247,244,239,0.74) 74%,
+          rgba(247,244,239,0.58) 100%
         )]
+
+        /* ✅ スマホはblur無効（重い） */
         backdrop-blur-[10px]
+        [@media(pointer:coarse)]:backdrop-blur-0
+
         border-t border-[rgba(96,78,62,0.13)]
         px-[4vw]
         pt-[10px]

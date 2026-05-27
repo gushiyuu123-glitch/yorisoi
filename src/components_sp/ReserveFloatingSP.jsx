@@ -28,46 +28,40 @@ function NewsIcon(props) {
 
 export default function ReserveFloatingSP() {
   const wrapRef = useRef(null);
-
-  const rafRef = useRef(0);
-  const lastYRef = useRef(0);
-  const hiddenRef = useRef(false);
-  const stopTimerRef = useRef(null);
-
   const introTweenRef = useRef(null);
-  const breatheTweenRef = useRef(null);
 
   const reduce =
     typeof window !== "undefined"
       ? window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false
       : false;
 
-  /* 初回フェードイン（2ボタンを軽くstagger） */
+  const coarse =
+    typeof window !== "undefined"
+      ? window.matchMedia?.("(pointer:coarse)")?.matches ?? true
+      : true;
+
+  const perf = reduce || coarse;
+
+  /* 初回フェードイン（スマホは軽く：blur無し） */
   useEffect(() => {
     const el = wrapRef.current;
     if (!el) return;
 
     const kids = Array.from(el.querySelectorAll("[data-float-item]"));
 
-    if (reduce) {
-      gsap.set(el, {
-        autoAlpha: 1,
-        y: 0,
-        filter: "blur(0px)",
-        pointerEvents: "auto",
-      });
-      gsap.set(kids, { autoAlpha: 1, y: 0, filter: "blur(0px)" });
+    if (perf) {
+      gsap.set(el, { autoAlpha: 1, y: 0, pointerEvents: "auto" });
+      gsap.set(kids, { autoAlpha: 1, y: 0 });
       return;
     }
 
     gsap.set(el, { autoAlpha: 1, pointerEvents: "auto" });
     introTweenRef.current = gsap.fromTo(
       kids,
-      { autoAlpha: 0, y: -8, filter: "blur(0.20px)" },
+      { autoAlpha: 0, y: -8 },
       {
         autoAlpha: 1,
         y: 0,
-        filter: "blur(0px)",
         duration: 0.68,
         ease: "power3.out",
         delay: 0.9,
@@ -76,97 +70,7 @@ export default function ReserveFloatingSP() {
     );
 
     return () => introTweenRef.current?.kill?.();
-  }, [reduce]);
-
-  /* 呼吸（HotPepperボタンだけ） */
-  useEffect(() => {
-    const el = wrapRef.current;
-    if (!el || reduce) return;
-
-    const hot = el.querySelector("[data-breathe]");
-    if (!hot) return;
-
-    breatheTweenRef.current = gsap.to(hot, {
-      scale: 1.0022,
-      duration: 3.6,
-      ease: "power1.inOut",
-      yoyo: true,
-      repeat: -1,
-    });
-
-    return () => breatheTweenRef.current?.kill?.();
-  }, [reduce]);
-
-  /* スクロールで引く（押せない事故防止で pointerEvents も切る） */
-  useEffect(() => {
-    const el = wrapRef.current;
-    if (!el) return;
-
-    lastYRef.current = window.scrollY || 0;
-
-    const THRESHOLD = 6;
-    const RESTORE_DELAY = 240;
-
-    const animateTo = (hide) => {
-      if (hiddenRef.current === hide) return;
-      hiddenRef.current = hide;
-
-      gsap.killTweensOf(el);
-
-      if (reduce) {
-        gsap.set(el, {
-          y: hide ? -18 : 0,
-          autoAlpha: hide ? 0 : 1,
-          pointerEvents: hide ? "none" : "auto",
-        });
-        return;
-      }
-
-      gsap.to(el, {
-        y: hide ? -18 : 0,
-        autoAlpha: hide ? 0 : 1,
-        duration: hide ? 0.22 : 0.28,
-        ease: "power3.out",
-        overwrite: "auto",
-        onStart: () => {
-          // 隠す瞬間に押せなくする
-          if (hide) el.style.pointerEvents = "none";
-        },
-        onComplete: () => {
-          // 出したら押せる
-          if (!hide) el.style.pointerEvents = "auto";
-        },
-      });
-    };
-
-    const onScroll = () => {
-      if (rafRef.current) return;
-
-      rafRef.current = requestAnimationFrame(() => {
-        rafRef.current = 0;
-
-        const currentY = window.scrollY || 0;
-        const diff = currentY - lastYRef.current;
-
-        clearTimeout(stopTimerRef.current);
-        stopTimerRef.current = setTimeout(() => animateTo(false), RESTORE_DELAY);
-
-        if (Math.abs(diff) >= THRESHOLD) {
-          animateTo(diff > 0); // 下で隠す
-        }
-
-        lastYRef.current = currentY;
-      });
-    };
-
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      if (rafRef.current) cancelAnimationFrame(rafRef.current);
-      if (stopTimerRef.current) clearTimeout(stopTimerRef.current);
-      gsap.killTweensOf(el);
-    };
-  }, [reduce]);
+  }, [perf]);
 
   return (
     <div
@@ -190,10 +94,13 @@ export default function ReserveFloatingSP() {
           font-medium
           rounded-[10px]
 
-          bg-[rgba(247,244,239,0.52)]
+          bg-[rgba(247,244,239,0.72)]
           text-[rgba(86,58,68,0.78)]
           border border-[rgba(255,255,255,0.55)]
+
+          /* ✅ スマホはblur無効（重い） */
           backdrop-blur-[10px]
+          [@media(pointer:coarse)]:backdrop-blur-0
 
           shadow-[0_6px_18px_rgba(0,0,0,0.08)]
           active:scale-[0.94]
@@ -208,7 +115,6 @@ export default function ReserveFloatingSP() {
       {/* HotPepper（主役） */}
       <a
         data-float-item
-        data-breathe
         href="https://beauty.hotpepper.jp/slnH000706136/"
         target="_blank"
         rel="noopener noreferrer"
@@ -221,10 +127,13 @@ export default function ReserveFloatingSP() {
           font-medium
           rounded-[10px]
 
-          bg-[rgba(236,206,216,0.58)]
+          bg-[rgba(236,206,216,0.70)]
           text-[rgba(86,58,68,0.92)]
           border border-[rgba(255,255,255,0.55)]
+
+          /* ✅ スマホはblur無効（重い） */
           backdrop-blur-[10px]
+          [@media(pointer:coarse)]:backdrop-blur-0
 
           shadow-[0_6px_18px_rgba(0,0,0,0.10)]
           active:scale-[0.94]
