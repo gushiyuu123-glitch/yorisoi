@@ -3,20 +3,40 @@ import { useLayoutEffect, useRef } from "react";
 import gsap from "gsap";
 
 export default function HeroSP() {
+  const rootRef = useRef(null);
+  const logoRef = useRef(null);
+  const tagsRef = useRef(null);
   const titleRef = useRef(null);
   const subRef = useRef(null);
-  const logoRef = useRef(null);
+  const ctaRef = useRef(null);
   const photoRef = useRef(null);
   const ctxRef = useRef(null);
 
-  /* ======================================
-        GSAP（ useLayoutEffect で同期保証 ）
-  ======================================= */
+  const reduce =
+    typeof window !== "undefined"
+      ? window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false
+      : false;
+
+  // 1行をnowrapで保持（改行事故防止）
+  const splitLine = (text) => (
+    <span className="inline-block whitespace-nowrap" aria-hidden="true">
+      {text.split("").map((c, i) => (
+        <span key={i} className="char inline-block">
+          {c === " " ? "\u00A0" : c}
+        </span>
+      ))}
+    </span>
+  );
+
   useLayoutEffect(() => {
+    if (reduce) return;
+
     ctxRef.current = gsap.context(() => {
       const logo = logoRef.current;
+      const tags = tagsRef.current;
       const title = titleRef.current;
       const sub = subRef.current;
+      const cta = ctaRef.current;
       const photo = photoRef.current;
 
       if (!logo || !title || !sub || !photo) return;
@@ -24,215 +44,218 @@ export default function HeroSP() {
       const chars = title.querySelectorAll(".char");
       if (!chars.length) return;
 
-      const tl = gsap.timeline({ delay: 0.25 });
+      const tl = gsap.timeline({ delay: 0.16 });
 
-      // ロゴ
+      // ロゴ（極薄blur）
       tl.fromTo(
         logo,
-        { opacity: 0, y: 12, filter: "blur(0.5px)" },
-        {
-          opacity: 1,
-          y: 0,
-          filter: "blur(0px)",
-          duration: 1.05,
-          ease: "power3.out",
-        }
+        { opacity: 0, y: 10, filter: "blur(0.22px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.66, ease: "power3.out" }
       );
 
-      // H1（バラバラ）
+      // タグ（S-1）
+      if (tags) {
+        tl.fromTo(
+          tags,
+          { opacity: 0, y: 8, filter: "blur(0.18px)" },
+          { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.52, ease: "power3.out" },
+          "-=0.44"
+        );
+      }
+
+      // H1（文字）
       tl.fromTo(
         chars,
-        { opacity: 0, y: 18, filter: "blur(0.4px)" },
+        { opacity: 0, y: 14, filter: "blur(0.22px)" },
         {
           opacity: 1,
           y: 0,
           filter: "blur(0px)",
-          duration: 1,
-          stagger: 0.03,
+          duration: 0.72,
+          stagger: 0.020,
           ease: "power3.out",
         },
-        "-=0.55"
+        "-=0.18"
       );
 
-      // サブコピー
+      // サブ
       tl.fromTo(
         sub,
-        { opacity: 0, y: 16, filter: "blur(0.3px)" },
-        {
-          opacity: 1,
-          y: 0,
-          filter: "blur(0px)",
-          duration: 1,
-          ease: "power3.out",
-        },
-        "-=0.45"
+        { opacity: 0, y: 10, filter: "blur(0.18px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.58, ease: "power3.out" },
+        "-=0.38"
       );
 
-      // 背景写真
+      // CTA（A-7）
+      if (cta) {
+        tl.fromTo(
+          cta,
+          { opacity: 0, y: 10, filter: "blur(0.16px)" },
+          { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.56, ease: "power3.out" },
+          "-=0.44"
+        );
+      }
+
+      // 写真（過剰blur禁止：極薄＋scaleで像が立つ）
       tl.fromTo(
         photo,
-        { opacity: 0.55, scale: 1.06, filter: "blur(1.6px)" },
-        {
-          opacity: 1,
-          scale: 1,
-          filter: "blur(0px)",
-          duration: 1.25,
-          ease: "power3.out",
-        },
-        "-=0.25"
+        { opacity: 0.72, scale: 1.02, x: 8, filter: "blur(0.24px)" },
+        { opacity: 1, scale: 1, x: 0, filter: "blur(0px)", duration: 0.9, ease: "power3.out" },
+        "-=0.78"
       );
-    });
+    }, rootRef);
 
-    return () => ctxRef.current && ctxRef.current.revert();
-  }, []);
+    return () => ctxRef.current?.revert?.();
+  }, [reduce]);
 
-  /* ==========================
-        文字スプリット
-  =========================== */
-  const splitText = (text) =>
-    text.split("").map((c, i) => (
-      <span key={i} className="char inline-block">
-        {c === " " ? "\u00A0" : c}
-      </span>
-    ));
+  // ✅ 禁止ワード回避（静かに/整う なし）
+  const LINE1 = "朝7時から、身だしなみが決まる。";
+  const LINE2 = "半個室で、1対1で仕上げます。";
+
+  // S-1：強み5つ
+  const TAGS = ["朝7:00〜", "マンツーマン", "半個室", "駐車場あり", "メンズ専門"];
+
+  // A-7：Hero内CTA
+  const RESERVE_URL = "https://beauty.hotpepper.jp/slnH000706136/";
+
+  // A-4：サブテキスト
+  const SUB_1 = "気になるところだけ教えてください。";
+  const SUB_2 = "髪質とセットの癖に合わせて、朝が楽になる形を作ります。";
+  const SUB_3 = "パーマで扱いやすくなる方には、あわせてご提案します。";
 
   return (
-    <section className="relative w-full overflow-hidden bg-[#f7f4ef]">
-
-      {/* ===================================================
-          ★ 1. 背景写真
-      ==================================================== */}
-      <div className="relative w-full h-[100vh] z-[0] overflow-hidden">
+    <section
+      ref={rootRef}
+      id="hero"
+      className="relative w-full overflow-hidden bg-[#f7f4ef]"
+      aria-label="ヨリソイ Hero（スマホ）"
+    >
+      {/* 1) 背景写真 */}
+      <div className="relative w-full min-h-[100svh] z-[0] overflow-hidden">
         <img
           ref={photoRef}
-          src="/yorisoi/hero1.png"
+          src="/yorisoi/hero2.jpg"
+          alt="ヨリソイ Hair&Spa 店内"
           className="
-            w-full h-full object-cover
-            [filter:brightness(1.03)_contrast(0.94)]
-            scale-[1.03]
+            w-full h-[100svh] object-cover
+            [filter:brightness(1.02)_contrast(0.90)_saturate(0.95)]
+            scale-[1.02]
           "
-          alt="YORISOI Hero"
+          fetchPriority="high"
+          decoding="async"
         />
       </div>
 
-      {/* ===================================================
-          ★ 2. 背景光（極薄・自然光）（※ screen 削除）
-      ==================================================== */}
+      {/* 2) テキスト帯（可読性の土台） */}
       <div
+        aria-hidden="true"
         className="
-          absolute inset-0 z-[10] pointer-events-none
+          absolute inset-x-0
+          top-[20vh] bottom-[12vh]
+          z-[30] pointer-events-none
           bg-[linear-gradient(
             to_bottom,
-            rgba(255,255,255,0.06) 0%,
-            rgba(255,255,255,0.04) 35%,
-            rgba(255,255,255,0.025) 65%,
-            rgba(255,255,255,0.015) 85%,
-            rgba(255,255,255,0) 100%
+            rgba(247,244,239,0.00) 0%,
+            rgba(247,244,239,0.56) 12%,
+            rgba(247,244,239,0.82) 34%,
+            rgba(247,244,239,0.86) 68%,
+            rgba(247,244,239,0.64) 100%
           )]
+          backdrop-blur-[2.4px]
         "
       />
 
-      {/* ===================================================
-          ★ 3. 黒膜（視認性補助）
-      ==================================================== */}
+      {/* 3) テキスト（帯の中に収める） */}
       <div
         className="
-          absolute inset-0 z-[20] pointer-events-none
-          bg-[linear-gradient(
-            to_bottom,
-            rgba(0,0,0,0) 0%,
-            rgba(0,0,0,0.05) 30%,
-            rgba(0,0,0,0.10) 55%,
-            rgba(0,0,0,0.14) 70%,
-            rgba(0,0,0,0.18) 100%
-          )]
-        "
-      />
-
-      {/* ===================================================
-          ★ 4. テキスト背面の白にじみ膜（※ 最重要）
-      ==================================================== */}
-      <div
-        className="
-          absolute left-0 right-0
-          top-[25vh] bottom-[0]
-          z-[60] pointer-events-none
-
-          bg-[linear-gradient(
-            to_bottom,
-            rgba(255,255,255,0.32) 0%,
-            rgba(255,255,255,0.18) 16%,
-            rgba(255,255,255,0.12) 34%,
-            rgba(255,255,255,0.08) 56%,
-            rgba(255,255,255,0.04) 78%,
-            rgba(255,255,255,0) 100%
-          )]
-
-          backdrop-blur-[0.55px]
-        "
-      />
-
-      {/* ===================================================
-          ★ 5. テキスト（最前面）
-      ==================================================== */}
-      <div
-        className="
-          absolute left-0 right-0 top-[33vh]
+          absolute inset-x-0
+          top-[22vh] bottom-[12vh]
           px-[6vw]
-          z-[100]
+          z-[80]
+          flex flex-col
         "
       >
+        <div>
+          <div
+            ref={logoRef}
+            className="
+              text-[13px]
+              tracking-[0.22em]
+              text-[rgba(46,42,39,0.66)]
+              font-light
+            "
+          >
+            ヨリソイ Hair&Spa
+          </div>
 
-      {/* ロゴ行 */}
-<div
-  ref={logoRef}
-  className="
-    text-[15px]
-    tracking-[0.23em]
-    text-[rgba(155,138,123,0.92)]
-    font-light
-  "
->
-  ヨリソイ
-</div>
+          {/* S-1：強み5つ（タグ） */}
+          <ul
+            ref={tagsRef}
+            className="
+              mt-3
+              flex flex-wrap
+              gap-x-2.5 gap-y-1.5
+              text-[11px]
+              tracking-[0.18em]
+              text-[rgba(46,42,39,0.58)]
+            "
+            aria-label="店舗の特徴"
+          >
+            {TAGS.map((t) => (
+              <li key={t} className="whitespace-nowrap">
+                [{t}]
+              </li>
+            ))}
+          </ul>
 
-{/* H1 */}
-<h1
-  ref={titleRef}
-  className="
-    text-[clamp(18px,5.8vw,24px)]
-    leading-[1.32]
-    tracking-[0.01em]
-    font-medium
-    text-[#7A6A5A]
-    drop-shadow-[0_1px_3px_rgba(0,0,0,0.28)]
-    drop-shadow-[0_0.5px_1.3px_rgba(255,255,255,0.32)]
-    mb-[2vh]
-  "
->
-  {splitText("話しすぎない、でも寄り添う。")}
-  <br />
-  {splitText("あなたに合わせて整える美容室。")}
-</h1>
+          <h1
+            ref={titleRef}
+            aria-label={`${LINE1} ${LINE2}`}
+            className="
+              mt-[5vh]
+              text-[clamp(19px,6.0vw,25px)]
+              leading-[1.24]
+              tracking-[0.005em]
+              font-medium
+              text-[rgba(46,42,39,0.94)]
+            "
+          >
+            <span className="block whitespace-nowrap">{splitLine(LINE1)}</span>
+            <span className="block whitespace-nowrap mt-[0.28em]">{splitLine(LINE2)}</span>
+          </h1>
 
-{/* サブコピー */}
-<p
-  ref={subRef}
-  className="
-    text-[clamp(13px,3.6vw,15px)]
-    leading-[1.9]
-    text-[rgba(140,124,110,0.92)]
-    drop-shadow-[0_1px_2px_rgba(0,0,0,0.25)]
-    drop-shadow-[0_0.45px_1px_rgba(255,255,255,0.26)]
-  "
->
-  無理なく相談できて、自然に任せられる距離感で。
-  <br />
-  あなたの日常に合うスタイルを、丁寧に仕上げていきます。
-</p>
+          {/* A-4：サブ（カード化しない） */}
+          <p
+            ref={subRef}
+            className="
+              mt-8
+              text-[clamp(11px,3.1vw,13px)]
+              leading-[1.9]
+              tracking-[0.01em]
+              text-[rgba(46,42,39,0.76)]
+              max-w-[32em]
+            "
+          >
+            {SUB_1}
+            <br />
+            {SUB_2}
+            <br />
+            {SUB_3}
+          </p>
 
+  
+        </div>
 
+        {/* 下側は空ける：下固定UIに被らない */}
+        <div className="flex-1" />
       </div>
+
+      {/* reduce-motion：強制表示（念のため） */}
+      {reduce && (
+        <style>{`
+          .char { opacity: 1 !important; transform: none !important; filter: none !important; }
+        `}</style>
+      )}
     </section>
   );
 }

@@ -1,142 +1,200 @@
 // src/sections_sp/ConceptSP.jsx
-import { useRef, useEffect } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-gsap.registerPlugin(ScrollTrigger);
+import { useMemo } from "react";
+import { Reveal } from "../components/Reveal";
 
 export default function ConceptSP() {
-  const sectionRef = useRef(null);
-
-  useEffect(() => {
-    const el = sectionRef.current;
-    if (!el) return;
-
-    gsap.fromTo(
-      el.querySelectorAll(".cpSP"),
-      { opacity: 0, y: 22 },
+  const POINTS = useMemo(
+    () => [
       {
-        opacity: 1,
-        y: 0,
-        duration: 1.05,
-        ease: "power3.out",
-        stagger: 0.14,
-        scrollTrigger: { trigger: el, start: "top 85%" }
-      }
-    );
-  }, []);
+        kicker: "POINT 01",
+        title: "半個室の2席で、落ち着いて進める。",
+        desc: "周りが気になりにくい空間で、最初から最後までしっかり担当します。",
+        sub: ["席数は2席", "最初から最後まで担当"],
+        img: "/yorisoi/concept-room.png",
+        alt: "ヨリソイの店内（半個室の席）",
+        cap: "SCENE 01 / ROOM",
+        aspect: "aspect-[16/10]",
+      },
+      {
+        kicker: "POINT 02",
+        title: "先に確認して、迷わず決める。",
+        desc: "「気になるところ」と「普段のセット」を先に聞いて、合う形を一緒に決めます。",
+        sub: ["途中で変わってOK", "必要なことから順に進める"],
+        img: "/yorisoi/concept-cut.png",
+        alt: "施術前に確認している様子",
+        cap: "SCENE 02 / CUT",
+        aspect: "aspect-[16/10]",
+      },
+      {
+        kicker: "POINT 03",
+        title: "家でのセットが、楽になる形へ。",
+        desc: "乾かして手ぐしで形が出るように。朝のセットが楽になる仕上がりを目指します。",
+        sub: ["乾かして形が出る", "髪質・骨格に合わせて調整"],
+        img: "/yorisoi/concept-home.png",
+        alt: "自宅で髪を整える様子",
+        cap: "SCENE 03 / HOME",
+        aspect: "aspect-[4/3]",
+      },
+    ],
+    []
+  );
 
   return (
     <section
       id="concept"
-      ref={sectionRef}
       className="
-        relative
-        w-full
-        pt-[12vh] pb-[20vh] px-[6vw]
+        relative w-full bg-base
+        pt-[12vh] pb-[18vh] px-[6vw]
         overflow-hidden
       "
+      aria-label="コンセプト"
     >
-      {/* 背景 */}
-      <div className="absolute inset-0 -z-10">
+      {/* 背景：鳥は気配だけ */}
+      <div aria-hidden className="absolute inset-0 -z-10">
         <img
           src="/yorisoi/bird.png"
           alt=""
           className="
             w-full h-full object-cover
-            opacity-[0.32]
-            scale-[1.1]
+            opacity-[0.12]
+            scale-[1.08]
+            [filter:brightness(1.06)_contrast(0.92)]
           "
         />
-
         <div
           className="
             absolute inset-0 pointer-events-none
-            bg-[radial-gradient(circle_at_30%_24%,rgba(255,253,249,0.6),rgba(255,253,249,0.2)_60%)]
+            bg-[radial-gradient(circle_at_30%_22%,rgba(255,253,249,0.70),rgba(255,253,249,0.18)_62%,rgba(247,244,239,0.94)_100%)]
           "
         />
       </div>
 
-      {/* 見出し */}
-      <div className="cpSP mx-auto max-w-[480px] text-center mb-12">
-        <p className="text-[11px] tracking-[0.28em] text-[rgba(96,78,62,0.55)] mb-6">
-          ヨリソイ / SALON PHILOSOPHY
-        </p>
+      <div className="mx-auto max-w-[560px]">
+        {/* 見出し */}
+        <Reveal
+          as="p"
+          y={12}
+          blur={0.14}
+          duration={0.60}
+          className="text-[11px] tracking-[0.28em] text-ink/55 mb-3"
+        >
+          CONCEPT
+        </Reveal>
 
-        <h2 className="text-[clamp(21px,6vw,26px)] leading-[1.5] text-[#5d4c3f] font-medium">
-          ヨリソイが大切にしていること
-        </h2>
-      </div>
+        <Reveal
+          as="h2"
+          delay={0.06}
+          y={12}
+          blur={0.14}
+          duration={0.60}
+          className="text-[clamp(20px,6vw,26px)] leading-[1.48] text-ink/90 font-medium"
+        >
+          任せやすい理由を、<br />
+          3つにまとめました。
+        </Reveal>
 
-      {/* コンテンツ */}
-      <div className="mx-auto max-w-[520px] space-y-10">
+        <Reveal
+          delay={0.12}
+          y={12}
+          blur={0.14}
+          duration={0.60}
+          className="mt-7 text-[15px] leading-[1.95] text-ink/78"
+        >
+          店内の安心があって、先に確認して、最後は家で楽になる。
+          <br />
+          その順番が、いちばん自然だと思っています。
+        </Reveal>
 
-        {[
-          {
-            icon: (
-              <>
-                <path d="M12 3v12" />
-                <path d="M16 7v8" />
-                <path d="M8 5v10" />
-                <path d="M4 15c0 4 4 6 8 6s8-2 8-6" />
-              </>
-            ),
-            title: "やわらかな接客",
-            desc: "お客様のペースに寄り添い、その日の気分に合わせた距離感を大切にしています。静かに過ごしたい日も、ゆっくり話したい日も、そのままでいられる場所でありたいと考えています。",
-          },
-          {
-            icon: (
-              <>
-                <circle cx="6" cy="6" r="3" />
-                <circle cx="6" cy="18" r="3" />
-                <path d="M9 6l13 8M9 18l13-8" />
-              </>
-            ),
-            title: "扱いやすい髪",
-            desc: "乾かすだけで自然に整う。毎日の生活の中で、無理なく続くスタイルを。頑張らなくても、きちんと見える髪を目指しています。",
-          },
-          {
-            icon: (
-              <>
-                <path d="M9 3h6l1 3H8l1-3z" />
-                <path d="M4 8h16v10H4z" />
-                <path d="M10 12h4" />
-              </>
-            ),
-            title: "心地よい空間",
-            desc: "光・香り・空気のバランスを整え、五感が静かに落ち着く空間づくりを大切にしています。長くいても疲れない、やわらかな時間を。",
-          },
-        ].map((item, i) => (
-          <div
-            key={i}
-            className="
-              cpSP
-              bg-white/75
-              backdrop-blur-[2px]
-              border border-white/40
-              rounded-[14px]
-              p-8
-              shadow-[0_18px_36px_rgba(0,0,0,0.05)]
-            "
-          >
-            <svg
-              className="w-[32px] h-[32px] mb-5 text-[rgba(96,78,62,0.7)]"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.4"
-              viewBox="0 0 24 24"
-            >
-              {item.icon}
-            </svg>
+        <Reveal
+          delay={0.18}
+          y={10}
+          blur={0.12}
+          duration={0.56}
+          className="mt-9 h-px w-[64%] bg-ink/14"
+          aria-hidden
+        />
 
-            <h3 className="text-[17px] text-[#5d4c3f] font-medium mb-3 leading-[1.6]">
-              {item.title}
-            </h3>
+        {/* POINTS */}
+        <div className="mt-[9vh] space-y-[10vh]">
+          {POINTS.map((p, i) => {
+            const flip = i === 1;
+            const textAlign = flip ? "text-right" : "text-left";
+            const chipAlign = flip ? "justify-end" : "";
 
-            <p className="text-[14.5px] leading-[1.9] text-[rgba(96,78,62,0.8)]">
-              {item.desc}
-            </p>
-          </div>
-        ))}
+            return (
+              <div key={p.kicker} className="pt-10 border-t border-ink/12">
+                {/* 画像（SPはブリードで箱感を消す） */}
+                <Reveal y={12} blur={0.12} duration={0.60}>
+                  <figure className="-mx-[6vw]">
+                    <img
+                      src={p.img}
+                      alt={p.alt}
+                      loading="lazy"
+                      decoding="async"
+                      className={`
+                        w-full object-cover
+                        [filter:brightness(1.02)_contrast(0.95)]
+                        shadow-[0_10px_26px_rgba(0,0,0,0.10)]
+                        ${p.aspect}
+                      `}
+                    />
+                    <figcaption className="px-[6vw] mt-3 text-[11px] tracking-[0.20em] text-ink/58">
+                      {p.cap}
+                    </figcaption>
+                  </figure>
+                </Reveal>
+
+                {/* テキスト */}
+                <div className={`mt-7 ${textAlign}`}>
+                  <Reveal
+                    y={12}
+                    blur={0.14}
+                    duration={0.60}
+                    className="text-[11px] tracking-[0.28em] text-ink/55 mb-3"
+                  >
+                    {p.kicker}
+                  </Reveal>
+
+                  <Reveal
+                    delay={0.06}
+                    y={12}
+                    blur={0.14}
+                    duration={0.60}
+                    as="h3"
+                    className="text-[18px] leading-[1.65] text-ink/90 font-medium"
+                  >
+                    {p.title}
+                  </Reveal>
+
+                  <Reveal
+                    delay={0.12}
+                    y={12}
+                    blur={0.14}
+                    duration={0.60}
+                    className="mt-3 text-[14.6px] leading-[1.95] text-ink/76"
+                  >
+                    {p.desc}
+                  </Reveal>
+
+                  <Reveal
+                    delay={0.18}
+                    y={10}
+                    blur={0.12}
+                    duration={0.56}
+                    className={`mt-6 flex flex-wrap gap-x-4 gap-y-2 text-[12.5px] tracking-[0.06em] text-ink/62 ${chipAlign}`}
+                  >
+                    {p.sub.map((s, idx) => (
+                      <span key={idx} className="inline-flex items-center gap-2">
+                        <span className="h-[1px] w-[10px] bg-ink/28" aria-hidden />
+                        {s}
+                      </span>
+                    ))}
+                  </Reveal>
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </div>
     </section>
   );

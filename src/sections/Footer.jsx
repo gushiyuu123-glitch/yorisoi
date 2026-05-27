@@ -1,5 +1,4 @@
 // src/sections/Footer.jsx
-import React from "react";
 
 /* ===============================
    Icons（極細ライン統一）
@@ -41,7 +40,33 @@ const DesignIcon = () => (
   </svg>
 );
 
-export default function Footer() {
+const FooterLink = ({ href, label }) => (
+  <a
+    href={href}
+    target="_blank"
+    rel="noopener noreferrer"
+    className="
+      inline-flex items-center gap-2
+      text-[13px]
+      text-ink/78
+      underline underline-offset-[5px]
+      decoration-ink/20
+      hover:text-ink/92
+      hover:decoration-ink/34
+      transition-colors
+    "
+  >
+    {label}
+    <span aria-hidden className="text-ink/50">
+      ↗
+    </span>
+  </a>
+);
+
+export default function Footer({
+  // ✅ PC/SPを同時DOM表示する構成なら、片方だけ true にして重複JSON-LD回避
+  withJsonLd = true,
+}) {
   const siteUrl = "https://yorisoi-nine.vercel.app/";
   const hotpepperUrl = "https://beauty.hotpepper.jp/slnH000706136/";
   const hotpepperReviewUrl = "https://beauty.hotpepper.jp/slnH000706136/review/";
@@ -49,11 +74,11 @@ export default function Footer() {
   const gushikenUrl = "https://gushikendesign.com/";
   const gushikenInsta = "https://www.instagram.com/gushiken_design/";
 
-  // 口コミ（このサイト内の表示値と一致させる：全部5固定の方針）
+  // ✅ 表示と一致させて統一（必要なら全体で同じ数に揃える）
   const ratingValue = 5.0;
-  const reviewCount = 6; // ここは実数があるなら合わせる（仮：Review.jsxの件数）
+  const reviewCount = 63;
 
-  // 画像（存在するURLに置き換えてOK）
+  // 画像
   const ogImage = `${siteUrl}yorisoi/ogp1.png`;
   const footerBg = "/yorisoi/footer.png";
   const birdLogo = "/yorisoi/bird-logo.png";
@@ -67,7 +92,7 @@ export default function Footer() {
     url: siteUrl,
     image: ogImage,
     description:
-      "沖縄県浦添市のプライベートサロン。朝7時から営業。静かで落ち着く空間で、扱いやすさと再現性を大切にした施術をご提供します。",
+      "沖縄県浦添市のメンズ専門理容室。朝7時から営業。半個室の2席で、最初から最後まで丁寧に担当します。",
     telephone: "090-7357-0926",
     address: {
       "@type": "PostalAddress",
@@ -77,20 +102,8 @@ export default function Footer() {
       postalCode: "901-2121",
       addressCountry: "JP",
     },
-    // 位置情報は確定値があるなら入れる（なければ削除推奨）
-    geo: {
-      "@type": "GeoCoordinates",
-      latitude: "26.245",
-      longitude: "127.718",
-    },
+    openingHours: ["Tu-Su 07:00-19:00"],
     openingHoursSpecification: [
-      {
-        "@type": "OpeningHoursSpecification",
-        dayOfWeek: ["Monday"],
-        opens: "00:00",
-        closes: "00:00",
-        description: "定休日",
-      },
       {
         "@type": "OpeningHoursSpecification",
         dayOfWeek: [
@@ -105,15 +118,16 @@ export default function Footer() {
         closes: "19:00",
       },
     ],
+    paymentAccepted:
+      "Cash, Visa, Mastercard, JCB, PayPay, QUICPay, iD, Suica, PASMO, Apple Pay",
     priceRange: "¥¥",
-    sameAs: [hotpepperUrl, instaYorisoi],
-    // ★ AggregateRating（Reviewセクションの表示と整合）
+    sameAs: [hotpepperUrl, hotpepperReviewUrl, instaYorisoi],
     aggregateRating: {
       "@type": "AggregateRating",
-      ratingValue: ratingValue,
+      ratingValue,
       bestRating: 5,
       worstRating: 1,
-      reviewCount: reviewCount,
+      reviewCount,
     },
   };
 
@@ -132,14 +146,13 @@ export default function Footer() {
     },
   };
 
-  // GUSHIKEN DESIGN（制作主体：過剰主張しないが、Googleに明確に伝える）
+  // GUSHIKEN DESIGN（制作主体）
   const jsonLdGushiken = {
     "@context": "https://schema.org",
     "@type": "ProfessionalService",
     "@id": `${gushikenUrl}#org`,
     name: "GUSHIKEN DESIGN",
     url: gushikenUrl,
-    // logo/ogpは存在するURLに合わせる（なければ削除 or 正しいURLに）
     logo: `${gushikenUrl}ogp.png`,
     image: `${gushikenUrl}ogp.png`,
     description:
@@ -164,7 +177,7 @@ export default function Footer() {
     ],
   };
 
-  // CreativeWork（このWebサイトが制作実績である “証明”）
+  // CreativeWork（制作実績の証明）
   const jsonLdWorkProof = {
     "@context": "https://schema.org",
     "@type": "CreativeWork",
@@ -181,7 +194,7 @@ export default function Footer() {
     isPartOf: { "@id": `${gushikenUrl}#portfolio` },
   };
 
-  // Portfolio（GUSHIKEN DESIGN側の文脈を補強）
+  // Portfolio
   const jsonLdPortfolio = {
     "@context": "https://schema.org",
     "@type": "WebSite",
@@ -191,7 +204,7 @@ export default function Footer() {
     inLanguage: "ja-JP",
   };
 
-  // ItemList（制作実績：この1本を明示）
+  // ItemList
   const jsonLdItemList = {
     "@context": "https://schema.org",
     "@type": "ItemList",
@@ -210,136 +223,158 @@ export default function Footer() {
   return (
     <footer
       className="
-        relative w-full
+        w-full bg-base
         pt-[14vh] pb-[8vh] px-[6vw]
-        overflow-hidden
+        relative overflow-hidden
         border-t border-[rgba(96,78,62,0.14)]
       "
+      aria-label="フッター"
     >
-      {/* 背景 */}
-      <div aria-hidden className="absolute inset-0 -z-10">
+      {/* 背景（z-0） */}
+      <div aria-hidden className="absolute inset-0 z-0 pointer-events-none">
         <img
           src={footerBg}
           alt=""
-          className="w-full h-full object-cover opacity-[0.40] scale-[1.05]"
-        />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_40%_20%,rgba(255,253,249,0.55),rgba(255,253,249,0.10)_70%)]" />
-      </div>
-
-      {/* ================= 上段 ================= */}
-      <div className="max-w-[900px] mx-auto text-center mb-12">
-        <img
-          src={birdLogo}
-          alt="YORISOI Bird Logo"
-          className="w-[60px] h-[60px] mx-auto mb-5"
           loading="lazy"
           decoding="async"
+          className="
+            w-full h-full object-cover
+            opacity-[0.62] scale-[1.05]
+            [filter:brightness(0.92)_contrast(0.96)]
+          "
         />
-
-        <h3 className="text-[#5d4c3f] text-[20px] tracking-[0.12em] font-medium">
-          ヨリソイ — Hair & Spa
-        </h3>
-
-        <p className="mt-4 text-[14.5px] text-[rgba(96,78,62,0.75)] leading-[1.8]">
-          静けさの中で、あなたらしさに寄り添うサロン。<br />
-          心地よい時間を、これからも。
-        </p>
+        {/* ✅ 白モヤを“強制弱体化” */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_40%_20%,rgba(255,253,249,0.12),rgba(255,253,249,0.00)_74%)]" />
       </div>
 
-      {/* ================= 店舗情報 ================= */}
-      <div className="max-w-[680px] mx-auto text-center mb-10">
-        <p className="text-[14px] text-[rgba(96,78,62,0.78)] leading-[1.85]">
-          沖縄県浦添市内間2丁目20-3（駐車場2台＋バイク1台）<br />
-          営業時間：7:00〜19:00（最終受付：カット18:00）<br />
-          定休日：毎週月曜日
-        </p>
-      </div>
+      {/* ✅ 中身を必ず前面（z-10）へ */}
+      <div className="relative z-10">
+        {/* ================= 上段 ================= */}
+        <div className="max-w-[900px] mx-auto text-center mb-12">
+          <img
+            src={birdLogo}
+            alt="YORISOI Bird Logo"
+            className="w-[60px] h-[60px] mx-auto mb-5 opacity-90"
+            loading="lazy"
+            decoding="async"
+          />
 
-      {/* ================= 制作クレジット ================= */}
-      <div className="max-w-[680px] mx-auto text-center mb-12">
-        <div className="flex flex-wrap items-center justify-center gap-3 text-[13.5px]">
-          {/* --- 制作（控えめに“気づかせる”） --- */}
-          <a
-            href={gushikenUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="
-              inline-flex items-center gap-1.5
-              px-3.5 py-1.5
-              rounded-full
-              border border-[rgba(96,78,62,0.18)]
-              text-[rgba(96,78,62,0.85)]
-              bg-[linear-gradient(90deg,rgba(255,255,255,0.18),rgba(255,255,255,0.02))]
-              hover:bg-[linear-gradient(90deg,rgba(96,78,62,0.08),rgba(96,78,62,0.03))]
-              hover:border-[rgba(96,78,62,0.26)]
-              transition-all duration-300
-              shadow-[0_4px_14px_rgba(0,0,0,0.04)]
-              hover:shadow-[0_8px_18px_rgba(0,0,0,0.06)]
-            "
-            aria-label="サイト制作：GUSHIKEN DESIGN（外部サイト）"
-          >
-            <DesignIcon />
-            サイト制作 — GUSHIKEN DESIGN
-          </a>
+          <h3 className="text-ink/90 text-[20px] tracking-[0.12em] font-medium">
+            ヨリソイ — Hair &amp; Spa
+          </h3>
 
-          {/* --- Instagram（同等の扱いで平等性） --- */}
-          <a
-            href={instaYorisoi}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="
-              inline-flex items-center gap-1.5
-              px-3.5 py-1.5
-              rounded-full
-              border border-[rgba(96,78,62,0.18)]
-              text-[rgba(96,78,62,0.85)]
-              bg-[linear-gradient(90deg,rgba(255,255,255,0.18),rgba(255,255,255,0.02))]
-              hover:bg-[linear-gradient(90deg,rgba(96,78,62,0.08),rgba(96,78,62,0.03))]
-              hover:border-[rgba(96,78,62,0.26)]
-              transition-all duration-300
-              shadow-[0_4px_14px_rgba(0,0,0,0.04)]
-              hover:shadow-[0_8px_18px_rgba(0,0,0,0.06)]
-            "
-            aria-label="ヨリソイ Instagram（外部サイト）"
-          >
-            <InstaIcon />
-            Instagram — YORISO
-          </a>
+          {/* ✅ 文字が沈まない濃度（ink基準） */}
+          <p className="mt-4 text-[14.5px] text-ink/76 leading-[1.85]">
+            朝7時から。半個室の2席で、最初から最後まで担当します。
+            <br />
+            伸びてきても崩れにくい形を基準に、仕上げます。
+          </p>
+
+          <div className="mt-7 flex flex-wrap justify-center gap-x-6 gap-y-3">
+            <FooterLink href={hotpepperUrl} label="空席を確認して予約" />
+            <FooterLink href={hotpepperReviewUrl} label="口コミを見る" />
+            <FooterLink href={instaYorisoi} label="Instagram" />
+          </div>
         </div>
-      </div>
 
-      {/* ================= コピーライト ================= */}
-      <div className="text-center">
-        <p className="text-[12px] tracking-wide text-[rgba(96,78,62,0.55)]">
-          © ヨリソイ Hair &amp; Spa
-        </p>
-      </div>
+        {/* ================= 店舗情報 ================= */}
+        <div className="max-w-[680px] mx-auto text-center mb-10">
+          <p className="text-[14px] text-ink/76 leading-[1.85]">
+            沖縄県浦添市内間2丁目20-3（駐車場2台＋バイク1台）
+            <br />
+            営業時間：7:00〜19:00（最終受付：カット18:00）
+            <br />
+            定休日：毎週月曜日
+          </p>
+          <p className="mt-4 text-[12px] leading-[1.75] text-ink/55">
+            ※ 最新の営業時間・メニューはHotPepperをご確認ください。
+          </p>
+        </div>
 
-      {/* ================= SEO（JSON-LD） ================= */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdWebSite) }}
-      />
-      <script
-        typIe="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdSalon) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdGushiken) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdPortfolio) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdWorkProof) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdItemList) }}
-      />
+        {/* ================= 制作クレジット ================= */}
+        <div className="max-w-[680px] mx-auto text-center mb-12">
+          <div className="flex flex-wrap items-center justify-center gap-3 text-[13.5px]">
+            <a
+              href={gushikenUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="
+                inline-flex items-center gap-1.5
+                px-3.5 py-1.5
+                rounded-full
+                border border-ink/14
+                text-ink/80
+                bg-[linear-gradient(90deg,rgba(255,255,255,0.18),rgba(255,255,255,0.02))]
+                hover:bg-[linear-gradient(90deg,rgba(46,42,39,0.06),rgba(46,42,39,0.02))]
+                transition-all duration-300
+                shadow-[0_4px_14px_rgba(0,0,0,0.04)]
+              "
+              aria-label="サイト制作：GUSHIKEN DESIGN（外部サイト）"
+            >
+              <DesignIcon />
+              サイト制作 — GUSHIKEN DESIGN
+            </a>
+
+            <a
+              href={instaYorisoi}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="
+                inline-flex items-center gap-1.5
+                px-3.5 py-1.5
+                rounded-full
+                border border-ink/14
+                text-ink/80
+                bg-[linear-gradient(90deg,rgba(255,255,255,0.18),rgba(255,255,255,0.02))]
+                hover:bg-[linear-gradient(90deg,rgba(46,42,39,0.06),rgba(46,42,39,0.02))]
+                transition-all duration-300
+                shadow-[0_4px_14px_rgba(0,0,0,0.04)]
+              "
+              aria-label="ヨリソイ Instagram（外部サイト）"
+            >
+              <InstaIcon />
+              Instagram — YORISOI
+            </a>
+          </div>
+        </div>
+
+        {/* ================= コピーライト ================= */}
+        <div className="text-center">
+          <p className="text-[12px] tracking-wide text-ink/55">
+            © ヨリソイ Hair &amp; Spa
+          </p>
+        </div>
+
+        {/* ================= SEO（JSON-LD） ================= */}
+        {withJsonLd && (
+          <>
+            <script
+              type="application/ld+json"
+              dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdWebSite) }}
+            />
+            <script
+              type="application/ld+json"
+              dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdSalon) }}
+            />
+            <script
+              type="application/ld+json"
+              dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdGushiken) }}
+            />
+            <script
+              type="application/ld+json"
+              dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdPortfolio) }}
+            />
+            <script
+              type="application/ld+json"
+              dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdWorkProof) }}
+            />
+            <script
+              type="application/ld+json"
+              dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdItemList) }}
+            />
+          </>
+        )}
+      </div>
     </footer>
   );
 }

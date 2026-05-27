@@ -1,5 +1,8 @@
-// src/AppSP.jsx
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+
+import ScrollToTop from "./components/ScrollToTop";
+import HashScroll from "./components/HashScroll";
+import Seo from "./components/Seo"; // ✅ 追加
 
 // ---- LP Sections ----
 import HeroSP from "./sections_sp/HeroSP";
@@ -12,7 +15,7 @@ import ReviewSP from "./sections_sp/ReviewSP";
 import AccessSP from "./sections_sp/AccessSP";
 import FinalCTA_SP from "./sections_sp/FinalCTA_SP";
 import FooterSP from "./sections_sp/FooterSP";
-
+import FAQSP from "./sections_sp/FAQSP";
 import NewsTopSP from "./pages_sp/NewsTopSP";
 import NewsListSP from "./pages_sp/NewsListSP";
 import NewsDetailSP from "./pages_sp/NewsDetailSP";
@@ -25,19 +28,24 @@ import ReserveFloatingSP from "./components_sp/ReserveFloatingSP";
 export default function AppSP() {
   return (
     <BrowserRouter>
-      <main className="scroll-smooth relative">
-        {/* 予約 & ロゴ（最前面） */}
+      <ScrollToTop />
+      <HashScroll />
+
+      <main className="relative">
         <LogoYorisoiFloatingSP />
         <ReserveFloatingSP />
 
         <Routes>
-          {/* ===============================
-              SP トップページ（LP）
-          =============================== */}
           <Route
             path="/"
             element={
               <>
+                <Seo
+                  title="浦添のメンズ専門理容室。朝7時から。"
+                  description="沖縄県浦添市内間のメンズ専門理容室ヨリソイ Hair＆Spa。静かで落ち着く1対1の空間で、似合わせ×再現性を重視したメンズカット。フェード/パーマ/シェービング/ヘッドスパ対応。駐車場あり。"
+                  path="/"
+                />
+
                 <section id="home">
                   <HeroSP />
                 </section>
@@ -52,7 +60,6 @@ export default function AppSP() {
                   <ProfileSP />
                 </section>
 
-                {/* ★ NEWSトップ3件（SP） */}
                 <section id="news">
                   <NewsTopSP />
                 </section>
@@ -72,11 +79,16 @@ export default function AppSP() {
                 <section id="review">
                   <ReviewSP />
                 </section>
+{/* ✅ 追加：FAQ（Accessの前） */}
+<section id="faq">
+  <FAQSP />
+</section>
 
                 <section id="access">
                   <AccessSP />
                 </section>
 
+                {/* ✅ wrapperにidがあるので、FinalCTA_SP側にid reserveは持たせない */}
                 <section id="reserve">
                   <FinalCTA_SP />
                 </section>
@@ -86,11 +98,23 @@ export default function AppSP() {
             }
           />
 
-          {/* ===============================
-              NEWS 全件一覧 / 詳細ページ
-          =============================== */}
-          <Route path="/news" element={<NewsListSP />} />
+          <Route
+            path="/news"
+            element={
+              <>
+                <Seo
+                  title="NEWS"
+                  description="ヨリソイの営業情報・空き状況・お知らせをまとめています。"
+                  path="/news"
+                />
+                <NewsListSP />
+              </>
+            }
+          />
+
           <Route path="/news/:id" element={<NewsDetailSP />} />
+
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
     </BrowserRouter>

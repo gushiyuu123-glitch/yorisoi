@@ -4,54 +4,93 @@
 
 /* ---------------------------------------
    裕人仕様：質感 × 可読性 × 安定性
+   - smooth scroll はデフォOFF（Lenis/GSAPと競合しやすい）
+   - reduce-motion でフェード＆スクロールを必ず無効化
+   - FadeUp は “付いた瞬間に再生” を維持しつつ、負荷と副作用を軽減
 ---------------------------------------- */
 
-/* ブラウザ共通の最適化 */
 html {
   -webkit-text-size-adjust: 100%;
   text-rendering: optimizeLegibility;
-  scroll-behavior: smooth;
+  /* scroll-behavior: smooth;  ←デフォOFF（必要ならJSでアンカーのみ制御推奨） */
 }
 
-/* body（背景色は site 全体の空気） */
 body {
   @apply bg-base text-text font-jp antialiased;
   @apply leading-relax tracking-cozy;
 
-  /* Safari のフォント最適化 */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* 画像：ドラッグ禁止 + なめらか表示 */
+/* 画像：ドラッグ禁止 + 行間ゴミ除去 + なめらか表示 */
 img {
   @apply select-none;
+  display: block;
+  max-width: 100%;
+  height: auto;
   image-rendering: auto;
   -webkit-user-drag: none;
 }
 
-/* ---------------------------------------
-   Fade Up（裕人の “静かで自然なフェード”）
----------------------------------------- */
+/* reduce-motion：強制的に動きとスムースを止める */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
 
-.fade-up {
-  opacity: 0;
-  transform: translateY(16px);
-  animation: fadeUp 1.2s cubic-bezier(0.25, 0.7, 0.3, 1) forwards;
+  /* 基本：全アニメ/トランジションを止める（事故防止） */
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* フェード系は “見える状態” に固定（アクセシビリティと酔い対策） */
+  .fade-up,
+  .fade-up-delay {
+    opacity: 1 !important;
+    transform: none !important;
+    filter: none !important;
+  }
 }
 
+/* ---------------------------------------
+   Fade Up（裕人の “静かで自然なフェード”）
+   - duration は裕人の体感帯(0.62〜0.68s)
+   - blur は 0.3px以下。長時間保持しない（負荷時間を短く）
+---------------------------------------- */
+
+.fade-up,
 .fade-up-delay {
   opacity: 0;
   transform: translateY(16px);
-  animation: fadeUp 1.2s cubic-bezier(0.25, 0.7, 0.3, 1) forwards 0.2s;
+
+  /* will-changeは“重いfilter”を外す（メモリと合成コストを抑える） */
+  will-change: opacity, transform;
 }
 
-/* 自然なフェードアップ */
+/* ベース：速め（裕人帯） */
+.fade-up {
+  animation: fadeUp 0.66s cubic-bezier(0.25, 0.7, 0.3, 1) forwards;
+}
+
+/* 少しだけ遅らせる（やりすぎない） */
+.fade-up-delay {
+  animation: fadeUp 0.66s cubic-bezier(0.25, 0.7, 0.3, 1) forwards 0.18s;
+}
+
+/* 自然なフェードアップ（blurは“最初だけ”で切る） */
 @keyframes fadeUp {
   0% {
     opacity: 0;
     transform: translateY(16px);
-    filter: blur(0.3px); /* 裕人ルール：人間が感じない0.3px以下 */
+    filter: blur(0.3px);
+  }
+  35% {
+    filter: blur(0px);
   }
   100% {
     opacity: 1;

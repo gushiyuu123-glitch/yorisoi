@@ -1,143 +1,144 @@
-import { useRef, useEffect } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-gsap.registerPlugin(ScrollTrigger);
+// src/sections_sp/ProfileSP.jsx
+import { Reveal } from "../components/Reveal";
 
 export default function ProfileSP() {
-  const sectionRef = useRef(null);
-
-  useEffect(() => {
-    const el = sectionRef.current;
-    if (!el) return;
-
-    gsap.fromTo(
-      el.querySelectorAll(".pfSP"),
-      { opacity: 0, y: 26, filter: "blur(8px)" },
-      {
-        opacity: 1,
-        y: 0,
-        filter: "blur(0px)",
-        ease: "power3.out",
-        duration: 1.1,
-        stagger: 0.16,
-        scrollTrigger: { trigger: el, start: "top 82%" },
-      }
-    );
-  }, []);
+  const REVIEW_URL = "https://beauty.hotpepper.jp/slnH000706136/review/";
 
   return (
     <section
-      id="owner"
-      ref={sectionRef}
       className="
-        w-full bg-[#f7f4ef]
-        pt-[12vh] pb-[18vh]
+        w-full bg-base
+        pt-[12vh]
         px-[6vw]
+        pb-[calc(18vh+110px+env(safe-area-inset-bottom))]
       "
+      aria-label="店主プロフィール"
     >
-      <div className="mx-auto max-w-[480px]">
-
-        {/* 写真（上：高級感の光膜アリ） */}
-        <div className="relative pfSP mb-10">
+      <div className="mx-auto max-w-[520px]">
+        {/* 写真 */}
+        <Reveal delay={0.0} y={12} blur={0.14} duration={0.62} className="relative mb-8">
           <img
-            src="/yorisoi/profile1.png"
-            alt="店主の写真"
+            src="/yorisoi/profile2.jpg"
+            alt="店主 照喜名一樹の写真"
+            loading="lazy"
+            decoding="async"
             className="
-              w-full h-[420px]
-              object-cover object-[center]
-              rounded-[8px]
-              shadow-[0_8px_26px_rgba(0,0,0,0.12)]
-              brightness-[1.03] contrast-[0.94]
+              w-full object-cover
+              rounded-[6px]
+              shadow-[0_8px_22px_rgba(0,0,0,0.12)]
+              [filter:brightness(1.02)_contrast(0.95)]
+              object-[center_18%]
+              aspect-[4/5]
             "
           />
 
-          {/* 上部光膜 */}
+          {/* 上部の薄い光膜（強すぎない） */}
           <div
+            aria-hidden="true"
             className="
-              absolute inset-0 pointer-events-none
+              absolute inset-0 pointer-events-none rounded-[6px]
               bg-[linear-gradient(
                 to_bottom,
-                rgba(255,255,255,0.40) 0%,
-                rgba(255,255,255,0.15) 45%,
+                rgba(255,255,255,0.28) 0%,
+                rgba(255,255,255,0.12) 42%,
                 rgba(255,255,255,0) 100%
               )]
-              rounded-[8px]
             "
           />
-        </div>
+        </Reveal>
 
         {/* 見出し */}
-        <p className="pfSP text-[11px] tracking-[0.26em] text-[rgba(96,78,62,0.50)] mb-3">
-          PROFILE ／ 店主について
-        </p>
+        <Reveal
+          as="p"
+          delay={0.06}
+          y={12}
+          blur={0.14}
+          duration={0.62}
+          className="text-[11px] tracking-[0.24em] text-ink/55 mb-3"
+        >
+          店主について
+        </Reveal>
 
-        {/* タイトル */}
-        <h2
+        {/* タイトル（“整える”連打を避ける） */}
+        <Reveal
+          as="h2"
+          delay={0.12}
+          y={12}
+          blur={0.14}
+          duration={0.62}
           className="
-            pfSP
-            text-[clamp(22px,6vw,27px)]
+            text-[clamp(20px,6vw,26px)]
             leading-[1.48]
-            text-[#5d4c3f]
+            tracking-[0.005em]
+            text-ink/90
             font-medium
             mb-6
           "
         >
-          美容師としての“軸”が、  
-          このサロンをつくりました。
-        </h2>
+          似合う形を、<br />
+          きれいに仕上げる。
+        </Reveal>
 
-        {/* ストーリー */}
-        <div
+        {/* ストーリー（“初回の安心”を先に混ぜる） */}
+        <Reveal
+          delay={0.18}
+          y={12}
+          blur={0.14}
+          duration={0.62}
           className="
-            pfSP
-            text-[14.8px] leading-[1.92]
-            text-[rgba(96,78,62,0.82)]
+            text-[15px]
+            leading-[1.95]
+            text-ink/78
             space-y-5
           "
         >
           <p>
-            人と向き合う仕事を18年間続けてきて、気づいたことがあります。  
-            髪を整えるだけではなく、
-            <span className="text-[#5d4c3f] font-medium">
-              「その日の気持ちに寄り添う空気」
-            </span>
-            が、美容室には必要だということ。
+            東京で副店長として18年。<br />
+            カットとパーマの現場で経験を重ねてきました。
           </p>
 
           <p>
-            忙しい日、疲れた日、話したい日、静かにしたい日。  
-            お客様の表情や声のトーンから、その日の“ちょうどいい距離感”を探すことが私のスタイルです。
+            最初に「気になるところ」と「普段のセット」を確認して、<br />
+            髪質・骨格に合わせて仕上がりを決めていきます。
           </p>
 
           <p>
-            カットの技術はもちろん、  
-            <span className="text-[#5d4c3f] font-medium">
-              「無理のない自然体」
-            </span>
-            を大切にしています。  
-            手ぐしで整う、頑張らなくても決まる、そんな髪型が好きです。
+            パーマは、朝が楽になることを基準に。<br />
+            ニュアンス〜しっかりめまで、相談しながら整えます。
           </p>
 
-          <p>
-            初めて来た方でも安心して任せられる、  
-            やわらかい空気をまとったサロンでありたい——  
-            その想いで YORISOI をつくりました。
-          </p>
-        </div>
+  <p className="text-ink/70">
+  その日の雰囲気を見ながら、テンポも距離感も合わせます。<br />
+  気になるところは、途中でもそのまま言ってください。
+</p>
+        </Reveal>
 
-        {/* プロフィール情報 */}
-        <div
-          className="
-            pfSP
-            mt-10 text-[14.6px] leading-[1.9]
-            text-[rgba(96,78,62,0.80)]
-            space-y-1.5
-          "
+        {/* 事実（箱をやめて線と余白で） */}
+        <Reveal
+          delay={0.24}
+          y={12}
+          blur={0.12}
+          duration={0.62}
+          className="mt-8 pt-6 border-t border-ink/10"
         >
-          <p><span className="font-medium text-[#5d4c3f]">名前：</span>山田 聡</p>
-          <p><span className="font-medium text-[#5d4c3f]">経験：</span>美容師歴〇〇〇年（東京・沖縄）</p>
-          <p><span className="font-medium text-[#5d4c3f]">得意：</span>扱いやすいナチュラルカット</p>
-        </div>
+          <dl className="text-[13.6px] leading-[1.9] text-ink/74 space-y-2">
+            <div className="flex gap-3">
+              <dt className="w-[5.5em] text-ink/88 font-medium">名前</dt>
+              <dd>照喜名 一樹</dd>
+            </div>
+            <div className="flex gap-3">
+              <dt className="w-[5.5em] text-ink/88 font-medium">得意</dt>
+              <dd>メンズカット／メンズパーマ</dd>
+            </div>
+            <div className="flex gap-3">
+              <dt className="w-[5.5em] text-ink/88 font-medium">評価</dt>
+              <dd>★5.0（61件）／2026.03時点</dd>
+            </div>
+          </dl>
+
+
+        </Reveal>
+
 
       </div>
     </section>

@@ -1,157 +1,215 @@
 // src/sections/Review.jsx
-import React from "react";
+import { useEffect, useMemo } from "react";
+import { Reveal } from "../components/Reveal";
+
+const HOTPEPPER_REVIEW_URL = "https://beauty.hotpepper.jp/slnH000706136/review/";
+const MAX_REVIEWS = 4;
 
 export default function Review() {
+  // HotPepper表記に合わせた数値
+  const rating = useMemo(
+    () => ({
+      avg: "5.00",
+      count: 63,
+      mood: "5.0",
+      service: "5.0",
+      skill: "5.0",
+      price: "4.7",
+    }),
+    []
+  );
 
-  const reviews = [
-    {
-      name: "20代後半 男性（会社員）",
-      text: "毎回同じスタイルを正確に再現してくれるので安心して任せられます。落ち着いた空間で居心地もよく、細かな要望にも丁寧に対応してくれます。",
-    },
-    {
-      name: "30代後半 男性（会社員）",
-      text: "カットもスパも非常に丁寧でリラックスできる時間でした。仕上がりも満足で、今後も通いたいと思えるサロンです。",
-    },
-    {
-      name: "40代 男性（会社員）",
-      text: "照明や空間の気遣いが心地よく、施術中に眠りそうになるほどリラックスできます。技術も安定していて、毎回安心して任せられます。",
-    },
-    {
-      name: "20代後半 男性（会社員）",
-      text: "初めてパーマをお願いしましたが、理想的な仕上がりでした。待ち時間の配慮など細かなサービスも良かったです。",
-    },
-    {
-      name: "40代 男性（会社員）",
-      text: "カウンセリングが丁寧で、細かい部分まで確認してくれます。仕上がりも扱いやすく、信頼できるサロンです。",
-    },
-    {
-      name: "30代後半 男性（自営業）",
-      text: "朝早くからの予約にも対応してくれて助かります。落ち着いた店内で丁寧にカットしてくれて、気持ちが整います。",
-    },
-  ];
+  // ※ 外部口コミの“要点まとめ”（引用ではなく要約）
+  //   - 「会話/整う」などの“意識させるワード”は避け、寄り添い=合わせる/丁寧/再現性で寄せる
+  const reviews = useMemo(
+    () => [
+      {
+        name: "50代 男性（会社員）",
+        text:
+          "予約制で待たずに入れて、駐車もスムーズでした。仕上げが丁寧で、家でもセットしやすい形になりました。",
+      },
+      {
+        name: "30代後半 男性（会社員）",
+        text:
+          "最初に希望を確認してから進めてくれるので安心。パーマの強さも相談できて、仕上がりが期待以上でした。",
+      },
+      {
+        name: "20代後半 男性（会社員）",
+        text:
+          "同じ雰囲気を安定して再現してくれるので頼りやすいです。気になる点もその場で調整してくれます。",
+      },
+      {
+        name: "40代 男性（会社員）",
+        text:
+          "動きが丁寧で、時間があっという間でした。仕上がりのまとまりも良く、次の日から楽でした。",
+      },
+      // 予備（将来増やす用。表示はMAX_REVIEWSで固定）
+      {
+        name: "30代後半 男性（会社員）",
+        text:
+          "カットとパーマのバランスが上手い。伸びてきても崩れにくく、朝のセットが楽になりました。",
+      },
+      {
+        name: "40代 男性（自営業）",
+        text:
+          "仕上げの精度が高く、安心して任せられます。技術と価格のバランスも良いと感じました。",
+      },
+    ],
+    []
+  );
 
-  const avg = "5.0";
+  // JSON-LD（重複しない）
+  useEffect(() => {
+    const id = "ld-yorisoi-aggregate-rating";
+    if (document.getElementById(id)) return;
+
+    const script = document.createElement("script");
+    script.id = id;
+    script.type = "application/ld+json";
+    script.text = JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "HairSalon",
+      name: "YORISOI",
+      aggregateRating: {
+        "@type": "AggregateRating",
+        ratingValue: rating.avg,
+        reviewCount: String(rating.count),
+        bestRating: "5",
+        worstRating: "1",
+      },
+    });
+
+    document.head.appendChild(script);
+  }, [rating]);
+
+  const visible = reviews.slice(0, MAX_REVIEWS);
 
   return (
     <section
       id="review"
-      className="w-full bg-[#f7f4ef] pt-[18vh] pb-[18vh] px-[6vw]"
+      className="w-full bg-base pt-[18vh] pb-[18vh] px-[6vw]"
+      aria-label="口コミ"
     >
-
-      {/* =========================
-          AggregateRating（SEO）
-      ========================== */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "HairSalon",
-            "name": "YORISOI Hair & Spa",
-            "aggregateRating": {
-              "@type": "AggregateRating",
-              "ratingValue": "5.0",
-              "reviewCount": reviews.length.toString(),
-              "bestRating": "5",
-              "worstRating": "1"
-            }
-          })
-        }}
-      />
-
-      {/* TITLE */}
-      <div className="mx-auto max-w-[760px] mb-12 text-center">
-        <p className="text-[12px] tracking-[0.32em] text-[rgba(96,78,62,0.55)] mb-6">
-          REVIEW / 口コミ
-        </p>
-
-        <h2 className="text-[clamp(26px,3vw,34px)] text-[#5d4c3f] leading-[1.45] font-medium mb-4">
-          実際にご来店いただいた<br />お客様の声
-        </h2>
-
-        {/* 平均評価 */}
-        <div className="flex justify-center items-center gap-2 mt-3">
-          <span className="text-[15px] text-[#5d4c3f] font-medium">
-            平均評価
-          </span>
-          <span className="text-[20px] font-semibold text-[#b38b4d]">
-            {avg}
-          </span>
-          <span className="text-[13px] text-[rgba(96,78,62,0.6)]">
-            / 5.0
-          </span>
-        </div>
-      </div>
-
-      {/* GRID */}
-      <div className="mx-auto max-w-[980px] grid grid-cols-3 gap-[2.2vw] md:grid-cols-2 sm:grid-cols-1">
-
-        {reviews.map((r, i) => (
-          <div
-            key={i}
-            className="
-              bg-white/75 backdrop-blur-[1px]
-              border border-[rgba(96,78,62,0.12)]
-              rounded-[16px]
-              shadow-[0_8px_24px_rgba(0,0,0,0.05)]
-              p-8
-              transition duration-300
-              hover:shadow-[0_14px_34px_rgba(0,0,0,0.08)]
-            "
+      <div className="mx-auto max-w-[980px]">
+        {/* TITLE */}
+        <div className="mx-auto max-w-[780px] text-center mb-12">
+          <Reveal
+            as="p"
+            delay={0.0}
+            y={12}
+            blur={0.14}
+            duration={0.66}
+            className="text-[12px] tracking-[0.28em] text-ink/55 mb-6"
           >
-            {/* 星（常に5） */}
-            <div className="flex items-center gap-1 mb-4">
-              {Array.from({ length: 5 }).map((_, idx) => (
-                <svg
-                  key={idx}
-                  viewBox="0 0 24 24"
-                  fill="#d4af37"
-                  stroke="#b38b4d"
-                  strokeWidth="0.6"
-                  className="w-[18px] h-[18px]"
-                  style={{
-                    filter: "drop-shadow(0 0 2px rgba(212,175,55,0.35))"
-                  }}
-                >
-                  <polygon points="12 2 15 9 22 9 17 13 19 21 12 17 5 21 7 13 2 9 9 9" />
-                </svg>
-              ))}
+            口コミ
+          </Reveal>
+
+          <Reveal
+            as="h2"
+            delay={0.06}
+            y={12}
+            blur={0.14}
+            duration={0.66}
+            className="text-[clamp(26px,3vw,34px)] text-ink/90 leading-[1.42] font-medium mb-6"
+          >
+            任せてよかった、の声。
+          </Reveal>
+
+          {/* Rating row（カード化しない） */}
+          <Reveal
+            delay={0.12}
+            y={12}
+            blur={0.14}
+            duration={0.66}
+            className="flex flex-col items-center gap-3"
+          >
+            <div className="flex items-end gap-3">
+              <span className="text-[13px] text-ink/70 tracking-[0.10em]">
+                平均
+              </span>
+              <span className="text-[34px] leading-none font-semibold text-ink/90">
+                {rating.avg}
+              </span>
+              <span className="text-[13px] text-ink/58">
+                / 5.0（{rating.count}件）
+              </span>
             </div>
 
-            <p className="text-[15px] leading-[1.9] text-[rgba(96,78,62,0.82)] mb-5">
-              {r.text}
+            <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-[12px] text-ink/62 tracking-[0.08em]">
+              <span>
+                雰囲気 <b className="text-ink/86">{rating.mood}</b>
+              </span>
+              <span>
+                接客 <b className="text-ink/86">{rating.service}</b>
+              </span>
+              <span>
+                技術 <b className="text-ink/86">{rating.skill}</b>
+              </span>
+              <span>
+                料金 <b className="text-ink/86">{rating.price}</b>
+              </span>
+            </div>
+          </Reveal>
+        </div>
+
+        {/* LIST（罫線で“誌面”に寄せる） */}
+        <div className="border-y border-ink/14">
+          {visible.map((r, i) => (
+            <Reveal
+              key={i}
+              delay={0.02 * i}
+              y={12}
+              blur={0.12}
+              duration={0.66}
+              className="py-9 border-b border-ink/12 last:border-b-0"
+            >
+              <div className="grid grid-cols-1 lg:grid-cols-[1fr,220px] gap-6 items-start">
+                <div>
+                  <p className="text-[15.5px] leading-[1.95] text-ink/82">
+                    {r.text}
+                  </p>
+                </div>
+
+                <div className="lg:text-right">
+                  <div className="text-[12px] tracking-[0.22em] text-ink/55 mb-2">
+                    ★★★★★
+                  </div>
+                  <p className="text-[13px] text-ink/60">{r.name}</p>
+                </div>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+
+        {/* CTA（“外部で確認できる”だけ残す） */}
+        <div className="text-center mt-[9vh]">
+          <Reveal delay={0.0} y={12} blur={0.12} duration={0.66}>
+            <a
+              href={HOTPEPPER_REVIEW_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="
+                inline-flex items-center justify-center
+                px-8 py-3.5
+                rounded-[999px]
+                text-[14px]
+                text-ink/90
+                bg-ink/[0.08]
+                tracking-[0.08em]
+                hover:bg-ink/[0.12]
+                transition-all duration-300
+                shadow-[0_6px_18px_rgba(0,0,0,0.05)]
+              "
+            >
+              すべての口コミを見る
+            </a>
+
+            <p className="text-[12px] mt-4 leading-[1.8] text-ink/50">
+              最新の口コミ・点数は外部ページで確認できます。
             </p>
-
-            <p className="text-[13px] text-[rgba(96,78,62,0.55)] tracking-wide">
-              {r.name}
-            </p>
-          </div>
-        ))}
+          </Reveal>
+        </div>
       </div>
-
-      {/* CTA */}
-      <div className="text-center mt-[9vh]">
-        <a
-          href="https://beauty.hotpepper.jp/slnH000706136/review/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="
-            inline-block
-            px-9 py-3.5
-            rounded-full
-            text-[14px]
-            text-[#5d4c3f]
-            bg-[linear-gradient(90deg,rgba(96,78,62,0.15),rgba(96,78,62,0.08))]
-            tracking-[0.08em]
-            hover:opacity-80
-            transition-all duration-300
-            shadow-[0_6px_18px_rgba(0,0,0,0.06)]
-          "
-        >
-          すべての口コミを見る（HotPepper Beauty）
-        </a>
-      </div>
-
     </section>
   );
 }

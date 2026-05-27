@@ -1,92 +1,90 @@
 // src/components/LogoYorisoiFloating.jsx
 import { useEffect, useRef } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import gsap from "gsap";
-import { ScrollToPlugin } from "gsap/ScrollToPlugin";
-
-// ScrollTo Plugin を有効化
-gsap.registerPlugin(ScrollToPlugin);
 
 export default function LogoYorisoiFloating() {
   const wrapRef = useRef(null);
 
-  /* ================================
-      初期フェードイン（静けさ × 高級感）
-  ================================ */
+  const navigate = useNavigate();
+  const { pathname, hash } = useLocation();
+
+  const reduce =
+    typeof window !== "undefined"
+      ? window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false
+      : false;
+
   useEffect(() => {
     const el = wrapRef.current;
     if (!el) return;
 
+    // ✅ LP以外は「即表示」(news等で消えた体感を潰す)
+    if (pathname !== "/" || reduce) {
+      gsap.set(el, { opacity: 1, y: 0, filter: "blur(0px)" });
+      return;
+    }
+
+    // ✅ LPでも delay を短く（透明時間が長いと「消えた」になる）
     gsap.fromTo(
       el,
-      { opacity: 0, y: 8, filter: "blur(6px)" },
+      { opacity: 0, y: 8, filter: "blur(0.35px)" },
       {
         opacity: 1,
         y: 0,
         filter: "blur(0px)",
-        duration: 1.2,
+        duration: 0.78,
         ease: "power3.out",
-        delay: 4.5,
+        delay: 1.1,
       }
     );
-  }, []);
 
-  /* ================================
-        ★ 帰還：どこにいても Hero に戻る
-  ================================ */
-  const scrollToHero = () => {
-    // 1) Hero セクションを取得
-    const hero = document.getElementById("home");
+    return () => gsap.killTweensOf(el);
+  }, [pathname, reduce]);
 
-    // 2) Hero が存在しない（記事ページなど）→ トップへ遷移
-    if (!hero) {
-      // いったんトップに遷移
-      window.location.href = "/";
+  const goHome = () => {
+    if (pathname !== "/") {
+      navigate({ pathname: "/", hash: "#home" });
       return;
     }
-
-    // 3) Hero セクションがある → スクロールで戻す
-    gsap.to(window, {
-      duration: 0,
-      scrollTo: hero,
-      ease: "power3.out",
-    });
+    if (hash !== "#home") {
+      navigate({ hash: "#home" });
+      return;
+    }
+    window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
   };
 
   return (
-    <div
+    <button
       ref={wrapRef}
-      onClick={scrollToHero}
+      type="button"
+      onClick={goHome}
+      aria-label="トップへ戻る"
       className="
-        fixed top-[4vh] left-[3vw] z-[50]
+        fixed top-[4vh] left-[3vw] z-[120]
         flex items-center gap-3
-        cursor-pointer
+        cursor-pointer select-none
       "
     >
       {/* 光膜 */}
-      <div
+      <span
+        aria-hidden="true"
         className="
-          absolute inset-0 -z-10 opacity-[0.35]
+          absolute inset-0 -z-10 opacity-[0.30]
           blur-[18px] rounded-full pointer-events-none
           bg-[rgba(255,255,255,0.45)]
         "
       />
 
-      {/* 鳥ロゴ */}
       <img
         src="/yorisoi/bird-logo.png"
-        alt="YORISOI Bird Logo"
-        className="w-[52px] h-[52px] opacity-85 select-none pointer-events-none"
+        alt=""
+        className="w-[52px] h-[52px] opacity-85 pointer-events-none"
+        decoding="async"
       />
 
-      {/* 文字ロゴ */}
-      <span
-        className="
-          text-[17px] tracking-[0.18em] font-medium
-          text-[rgba(96,78,62,0.82)] select-none
-        "
-      >
+      <span className="text-[17px] tracking-[0.18em] font-medium text-[rgba(96,78,62,0.82)]">
         ヨリソイ Hair＆Spa
       </span>
-    </div>
+    </button>
   );
 }
