@@ -85,7 +85,7 @@ export default function HeroC() {
         );
       }
 
-      // CTA（A-7：Hero内で予約へ）
+      // CTA（Hero内）
       if (ctaRef.current) {
         tl.fromTo(
           ctaRef.current,
@@ -132,17 +132,20 @@ export default function HeroC() {
     </span>
   );
 
-  // ✅ 禁止ワード回避（静かに/整う なし）
-  const LINE_1 = "朝7時から、身だしなみが決まる。";
-  const LINE_2 = "半個室で、1対1で仕上げます。";
+  // ✅ “業種認識”を最上段へ（OGPと同じ一撃）
+  const LINE_1 = "浦添のメンズ専門理容室。";
+  const LINE_2 = "朝7時から。";
+
+  // リード（世界観はここに残す）
+  const LEAD = "半個室で、最初から最後まで担当します。";
 
   // S-1：強み5つ（タグ）
-  const TAGS = ["朝7:00〜", "マンツーマン", "半個室", "駐車場あり", "メンズ専門"];
+  const TAGS =["半個室","マンツーマン","シェービング","駐車場あり"];
 
-  // A-7：Hero内CTA（テキストリンク）
+  // Hero内CTA（外部）
   const RESERVE_URL = "https://beauty.hotpepper.jp/slnH000706136/";
 
-  // A-4：サブテキスト（受け入れ → 具体 → パーマは最後）
+  // サブ（受け入れ → 具体 → パーマは最後）
   const SUB_1 = "気になるところだけ教えてください。";
   const SUB_2 = "髪質とセットの癖に合わせて、朝が楽になる形を作ります。";
   const SUB_3 = "パーマで扱いやすくなる方には、あわせてご提案します。";
@@ -227,12 +230,15 @@ export default function HeroC() {
             className="text-[19px] tracking-[0.36em] text-[rgba(96,78,62,0.80)] font-light"
           >
             ヨリソイ
+            <span className="ml-2 text-[12px] tracking-[0.28em] text-[rgba(96,78,62,0.62)]">
+              Hair&Spa
+            </span>
           </div>
 
           <div className="h-[1px] w-[120px] border-t border-dashed border-[rgba(96,78,62,0.35)] translate-y-[0.5px]" />
         </div>
 
-        {/* S-1：強み5つ（タグ） */}
+        {/* 強みタグ */}
         <ul
           ref={tagsRef}
           className="
@@ -252,7 +258,7 @@ export default function HeroC() {
           ))}
         </ul>
 
-        {/* H1 */}
+        {/* H1：業種認識の一撃 */}
         <h1
           ref={titleRef}
           aria-label={`${LINE_1} ${LINE_2}`}
@@ -270,26 +276,32 @@ export default function HeroC() {
           {splitChunk(LINE_2)}
         </h1>
 
-        {/* A-4：サブ（受け入れ→具体→パーマ） */}
-        <p
+        {/* サブ（リード＋説明） */}
+        <div
           ref={subRef}
-          className="
-            mt-6
-            text-[clamp(12.5px,3.6vw,14.5px)]
-            leading-[2.0]
-            font-normal
-            tracking-[0.01em]
-            text-[rgba(115,92,75,0.70)]
-            max-w-[520px]
-          "
+          className="mt-6 max-w-[520px]"
         >
-          {SUB_1}
-          <br />
-          {SUB_2}
-          <br />
-          {SUB_3}
-        </p>
+          <p className="text-[15px] leading-[1.9] tracking-[0.01em] text-[rgba(93,76,63,0.78)]">
+            {LEAD}
+          </p>
 
+          <p
+            className="
+              mt-4
+              text-[clamp(12.5px,3.6vw,14.5px)]
+              leading-[2.0]
+              font-normal
+              tracking-[0.01em]
+              text-[rgba(115,92,75,0.70)]
+            "
+          >
+            {SUB_1}
+            <br />
+            {SUB_2}
+            <br />
+            {SUB_3}
+          </p>
+        </div>
 
       </div>
     </section>

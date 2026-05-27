@@ -15,21 +15,21 @@ export default function AboutSP() {
     >
       <div className="mx-auto max-w-[520px]">
         {/* 小鳥アイコン */}
-        <Reveal
-          delay={0.0}
-          y={12}
-          blur={0.14}
-          duration={0.62}
-          className="flex justify-start mb-4 opacity-85"
-        >
-          <img
-            src="/yorisoi/bird-logo.png"
-            alt=""
-            className="w-[26px] h-[26px] opacity-75"
-            loading="lazy"
-            decoding="async"
-          />
-        </Reveal>
+ <Reveal
+  delay={0.0}
+  y={12}
+  blur={0.14}
+  duration={0.62}
+  className="flex justify-start mb-4 opacity-85"
+>
+  <img
+    src="/yorisoi/bird-logo.png"
+    alt=""
+    className="w-[30px] h-[30px] opacity-75"
+    loading="lazy"
+    decoding="async"
+  />
+</Reveal>
 
         {/* ABOUT SVG（小さめ） */}
         <Reveal delay={0.05} y={12} blur={0.14} duration={0.62} className="overflow-hidden mb-3">

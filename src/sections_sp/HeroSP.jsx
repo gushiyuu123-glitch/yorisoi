@@ -8,7 +8,6 @@ export default function HeroSP() {
   const tagsRef = useRef(null);
   const titleRef = useRef(null);
   const subRef = useRef(null);
-  const ctaRef = useRef(null);
   const photoRef = useRef(null);
   const ctxRef = useRef(null);
 
@@ -16,6 +15,12 @@ export default function HeroSP() {
     typeof window !== "undefined"
       ? window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false
       : false;
+
+  // ✅ スマホでの安定優先：blurを使わない（スクロール体感を守る）
+  const coarse =
+    typeof window !== "undefined"
+      ? window.matchMedia?.("(pointer:coarse)")?.matches ?? true
+      : true;
 
   // 1行をnowrapで保持（改行事故防止）
   const splitLine = (text) => (
@@ -36,7 +41,6 @@ export default function HeroSP() {
       const tags = tagsRef.current;
       const title = titleRef.current;
       const sub = subRef.current;
-      const cta = ctaRef.current;
       const photo = photoRef.current;
 
       if (!logo || !title || !sub || !photo) return;
@@ -44,21 +48,28 @@ export default function HeroSP() {
       const chars = title.querySelectorAll(".char");
       if (!chars.length) return;
 
+      // ✅ スマホはblur無し（0px固定）
+      const bLogo = coarse ? "blur(0px)" : "blur(0.22px)";
+      const bTags = coarse ? "blur(0px)" : "blur(0.18px)";
+      const bChar = coarse ? "blur(0px)" : "blur(0.22px)";
+      const bSub = coarse ? "blur(0px)" : "blur(0.18px)";
+      const bPhoto = coarse ? "blur(0px)" : "blur(0.24px)";
+
       const tl = gsap.timeline({ delay: 0.16 });
 
-      // ロゴ（極薄blur）
+      // ロゴ
       tl.fromTo(
         logo,
-        { opacity: 0, y: 10, filter: "blur(0.22px)" },
-        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.66, ease: "power3.out" }
+        { opacity: 0, y: 10, filter: bLogo },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.62, ease: "power3.out" }
       );
 
       // タグ（S-1）
       if (tags) {
         tl.fromTo(
           tags,
-          { opacity: 0, y: 8, filter: "blur(0.18px)" },
-          { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.52, ease: "power3.out" },
+          { opacity: 0, y: 8, filter: bTags },
+          { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.50, ease: "power3.out" },
           "-=0.44"
         );
       }
@@ -66,12 +77,12 @@ export default function HeroSP() {
       // H1（文字）
       tl.fromTo(
         chars,
-        { opacity: 0, y: 14, filter: "blur(0.22px)" },
+        { opacity: 0, y: 14, filter: bChar },
         {
           opacity: 1,
           y: 0,
           filter: "blur(0px)",
-          duration: 0.72,
+          duration: 0.70,
           stagger: 0.020,
           ease: "power3.out",
         },
@@ -81,44 +92,34 @@ export default function HeroSP() {
       // サブ
       tl.fromTo(
         sub,
-        { opacity: 0, y: 10, filter: "blur(0.18px)" },
-        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.58, ease: "power3.out" },
-        "-=0.38"
+        { opacity: 0, y: 10, filter: bSub },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.56, ease: "power3.out" },
+        "-=0.36"
       );
 
-      // CTA（A-7）
-      if (cta) {
-        tl.fromTo(
-          cta,
-          { opacity: 0, y: 10, filter: "blur(0.16px)" },
-          { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.56, ease: "power3.out" },
-          "-=0.44"
-        );
-      }
-
-      // 写真（過剰blur禁止：極薄＋scaleで像が立つ）
+      // 写真（像の立ち上がり：スマホはblur無し）
       tl.fromTo(
         photo,
-        { opacity: 0.72, scale: 1.02, x: 8, filter: "blur(0.24px)" },
-        { opacity: 1, scale: 1, x: 0, filter: "blur(0px)", duration: 0.9, ease: "power3.out" },
-        "-=0.78"
+        { opacity: 0.72, scale: 1.02, x: 8, filter: bPhoto },
+        { opacity: 1, scale: 1, x: 0, filter: "blur(0px)", duration: 0.88, ease: "power3.out" },
+        "-=0.72"
       );
     }, rootRef);
 
     return () => ctxRef.current?.revert?.();
-  }, [reduce]);
+  }, [reduce, coarse]);
 
-  // ✅ 禁止ワード回避（静かに/整う なし）
-  const LINE1 = "朝7時から、身だしなみが決まる。";
-  const LINE2 = "半個室で、1対1で仕上げます。";
+  // ✅ Hero一撃：業種認識（OGPと同じ）
+  const LINE1 = "浦添のメンズ専門理容室。";
+  const LINE2 = "朝7時から。";
 
-  // S-1：強み5つ
-  const TAGS = ["朝7:00〜", "マンツーマン", "半個室", "駐車場あり", "メンズ専門"];
+  // ✅ タグ：被りゼロで“理容室感”を増やす（最強セット）
+  const TAGS = ["半個室", "マンツーマン", "シェービング", "駐車場あり"];
 
-  // A-7：Hero内CTA
-  const RESERVE_URL = "https://beauty.hotpepper.jp/slnH000706136/";
+  // ✅ “寄り添う/丁寧”を抽象で言わず、行動で言う
+  const LEAD = "半個室で、最初から最後まで担当します。";
 
-  // A-4：サブテキスト
+  // サブ（安心の順番）
   const SUB_1 = "気になるところだけ教えてください。";
   const SUB_2 = "髪質とセットの癖に合わせて、朝が楽になる形を作ります。";
   const SUB_3 = "パーマで扱いやすくなる方には、あわせてご提案します。";
@@ -162,10 +163,11 @@ export default function HeroSP() {
             rgba(247,244,239,0.64) 100%
           )]
           backdrop-blur-[2.4px]
+          [@media(pointer:coarse)]:backdrop-blur-0
         "
       />
 
-      {/* 3) テキスト（帯の中に収める） */}
+      {/* 3) テキスト */}
       <div
         className="
           absolute inset-x-0
@@ -188,7 +190,7 @@ export default function HeroSP() {
             ヨリソイ Hair&Spa
           </div>
 
-          {/* S-1：強み5つ（タグ） */}
+          {/* タグ */}
           <ul
             ref={tagsRef}
             className="
@@ -208,13 +210,14 @@ export default function HeroSP() {
             ))}
           </ul>
 
+          {/* H1：業種一撃 */}
           <h1
             ref={titleRef}
             aria-label={`${LINE1} ${LINE2}`}
             className="
               mt-[5vh]
               text-[clamp(19px,6.0vw,25px)]
-              leading-[1.24]
+              leading-[1.22]
               tracking-[0.005em]
               font-medium
               text-[rgba(46,42,39,0.94)]
@@ -224,11 +227,25 @@ export default function HeroSP() {
             <span className="block whitespace-nowrap mt-[0.28em]">{splitLine(LINE2)}</span>
           </h1>
 
-          {/* A-4：サブ（カード化しない） */}
+          {/* リード：抽象を避けて“行動”で言い切る */}
+          <p
+            className="
+              mt-4
+              text-[clamp(12px,3.3vw,13.5px)]
+              leading-[1.85]
+              tracking-[0.01em]
+              text-[rgba(46,42,39,0.78)]
+              max-w-[32em]
+            "
+          >
+            {LEAD}
+          </p>
+
+          {/* サブ */}
           <p
             ref={subRef}
             className="
-              mt-8
+              mt-6
               text-[clamp(11px,3.1vw,13px)]
               leading-[1.9]
               tracking-[0.01em]
@@ -242,8 +259,6 @@ export default function HeroSP() {
             <br />
             {SUB_3}
           </p>
-
-  
         </div>
 
         {/* 下側は空ける：下固定UIに被らない */}
