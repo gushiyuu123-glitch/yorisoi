@@ -189,16 +189,11 @@ export default function FooterSP({
 
           {/* ✅ 抽象語を排除 → 事実と約束で締める */}
           <p className="mt-3 text-[13.5px] text-ink/76 leading-[1.85]">
-            朝7時から。半個室の2席で、最初から最後まで担当します。<br />
+            朝7時から。半個室の2席で、<br />最初から最後まで担当します。<br /><br />
             伸びてきても崩れにくい形を基準に、仕上げます。
           </p>
 
-          {/* ✅ 迷わせない導線（小さく） */}
-          <div className="mt-6 flex flex-col items-center gap-3">
-            <FooterLink href={hotpepperUrl} label="空席を確認して予約" />
-            <FooterLink href={hotpepperReviewUrl} label="口コミを見る" />
-            <FooterLink href={instaYorisoi} label="Instagram" />
-          </div>
+
 
           <p className="mt-5 text-[11px] leading-[1.75] text-ink/50">
             ※ 最新の営業時間・メニューはHotPepperをご確認ください。

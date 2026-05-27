@@ -1,30 +1,6 @@
 // src/components_sp/ReserveFloatingSP.jsx
 import { useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
 import gsap from "gsap";
-
-function NewsIcon(props) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      width="15"
-      height="15"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-      {...props}
-    >
-      <path d="M6 3h10a2 2 0 0 1 2 2v14" />
-      <path d="M6 3a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12" />
-      <path d="M8 7h8" />
-      <path d="M8 11h8" />
-      <path d="M8 15h6" />
-    </svg>
-  );
-}
 
 export default function ReserveFloatingSP() {
   const wrapRef = useRef(null);
@@ -42,7 +18,6 @@ export default function ReserveFloatingSP() {
 
   const perf = reduce || coarse;
 
-  /* 初回フェードイン（スマホは軽く：blur無し） */
   useEffect(() => {
     const el = wrapRef.current;
     if (!el) return;
@@ -72,76 +47,47 @@ export default function ReserveFloatingSP() {
     return () => introTweenRef.current?.kill?.();
   }, [perf]);
 
+  const RESERVE_URL =
+    "https://beauty.hotpepper.jp/CSP/bt/reserve/?storeId=H000706136";
+
   return (
     <div
       ref={wrapRef}
       className="
-        fixed top-[calc(14px+env(safe-area-inset-top))] left-[14px] z-[110]
-        flex items-center gap-2
+        fixed top-[calc(14px+env(safe-area-inset-top))] right-[14px] z-[120]
+        flex items-center
         will-change-transform
       "
     >
-      {/* お知らせ（サブ） */}
-      <Link
-        data-float-item
-        to="/news"
-        aria-label="お知らせを見る"
-        className="
-          inline-flex items-center gap-2
-          px-[12px] py-[7px]
-          text-[11.2px]
-          tracking-[0.08em]
-          font-medium
-          rounded-[10px]
-
-          bg-[rgba(247,244,239,0.72)]
-          text-[rgba(86,58,68,0.78)]
-          border border-[rgba(255,255,255,0.55)]
-
-          /* ✅ スマホはblur無効（重い） */
-          backdrop-blur-[10px]
-          [@media(pointer:coarse)]:backdrop-blur-0
-
-          shadow-[0_6px_18px_rgba(0,0,0,0.08)]
-          active:scale-[0.94]
-          transition-all
-          cursor-pointer
-        "
-      >
-        <NewsIcon className="opacity-[0.72]" />
-        <span className="relative top-[0.5px]">お知らせ</span>
-      </Link>
-
-      {/* HotPepper（主役） */}
       <a
         data-float-item
-        href="https://beauty.hotpepper.jp/slnH000706136/"
+        href={RESERVE_URL}
         target="_blank"
         rel="noopener noreferrer"
-        aria-label="HotPepperへ"
+        aria-label="HotPepperで予約する"
         className="
           inline-flex items-center
           px-[14px] py-[7px]
           text-[11.5px]
-          tracking-[0.14em]
+          tracking-[0.10em]
           font-medium
           rounded-[10px]
 
-          bg-[rgba(236,206,216,0.70)]
-          text-[rgba(86,58,68,0.92)]
-          border border-[rgba(255,255,255,0.55)]
+          /* ✅ 主張を抑える（ここだけ調整） */
+          bg-[rgba(236,206,216,0.52)]
+          text-[rgba(86,58,68,0.84)]
+          border border-[rgba(255,255,255,0.40)]
 
-          /* ✅ スマホはblur無効（重い） */
           backdrop-blur-[10px]
           [@media(pointer:coarse)]:backdrop-blur-0
 
-          shadow-[0_6px_18px_rgba(0,0,0,0.10)]
-          active:scale-[0.94]
+          shadow-[0_4px_14px_rgba(0,0,0,0.085)]
+          active:scale-[0.955]
           transition-all
           cursor-pointer
         "
       >
-        HotPepperへ
+        予約（HotPepper）
       </a>
     </div>
   );

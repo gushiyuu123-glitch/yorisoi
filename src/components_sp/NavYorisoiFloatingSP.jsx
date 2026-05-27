@@ -15,13 +15,14 @@ export default function NavYorisoiFloatingSP() {
       ? window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false
       : false;
 
+  // ✅ 予約 → お知らせ（/news）
   const list = useMemo(
     () => [
       { label: "お店", key: "about", target: "#about" },
       { label: "店主", key: "profile", target: "#profile" },
       { label: "メニュー", key: "menu", target: "#menu" },
       { label: "地図", key: "access", target: "#access" },
-      { label: "予約", key: "reserve", target: "#reserve" },
+      { label: "お知らせ", key: "news", target: "/news" },
     ],
     []
   );
@@ -52,12 +53,13 @@ export default function NavYorisoiFloatingSP() {
         <path d="M12 2C7.5 2 4 5.6 4 10c0 6.5 8 12 8 12s8-5.5 8-12c0-4.4-3.5-8-8-8z" />
       </>
     ),
-    reserve: (
+    news: (
       <>
-        <rect x="3" y="4" width="18" height="17" rx="2" />
-        <line x1="16" y1="2" x2="16" y2="6" />
-        <line x1="8" y1="2" x2="8" y2="6" />
-        <line x1="3" y1="10" x2="21" y2="10" />
+        <path d="M6 3h10a2 2 0 0 1 2 2v14" />
+        <path d="M6 3a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12" />
+        <path d="M8 7h8" />
+        <path d="M8 11h8" />
+        <path d="M8 15h6" />
       </>
     ),
   };
@@ -85,14 +87,24 @@ export default function NavYorisoiFloatingSP() {
     return () => gsap.killTweensOf(items);
   }, [reduce]);
 
-  // 現在地ハイライト（IntersectionObserver）
+  // ✅ /news（お知らせページ）では「お知らせ」をアクティブにする
   useEffect(() => {
+    if (pathname === "/news" || pathname.startsWith("/news/")) {
+      setActive("/news");
+      return;
+    }
+    // / 以外はハイライト無し
     if (pathname !== "/") {
       setActive("");
       return;
     }
+  }, [pathname]);
 
-    const ids = ["#about", "#profile", "#menu", "#access", "#reserve"];
+  // 現在地ハイライト（IntersectionObserver）— / のときだけ
+  useEffect(() => {
+    if (pathname !== "/") return;
+
+    const ids = ["#about", "#profile", "#menu", "#access"];
     const els = ids.map((id) => document.querySelector(id)).filter(Boolean);
     if (!els.length) return;
 
@@ -115,12 +127,18 @@ export default function NavYorisoiFloatingSP() {
     return () => obs.disconnect();
   }, [pathname]);
 
-  const go = (hash) => {
-    if (pathname !== "/") {
-      navigate({ pathname: "/", hash }, { replace: true });
+  const go = (target) => {
+    // /news などのルート
+    if (target.startsWith("/")) {
+      navigate(target);
       return;
     }
-    navigate({ hash }, { replace: true });
+    // LP内 hash
+    if (pathname !== "/") {
+      navigate({ pathname: "/", hash: target }, { replace: true });
+      return;
+    }
+    navigate({ hash: target }, { replace: true });
   };
 
   return (
@@ -135,11 +153,8 @@ export default function NavYorisoiFloatingSP() {
           rgba(247,244,239,0.74) 74%,
           rgba(247,244,239,0.58) 100%
         )]
-
-        /* ✅ スマホはblur無効（重い） */
         backdrop-blur-[10px]
         [@media(pointer:coarse)]:backdrop-blur-0
-
         border-t border-[rgba(96,78,62,0.13)]
         px-[4vw]
         pt-[10px]
@@ -151,7 +166,6 @@ export default function NavYorisoiFloatingSP() {
     >
       {list.map((item) => {
         const isActive = active === item.target;
-        const isReserve = item.key === "reserve";
 
         return (
           <button
@@ -165,7 +179,7 @@ export default function NavYorisoiFloatingSP() {
               select-none
               ${isActive ? "text-[rgba(96,78,62,0.95)]" : "text-[rgba(96,78,62,0.66)]"}
               active:opacity-[0.82]
-              ${isReserve ? "active:scale-[0.90]" : "active:scale-[0.93]"}
+              active:scale-[0.93]
             `}
           >
             <svg
@@ -175,7 +189,7 @@ export default function NavYorisoiFloatingSP() {
               strokeWidth="1.28"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className={`w-[21px] h-[21px] mb-[3px] ${isReserve ? "opacity-[0.96]" : "opacity-[0.86]"}`}
+              className="w-[21px] h-[21px] mb-[3px] opacity-[0.86]"
               aria-hidden="true"
             >
               {Icons[item.key]}
@@ -190,17 +204,6 @@ export default function NavYorisoiFloatingSP() {
                   w-[22px] h-[1.7px]
                   bg-[rgba(96,78,62,0.34)]
                   rounded-full
-                "
-                aria-hidden="true"
-              />
-            )}
-
-            {isReserve && (
-              <div
-                className="
-                  absolute inset-0 -z-10 rounded-full
-                  bg-[rgba(255,225,190,0.18)]
-                  opacity-[0.22]
                 "
                 aria-hidden="true"
               />

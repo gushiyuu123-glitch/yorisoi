@@ -270,18 +270,14 @@ export default function Footer({
             伸びてきても崩れにくい形を基準に、仕上げます。
           </p>
 
-          <div className="mt-7 flex flex-wrap justify-center gap-x-6 gap-y-3">
-            <FooterLink href={hotpepperUrl} label="空席を確認して予約" />
-            <FooterLink href={hotpepperReviewUrl} label="口コミを見る" />
-            <FooterLink href={instaYorisoi} label="Instagram" />
-          </div>
+
         </div>
 
         {/* ================= 店舗情報 ================= */}
         <div className="max-w-[680px] mx-auto text-center mb-10">
           <p className="text-[14px] text-ink/76 leading-[1.85]">
             沖縄県浦添市内間2丁目20-3（駐車場2台＋バイク1台）
-            <br />
+            <br /> <br />
             営業時間：7:00〜19:00（最終受付：カット18:00）
             <br />
             定休日：毎週月曜日

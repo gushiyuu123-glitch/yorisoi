@@ -15,7 +15,6 @@ export default function LogoYorisoiFloatingSP() {
       ? window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false
       : false;
 
-  // ✅ スマホ（実機想定）では“動かさない”
   const coarse =
     typeof window !== "undefined"
       ? window.matchMedia?.("(pointer:coarse)")?.matches ?? true
@@ -23,14 +22,13 @@ export default function LogoYorisoiFloatingSP() {
 
   const perf = reduce || coarse;
 
-  /* 初回フェードイン（スマホは軽く：blur無し） */
   useEffect(() => {
     const el = wrapRef.current;
     if (!el) return;
 
     el.style.pointerEvents = "auto";
 
-    // perf（スマホ/減速）→ 即表示 or 超軽アニメ
+    // スマホは即表示（安定優先）
     if (perf) {
       gsap.set(el, { autoAlpha: 1, y: 0 });
       return;
@@ -44,14 +42,13 @@ export default function LogoYorisoiFloatingSP() {
         y: 0,
         duration: 0.78,
         ease: "power3.out",
-        delay: 0.95,
+        delay: 0.6,
       }
     );
 
     return () => introTweenRef.current?.kill?.();
   }, [perf]);
 
-  /* Home帰還（hash更新だけ） */
   const goHome = () => {
     if (pathname !== "/") {
       navigate({ pathname: "/", hash: "#home" });
@@ -69,49 +66,73 @@ export default function LogoYorisoiFloatingSP() {
       ref={wrapRef}
       type="button"
       onClick={goHome}
-      aria-label="トップへ戻る"
+      aria-label="トップへ戻る（ヨリソイ Hair＆Spa）"
       className="
-        fixed top-[calc(14px+env(safe-area-inset-top))] right-[14px] z-[110]
-        w-[58px] h-[58px]
-        bg-[linear-gradient(
-          to_bottom,
-          rgba(255,255,255,0.78) 0%,
-          rgba(255,255,255,0.66) 30%,
-          rgba(255,255,255,0.46) 70%,
-          rgba(255,255,255,0.00) 100%
-        )]
+        fixed top-[calc(14px+env(safe-area-inset-top))] left-[14px] z-[120]
+        h-[48px] w-auto
+        pl-[10px] pr-[12px]
+        flex items-center gap-[9px]
 
-        /* ✅ スマホはblur無効（重い） */
-        backdrop-blur-[11px]
-        [@media(pointer:coarse)]:backdrop-blur-0
+        rounded-[13px]
+        bg-[rgba(247,244,239,0.92)]
+        border border-[rgba(96,78,62,0.17)]
+        shadow-[0_9px_22px_rgba(0,0,0,0.085)]
+        [clip-path:polygon(0_0,calc(100%-11px)_0,100%_11px,100%_100%,0_100%)]
 
-        rounded-full
-        shadow-[0_4px_16px_rgba(0,0,0,0.08)]
-        flex items-center justify-center
-        active:scale-[0.94]
+        active:scale-[0.96]
         transition-transform
         cursor-pointer
         will-change-transform
       "
     >
-      {/* 内側の淡い光膜（スマホはblur落とす） */}
+      {/* 角欠けの“折り目”気配（超薄） */}
       <span
         aria-hidden="true"
         className="
-          absolute inset-0 rounded-full
-          bg-[rgba(255,255,255,0.45)]
-          opacity-[0.26]
-          blur-[14px]
-          [@media(pointer:coarse)]:blur-0
-          pointer-events-none -z-10
+          absolute top-0 right-0
+          w-[16px] h-[16px]
+          bg-[linear-gradient(135deg,rgba(96,78,62,0.10)_0%,rgba(96,78,62,0.00)_70%)]
+          pointer-events-none
+        "
+      />
+
+      {/* 1pxの内側シーム（紙の輪郭） */}
+      <span
+        aria-hidden="true"
+        className="
+          absolute inset-[5px]
+          rounded-[10px]
+          border border-[rgba(96,78,62,0.075)]
+          pointer-events-none
         "
       />
 
       <img
         src="/yorisoi/bird-logo.png"
         alt=""
-        className="w-[34px] h-[34px] opacity-[0.94] pointer-events-none"
+        className="w-[28px] h-[28px] opacity-[0.92] pointer-events-none"
         decoding="async"
+      />
+
+      {/* 店名（2段） */}
+      <span className="flex flex-col items-start leading-[1.04] pointer-events-none">
+        <span className="text-[11.6px] tracking-[0.16em] text-[rgba(46,42,39,0.82)] font-medium">
+          ヨリソイ
+        </span>
+        <span className="text-[9.6px] tracking-[0.22em] text-[rgba(46,42,39,0.54)]">
+          Hair＆Spa
+        </span>
+      </span>
+
+      {/* 小さな“署名点”（記憶フック） */}
+      <span
+        aria-hidden="true"
+        className="
+          ml-[1px]
+          h-[4px] w-[4px]
+          rounded-full
+          bg-[rgba(96,78,62,0.24)]
+        "
       />
     </button>
   );
