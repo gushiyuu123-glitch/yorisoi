@@ -156,11 +156,11 @@ export default function FinalCTA() {
                 そのまま任せられるスパ。
               </p>
 
-              <p className="mt-4 text-[13px] leading-[1.8] text-white/78 max-w-[460px]">
-                力加減や、気になるところは途中でも調整できます。
-                <br />
-                「今日は短めで」などの希望もOKです。
-              </p>
+     <p className="mt-4 text-[13px] leading-[1.8] text-white max-w-[460px]">
+  カットだけの日も、少し疲れている日も。
+  <br />
+  その日の状態に合わせて、無理なく整えられます。
+</p>
             </div>
           </div>
 

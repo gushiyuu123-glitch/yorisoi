@@ -63,35 +63,36 @@ const FooterLink = ({ href, label }) => (
 );
 
 export default function FooterSP({
-  // ✅ もし「PC/SPどちらかしかDOMに無い」運用なら true にしてOK
   // ✅ PC/SPをCSSで同時に出し分けてるなら false のままが安全
   withJsonLd = false,
 }) {
+  // ✅ 本番ドメインになったらここだけ差し替え推奨
   const siteUrl = "https://yorisoi-nine.vercel.app/";
+
   const hotpepperUrl = "https://beauty.hotpepper.jp/slnH000706136/";
-  const hotpepperReviewUrl = "https://beauty.hotpepper.jp/slnH000706136/review/";
+  const hotpepperMapUrl = "https://beauty.hotpepper.jp/slnH000706136/map/";
   const instaYorisoi = "https://www.instagram.com/yorisoihair/";
   const gushikenUrl = "https://gushikendesign.com/";
+  const gushikenInsta = "https://www.instagram.com/gushiken_design/";
 
-  // ✅ ここはサイト内の表示と揃える（6は事故）
-  const ratingValue = 5.0;
-  const reviewCount = 63;
+  // ✅ 電話（予約変更・キャンセル用）
+  const TEL_DISPLAY = "090-7357-0926";
+  const TEL_HREF = "tel:09073570926";
 
   const ogImage = `${siteUrl}yorisoi/ogp1.png`;
   const footerBg = "/yorisoi/footer.png";
   const birdLogo = "/yorisoi/bird-logo.png";
 
-  // LocalBusiness（店舗の実体）
   const jsonLdSalon = {
     "@context": "https://schema.org",
-    "@type": "HairSalon",
+    "@type": "BarberShop",
     "@id": `${siteUrl}#salon`,
-    name: "YORISOI Hair & Spa",
+    name: "ヨリソイ Hair & Spa",
     url: siteUrl,
     image: ogImage,
     description:
       "沖縄県浦添市のメンズ専門理容室。朝7時から営業。半個室の2席で、最初から最後まで丁寧に担当します。",
-    telephone: "090-7357-0926",
+    telephone: TEL_DISPLAY,
     address: {
       "@type": "PostalAddress",
       streetAddress: "内間2丁目20-3",
@@ -100,9 +101,6 @@ export default function FooterSP({
       postalCode: "901-2121",
       addressCountry: "JP",
     },
-
-    // ✅ 月曜0:00表記はやめる（誤解される）
-    openingHours: ["Tu-Su 07:00-19:00"],
     openingHoursSpecification: [
       {
         "@type": "OpeningHoursSpecification",
@@ -118,28 +116,43 @@ export default function FooterSP({
         closes: "19:00",
       },
     ],
-
     priceRange: "¥¥",
-    sameAs: [hotpepperUrl, hotpepperReviewUrl, instaYorisoi],
-    aggregateRating: {
-      "@type": "AggregateRating",
-      ratingValue,
-      bestRating: 5,
-      worstRating: 1,
-      reviewCount,
-    },
+    hasMap:
+      "https://www.google.com/maps/search/?api=1&query=" +
+      encodeURIComponent("沖縄県浦添市内間2丁目20-3 ヨリソイ Hair＆Spa"),
+    sameAs: [hotpepperUrl, hotpepperMapUrl, instaYorisoi],
   };
 
   const jsonLdWebSite = {
     "@context": "https://schema.org",
     "@type": "WebSite",
     "@id": `${siteUrl}#website`,
-    name: "YORISOI Hair & Spa",
+    name: "ヨリソイ Hair & Spa",
     url: siteUrl,
     inLanguage: "ja-JP",
     publisher: {
       "@type": "Organization",
-      name: "YORISOI Hair & Spa",
+      name: "ヨリソイ Hair & Spa",
+      url: siteUrl,
+    },
+  };
+
+  const jsonLdWorkProof = {
+    "@context": "https://schema.org",
+    "@type": "CreativeWork",
+    "@id": `${siteUrl}#work`,
+    name: "ヨリソイ Hair & Spa Webサイト",
+    url: siteUrl,
+    about: { "@id": `${siteUrl}#salon` },
+    creator: {
+      "@type": "Organization",
+      name: "GUSHIKEN DESIGN",
+      url: gushikenUrl,
+      sameAs: [gushikenInsta],
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "ヨリソイ Hair & Spa",
       url: siteUrl,
     },
   };
@@ -167,7 +180,7 @@ export default function FooterSP({
           loading="lazy"
           decoding="async"
         />
-        {/* ✅ 白モヤを思いっきり下げる */}
+        {/* ✅ 白モヤを下げる */}
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_40%_18%,rgba(255,253,249,0.12),rgba(255,253,249,0.00)_74%)]" />
       </div>
 
@@ -187,13 +200,12 @@ export default function FooterSP({
             ヨリソイ — Hair &amp; Spa
           </h3>
 
-          {/* ✅ 抽象語を排除 → 事実と約束で締める */}
           <p className="mt-3 text-[13.5px] text-ink/76 leading-[1.85]">
-            朝7時から。半個室の2席で、<br />最初から最後まで担当します。<br /><br />
+            朝7時から。半個室の2席で、<br />
+            最初から最後まで担当します。<br />
+            <br />
             伸びてきても崩れにくい形を基準に、仕上げます。
           </p>
-
-
 
           <p className="mt-5 text-[11px] leading-[1.75] text-ink/50">
             ※ 最新の営業時間・メニューはHotPepperをご確認ください。
@@ -212,9 +224,21 @@ export default function FooterSP({
             <br />
             定休日：毎週月曜日
           </p>
+
+          {/* ✅ 追加：変更・キャンセルTEL */}
+          <p className="mt-4 text-[12.5px] leading-[1.8] text-ink/70">
+            予約の変更・キャンセル：
+            <a
+              href={TEL_HREF}
+              className="underline underline-offset-2 decoration-ink/25 ml-1"
+              aria-label="予約の変更・キャンセルの電話番号"
+            >
+              TEL {TEL_DISPLAY}
+            </a>
+          </p>
         </div>
 
-        {/* 制作クレジット（基盤のまま） */}
+        {/* 制作クレジット */}
         <div className="max-w-[520px] mx-auto text-center mb-10">
           <div className="mx-auto max-w-[420px] flex flex-col gap-3 text-[13px]">
             <a
@@ -278,6 +302,10 @@ export default function FooterSP({
             <script
               type="application/ld+json"
               dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdSalon) }}
+            />
+            <script
+              type="application/ld+json"
+              dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdWorkProof) }}
             />
           </>
         )}

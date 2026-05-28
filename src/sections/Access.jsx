@@ -6,7 +6,10 @@ const GOOGLE_MAPS_URL =
   encodeURIComponent("沖縄県浦添市内間2丁目20-3 ヨリソイ Hair＆Spa");
 
 const HOTPEPPER_MAP_URL = "https://beauty.hotpepper.jp/slnH000706136/map/";
-const HOTPEPPER_RESERVE_URL = "https://beauty.hotpepper.jp/slnH000706136/";
+
+// ✅ 店主からの番号（予約変更・キャンセル）
+const TEL_DISPLAY = "090-7357-0926";
+const TEL_HREF = "tel:09073570926";
 
 const Icon = ({ children }) => (
   <span
@@ -18,6 +21,7 @@ const Icon = ({ children }) => (
       border border-ink/10
       text-ink/60
     "
+    aria-hidden="true"
   >
     {children}
   </span>
@@ -220,12 +224,36 @@ export default function Access() {
               }
             />
 
+            {/* ✅ 2箇所目：本文側で電話番号を明示 */}
+       <DlRow
+  dt="予約の変更・キャンセル"
+  dd={
+    <>
+      変更・キャンセルのご連絡は{" "}
+      <a
+        href={TEL_HREF}
+        className="underline underline-offset-2 decoration-ink/25 hover:decoration-ink/40"
+      >
+        TEL {TEL_DISPLAY}
+      </a>
+      へ。
+    </>
+  }
+/>
+
             <DlRow
               dt="朝7時の予約"
               dd={
                 <>
                   朝7時のご予約のみ <b>WEB予約</b>。<br />
-                  朝8時以降は 電話 / WEB どちらも可能。
+                  朝8時以降は{" "}
+                  <a
+                    href={TEL_HREF}
+                    className="underline underline-offset-2 decoration-ink/25 hover:decoration-ink/40"
+                  >
+                    TEL
+                  </a>{" "}
+                  / WEB どちらも可能。
                 </>
               }
             />
@@ -243,10 +271,11 @@ export default function Access() {
           </div>
         </Reveal>
 
-        {/* LINKS（Google + HotPepper地図 + 予約） */}
+        {/* LINKS（Google + HotPepper地図） */}
         <Reveal delay={0.24} y={12} blur={0.10} duration={0.66}>
           <div className="flex flex-wrap justify-center gap-3 mb-12">
             <Pill href={GOOGLE_MAPS_URL}>Google Mapsで開く</Pill>
+            <Pill href={HOTPEPPER_MAP_URL}>HotPepperで地図を見る</Pill>
           </div>
 
           <p className="text-center text-[12px] leading-[1.8] text-ink/50">

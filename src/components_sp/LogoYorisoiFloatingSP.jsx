@@ -28,7 +28,6 @@ export default function LogoYorisoiFloatingSP() {
 
     el.style.pointerEvents = "auto";
 
-    // スマホは即表示（安定優先）
     if (perf) {
       gsap.set(el, { autoAlpha: 1, y: 0 });
       return;
@@ -69,15 +68,15 @@ export default function LogoYorisoiFloatingSP() {
       aria-label="トップへ戻る（ヨリソイ Hair＆Spa）"
       className="
         fixed top-[calc(14px+env(safe-area-inset-top))] left-[14px] z-[120]
-        h-[48px] w-auto
+        h-[44px] w-auto
         pl-[10px] pr-[12px]
-        flex items-center gap-[9px]
+        flex items-center gap-[8px]
 
         rounded-[13px]
-        bg-[rgba(247,244,239,0.92)]
-        border border-[rgba(96,78,62,0.17)]
-        shadow-[0_9px_22px_rgba(0,0,0,0.085)]
-        [clip-path:polygon(0_0,calc(100%-11px)_0,100%_11px,100%_100%,0_100%)]
+        bg-[rgba(247,244,239,0.82)]
+        border border-[rgba(96,78,62,0.12)]
+        shadow-[0_6px_18px_rgba(0,0,0,0.06)]
+        [clip-path:polygon(0_0,calc(100%-8px)_0,100%_8px,100%_100%,0_100%)]
 
         active:scale-[0.96]
         transition-transform
@@ -85,24 +84,24 @@ export default function LogoYorisoiFloatingSP() {
         will-change-transform
       "
     >
-      {/* 角欠けの“折り目”気配（超薄） */}
+      {/* 角欠けの“折り目”気配（超薄・小さく） */}
       <span
         aria-hidden="true"
         className="
           absolute top-0 right-0
-          w-[16px] h-[16px]
-          bg-[linear-gradient(135deg,rgba(96,78,62,0.10)_0%,rgba(96,78,62,0.00)_70%)]
+          w-[14px] h-[14px]
+          bg-[linear-gradient(135deg,rgba(96,78,62,0.07)_0%,rgba(96,78,62,0.00)_72%)]
           pointer-events-none
         "
       />
 
-      {/* 1pxの内側シーム（紙の輪郭） */}
+      {/* 1pxの内側シーム（さらに薄く） */}
       <span
         aria-hidden="true"
         className="
           absolute inset-[5px]
           rounded-[10px]
-          border border-[rgba(96,78,62,0.075)]
+          border border-[rgba(96,78,62,0.055)]
           pointer-events-none
         "
       />
@@ -110,30 +109,22 @@ export default function LogoYorisoiFloatingSP() {
       <img
         src="/yorisoi/bird-logo.png"
         alt=""
-        className="w-[28px] h-[28px] opacity-[0.92] pointer-events-none"
+        className="w-[26px] h-[26px] opacity-[0.86] pointer-events-none"
         decoding="async"
       />
 
       {/* 店名（2段） */}
       <span className="flex flex-col items-start leading-[1.04] pointer-events-none">
-        <span className="text-[11.6px] tracking-[0.16em] text-[rgba(46,42,39,0.82)] font-medium">
+        <span className="text-[11.2px] tracking-[0.15em] text-[rgba(46,42,39,0.78)] font-medium">
           ヨリソイ
         </span>
-        <span className="text-[9.6px] tracking-[0.22em] text-[rgba(46,42,39,0.54)]">
+        <span className="text-[9.4px] tracking-[0.20em] text-[rgba(46,42,39,0.48)]">
           Hair＆Spa
         </span>
       </span>
 
-      {/* 小さな“署名点”（記憶フック） */}
-      <span
-        aria-hidden="true"
-        className="
-          ml-[1px]
-          h-[4px] w-[4px]
-          rounded-full
-          bg-[rgba(96,78,62,0.24)]
-        "
-      />
+      {/* 署名点：消す（“多い”を回避） */}
+      {/* <span aria-hidden="true" className="ml-[1px] h-[3px] w-[3px] rounded-full bg-[rgba(96,78,62,0.18)]" /> */}
     </button>
   );
 }

@@ -247,14 +247,7 @@ export default function NewsTopSP() {
                   <p className="text-[14px] leading-[1.9] text-[rgba(96,78,62,0.72)]">
                     現在、お知らせを準備中です。
                   </p>
-                  <div className="mt-4 text-center">
-                    <Link
-                      to="/news"
-                      className="inline-block text-[14px] tracking-[0.22em] text-[#5d4c3f] border-b border-[#5d4c3f]/50 pb-[4px] hover:opacity-70 transition"
-                    >
-                      お知らせ一覧を見る
-                    </Link>
-                  </div>
+     
                 </div>
               )}
 
@@ -297,7 +290,10 @@ export default function NewsTopSP() {
                       hover:opacity-70 transition
                     "
                   >
-                    もっと見る
+      
+                      お知らせ一覧を見る
+        
+  
                   </Link>
                 </Reveal>
               </div>

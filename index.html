@@ -11,6 +11,11 @@
     <meta name="referrer" content="strict-origin-when-cross-origin" />
     <meta name="color-scheme" content="light" />
     <meta name="theme-color" content="#F7F3EC" />
+    <meta name="application-name" content="ヨリソイ Hair＆Spa" />
+    <meta name="apple-mobile-web-app-title" content="ヨリソイ" />
+
+    <!-- iOSの自動リンク化を止める（telリンクは <a href="tel:"> を使うので問題なし） -->
+    <meta name="format-detection" content="telephone=no" />
 
     <!-- 検索結果のリッチ化に寄せる（許容範囲で最大） -->
     <meta
@@ -22,10 +27,6 @@
       content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
     />
 
-    <!-- iOS の自動リンク化を避けたい場合のみ（必要ならON）
-         ※タップ導線はサイト側で <a href="tel:..."> を明示して作る -->
-    <!-- <meta name="format-detection" content="telephone=no" /> -->
-
     <!-- ===============================
          Favicon
     =============================== -->
@@ -36,14 +37,13 @@
 
     <!-- ===============================
          TITLE（検索語順）
-         例）エリア → 業種 → 強み → 店名
-         ※長すぎると後半が切れるので「強みは3つまで」を目安
+         エリア → 業種 → 強み(3つまで) → 店名
+         ※強みを詰め込みすぎると後半が切れるので3つで止める
     =============================== -->
-    <title>浦添・内間のメンズ専門理容室｜ヨリソイ Hair＆Spa｜朝7時〜／マンツーマン／駐車場</title>
+    <title>浦添・内間のメンズ専門理容室｜ヨリソイ Hair＆Spa｜朝7時〜／マンツーマン／半個室</title>
 
     <!-- ===============================
-         DESCRIPTION（自然文／初回不安を先に潰す）
-         ※抽象語より「条件・事実」を優先
+         DESCRIPTION（条件・事実を優先）
     =============================== -->
     <meta
       name="description"
@@ -51,14 +51,15 @@
     />
 
     <!-- ===============================
-         Canonical
-         ※本番ドメインが決まったら必ず差し替え（VercelのURLは仮）
+         Canonical / OGP URL
+         ※本番ドメインが決まったら必ず差し替え
     =============================== -->
+    <!-- SITE_ORIGIN: https://yorisoi-nine.vercel.app -->
     <link rel="canonical" href="https://yorisoi-nine.vercel.app/" />
 
     <!-- ===============================
          OGP / Twitter
-         ※og:image は 1200x630 推奨（差し替えるなら同比率で）
+         ※og:image は 1200x630 推奨（同比率で）
     =============================== -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="ヨリソイ Hair＆Spa" />
@@ -67,11 +68,11 @@
 
     <meta
       property="og:title"
-      content="浦添・内間｜メンズ専門理容室 ヨリソイ Hair＆Spa（朝7時〜／マンツーマン／駐車場）"
+      content="浦添・内間｜メンズ専門理容室 ヨリソイ Hair＆Spa（朝7時〜／マンツーマン／半個室）"
     />
     <meta
       property="og:description"
-      content="朝7:00〜／マンツーマン／半個室。カット・フェード・パーマ・シェービング・ヘッドスパ。"
+      content="朝7:00〜／マンツーマン／半個室。カット・フェード・パーマ・シェービング・ヘッドスパ。駐車場あり。"
     />
 
     <meta property="og:image" content="https://yorisoi-nine.vercel.app/yorisoi/ogp.png" />
@@ -85,7 +86,7 @@
     <meta name="twitter:title" content="浦添・内間｜メンズ専門理容室 ヨリソイ Hair＆Spa" />
     <meta
       name="twitter:description"
-      content="朝7:00〜／マンツーマン／駐車場あり。カット・フェード・パーマ・シェービング・ヘッドスパ。"
+      content="朝7:00〜／マンツーマン／半個室。カット・フェード・パーマ・シェービング・ヘッドスパ。駐車場あり。"
     />
     <meta name="twitter:image" content="https://yorisoi-nine.vercel.app/yorisoi/ogp.png" />
     <meta name="twitter:image:alt" content="ヨリソイ Hair＆Spa（浦添・内間のメンズ専門理容室）" />
@@ -97,10 +98,10 @@
     <meta name="author" content="GUSHIKEN DESIGN" />
 
     <!-- ===============================
-         構造化データ（強化版）
-         - 店舗(BarberShop)を“ローカルビジネス”として明確化
-         - 重要強み（駐車場 / 半個室 / メンズ専門）を amenity として表現
-         - ただし「星・口コミ数」などはページ上に実表示が無いなら入れない（不一致リスク）
+         構造化データ（実在店舗として強化）
+         - LocalBusiness(BarberShop) を明確化
+         - “geo座標”は誤差リスクがあるので入れない（住所+hasMapで十分）
+         - 星/口コミ数は入れない（不一致リスク）
     =============================== -->
     <script type="application/ld+json">
       {
@@ -129,7 +130,9 @@
             "name": "浦添・内間のメンズ専門理容室｜ヨリソイ Hair＆Spa",
             "isPartOf": { "@id": "https://yorisoi-nine.vercel.app/#website" },
             "about": { "@id": "https://yorisoi-nine.vercel.app/#salon" },
-            "primaryImageOfPage": { "@id": "https://yorisoi-nine.vercel.app/#ogimage" }
+            "primaryImageOfPage": { "@id": "https://yorisoi-nine.vercel.app/#ogimage" },
+            "publisher": { "@id": "https://yorisoi-nine.vercel.app/#salon" },
+            "creator": { "@id": "https://gushikendesign.com/#org" }
           },
           {
             "@type": "BarberShop",
@@ -138,7 +141,8 @@
             "alternateName": "ヨリソイ",
             "url": "https://yorisoi-nine.vercel.app/",
             "image": { "@id": "https://yorisoi-nine.vercel.app/#ogimage" },
-            "description": "沖縄県浦添市内間のメンズ専門理容室。朝7時から営業。マンツーマン×半個室で、カットの相談がしやすい環境を整えています。",
+            "logo": "https://yorisoi-nine.vercel.app/yorisoi/bird-logo.png",
+            "description": "沖縄県浦添市内間のメンズ専門理容室。朝7時から営業。マンツーマン×半個室で、相談しやすい環境を整えています。",
             "telephone": "+81-90-7357-0926",
             "priceRange": "¥¥",
             "address": {
@@ -149,11 +153,6 @@
               "postalCode": "901-2121",
               "addressCountry": "JP"
             },
-"geo": {
-  "@type": "GeoCoordinates",
-  "latitude": 26.2351656,
-  "longitude": 127.703862
-},
             "openingHoursSpecification": [
               {
                 "@type": "OpeningHoursSpecification",
@@ -164,15 +163,20 @@
             ],
             "amenityFeature": [
               { "@type": "LocationFeatureSpecification", "name": "駐車場", "value": true },
-              { "@type": "LocationFeatureSpecification", "name": "半個室", "value": true },
-              { "@type": "LocationFeatureSpecification", "name": "メンズ専門", "value": true }
+              { "@type": "LocationFeatureSpecification", "name": "半個室", "value": true }
+            ],
+            "serviceType": [
+              "メンズカット",
+              "フェード",
+              "メンズパーマ",
+              "シェービング",
+              "ヘッドスパ"
             ],
             "hasMap": "https://www.google.com/maps/search/?api=1&query=%E6%B2%96%E7%B8%84%E7%9C%8C%E6%B5%A6%E6%B7%BB%E5%B8%82%E5%86%85%E9%96%932%E4%B8%81%E7%9B%AE20-3%20%E3%83%A8%E3%83%AA%E3%82%BD%E3%82%A4%20Hair%EF%BC%86Spa",
             "sameAs": [
               "https://beauty.hotpepper.jp/slnH000706136/",
-              "https://beauty.hotpepper.jp/slnH000706136/review/",
               "https://beauty.hotpepper.jp/slnH000706136/map/",
-              "https://www.instagram.com/yorisoi_salon/"
+              "https://www.instagram.com/yorisoihair/"
             ]
           },
           {
@@ -180,7 +184,10 @@
             "@id": "https://gushikendesign.com/#org",
             "name": "GUSHIKEN DESIGN",
             "url": "https://gushikendesign.com/",
-            "logo": "https://gushikendesign.com/ogp.png"
+            "logo": "https://gushikendesign.com/ogp.png",
+            "sameAs": [
+              "https://www.instagram.com/gushiken_design/"
+            ]
           },
           {
             "@type": "CreativeWork",
@@ -188,7 +195,8 @@
             "name": "ヨリソイ Hair＆Spa Webサイト（制作）",
             "url": "https://yorisoi-nine.vercel.app/",
             "about": { "@id": "https://yorisoi-nine.vercel.app/#salon" },
-            "creator": { "@id": "https://gushikendesign.com/#org" }
+            "creator": { "@id": "https://gushikendesign.com/#org" },
+            "publisher": { "@id": "https://yorisoi-nine.vercel.app/#salon" }
           }
         ]
       }

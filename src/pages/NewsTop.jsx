@@ -241,20 +241,22 @@ export default function NewsTop() {
 
               <div className="mt-10">
                 <Reveal y={10} blur={0.12} duration={0.56} delay={0.06}>
-                  <Link
-                    to="/news"
-                    className="
-                      inline-block
-                      text-[14px]
-                      tracking-[0.22em]
-                      text-[#5d4c3f]
-                      border-b border-[#5d4c3f]/45
-                      pb-[4px]
-                      hover:opacity-70 transition
-                    "
-                  >
-                    もっと見る
-                  </Link>
+             <div className="mt-4">
+                    <Link
+                      to="/news"
+                      className="
+                        inline-block
+                        text-[14px]
+                        tracking-[0.22em]
+                        text-[#5d4c3f]
+                        border-b border-[#5d4c3f]/45
+                        pb-[4px]
+                        hover:opacity-70 transition
+                      "
+                    >
+                      お知らせ一覧を見る
+                    </Link>
+                  </div>
                 </Reveal>
               </div>
             </div>
@@ -286,22 +288,7 @@ export default function NewsTop() {
                   <p className="text-[15px] leading-[1.95] text-[rgba(96,78,62,0.72)]">
                     現在、お知らせを準備中です。
                   </p>
-                  <div className="mt-4">
-                    <Link
-                      to="/news"
-                      className="
-                        inline-block
-                        text-[14px]
-                        tracking-[0.22em]
-                        text-[#5d4c3f]
-                        border-b border-[#5d4c3f]/45
-                        pb-[4px]
-                        hover:opacity-70 transition
-                      "
-                    >
-                      お知らせ一覧を見る
-                    </Link>
-                  </div>
+                
                 </div>
               )}
 
