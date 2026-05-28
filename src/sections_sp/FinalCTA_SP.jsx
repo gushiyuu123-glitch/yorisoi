@@ -162,11 +162,11 @@ export default function FinalCTA_SP() {
                 <br />
                 そのまま任せられるスパ。
               </p>
-              <p className="mt-3 text-[12.8px] leading-[1.85] text-white/78 max-w-[420px]">
-                カットだけの日も、少し疲れている日も。
-                <br />
-                その日の状態に合わせて、無理なく整えられます。
-              </p>
+    <p className="mt-3 text-[12.8px] leading-[1.85] text-white max-w-[420px]">
+  カットだけの日も、少し疲れている日も。
+  <br />
+  その日の状態に合わせて、無理なく整えられます。
+</p>
             </div>
           </div>
 
