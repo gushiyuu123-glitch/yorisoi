@@ -1,19 +1,26 @@
 // src/sections_sp/FinalCTA_SP.jsx
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useMemo } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 gsap.registerPlugin(ScrollTrigger);
 
-// ✅ PCの意図そのまま：画像＋予約票（slip）
-// ※ PC側が coupon URL になってるので合わせる（必要なら分けて）
-const RESERVE_URL = "https://beauty.hotpepper.jp/slnH000706136/";
-const COUPON_URL  = "https://beauty.hotpepper.jp/slnH000706136/coupon/";
+// ✅ 予約URLはこれ1本に統一（ボタンもここだけ）
+const RESERVE_URL =
+  "https://beauty.hotpepper.jp/CSP/bt/reserve/?storeId=H000706136";
 
-// ✅ 画像はPCと同じ想定
+// ✅ 実番号（表示はTELだけ）
+const TEL_DISPLAY = "090-7357-0926";
+
+// ✅ 画像は既存のまま
 const SPA_IMG = "/yorisoi/headspa3.png";
 
 export default function FinalCTA_SP() {
   const sectionRef = useRef(null);
+
+  const TEL_HREF = useMemo(
+    () => `tel:${TEL_DISPLAY.replace(/[^\d]/g, "")}`,
+    []
+  );
 
   useEffect(() => {
     const el = sectionRef.current;
@@ -52,11 +59,11 @@ export default function FinalCTA_SP() {
   return (
     <section
       ref={sectionRef}
-      id="reserve"
+      // ✅ App側 wrapper に id="reserve" があるので、ここでは持たせない
       className="
-        relative w-full bg-[#f7f4ef]
+        relative w-full bg-base
         pt-[16vh] pb-[18vh] px-[6vw]
-        border-t border-[rgba(96,78,62,0.10)]
+        border-t border-ink/10
         overflow-hidden
       "
       aria-label="予約"
@@ -76,11 +83,11 @@ export default function FinalCTA_SP() {
       />
 
       <div className="relative mx-auto max-w-[520px]">
-        {/* HEAD（PCと同じコピー） */}
+        {/* HEAD（抽象コピーを排除して、具体に） */}
         <div className="mb-10">
           <p
             data-fc
-            className="text-[11px] tracking-[0.32em] text-[rgba(96,78,62,0.55)] mb-4"
+            className="text-[11px] tracking-[0.32em] text-ink/55 mb-4"
           >
             RESERVE
           </p>
@@ -89,15 +96,15 @@ export default function FinalCTA_SP() {
             data-fc
             className="
               text-[clamp(22px,5.6vw,28px)]
-              text-[#5d4c3f]
+              text-ink/90
               font-medium
               leading-[1.55]
               tracking-[0.005em]
             "
           >
-            整えるだけじゃなく、
+            カットだけの日も。
             <br />
-            ほどける時間まで。
+            ヘッドスパも一緒の日も。
           </h2>
 
           <p
@@ -106,27 +113,27 @@ export default function FinalCTA_SP() {
               mt-4
               text-[14.5px]
               leading-[1.95]
-              text-[rgba(96,78,62,0.74)]
+              text-ink/74
             "
           >
-            カットやシェービングに加えて、ヘッドスパで力を抜く時間も。
+            HotPepperで空席を見て、そのまま予約できます。
             <br />
-            見た目が整うだけでなく、気持ちまで静かに戻る感覚を味わえます。
+            メニューに迷う場合も、当日の状態を見ながら決められます。
           </p>
         </div>
 
-        {/* SLIP（PCの“予約票”をSP縦積みへ） */}
+        {/* SLIP（PCの“予約票”をSP縦積みへ：デザイン維持） */}
         <div
           data-fc
           className="
-            border border-[rgba(96,78,62,0.14)]
-            bg-[rgba(255,255,255,0.56)]
+            border border-ink/14
+            bg-surface/56
             shadow-[0_16px_42px_rgba(0,0,0,0.06)]
             overflow-hidden
           "
         >
           {/* TOP RULE */}
-          <div className="h-[1px] bg-[rgba(96,78,62,0.14)]" />
+          <div className="h-[1px] bg-ink/14" />
 
           {/* IMAGE（上） */}
           <div className="relative h-[min(52vh,520px)]">
@@ -142,85 +149,99 @@ export default function FinalCTA_SP() {
               "
             />
 
-            {/* グラデ膜（SPは少し濃くして文字事故回避） */}
+            {/* グラデ膜（文字事故回避） */}
             <div className="absolute inset-0 bg-[linear-gradient(to_top,rgba(0,0,0,0.48),rgba(0,0,0,0.06))]" />
 
-            {/* CAPTION（PCの文法そのまま、サイズだけSP） */}
+            {/* CAPTION（抽象に寄せすぎない） */}
             <div className="absolute left-0 right-0 bottom-0 px-6 py-6">
-              <p className="text-[10.5px] tracking-[0.28em] text-[rgba(255,255,255,0.72)] mb-2">
+              <p className="text-[10.5px] tracking-[0.28em] text-white/72 mb-2">
                 HEAD SPA
               </p>
               <p className="text-[20px] leading-[1.5] text-white font-medium max-w-[420px]">
-                眠くなるほど、
+                目を閉じて、
                 <br />
-                力が抜ける時間。
+                そのまま任せられるスパ。
               </p>
-              <p className="mt-3 text-[12.8px] leading-[1.85] text-[rgba(255,255,255,0.78)] max-w-[420px]">
-                忙しさを切り替えたい日にも。
+              <p className="mt-3 text-[12.8px] leading-[1.85] text-white/78 max-w-[420px]">
+                カットだけの日も、少し疲れている日も。
                 <br />
-                仕上がりと一緒に、気分まで整えて帰れます。
+                その日の状態に合わせて、無理なく整えられます。
               </p>
             </div>
           </div>
 
           {/* DIVIDER */}
-          <div className="h-[1px] bg-[rgba(96,78,62,0.12)]" />
+          <div className="h-[1px] bg-ink/12" />
 
           {/* GUIDE（下） */}
           <div className="px-6 py-7">
-            <div className="text-[11px] tracking-[0.22em] text-[rgba(96,78,62,0.55)] mb-5">
+            <div className="text-[11px] tracking-[0.22em] text-ink/55 mb-5">
               BOOKING GUIDE
             </div>
 
-            <div className="border-y border-[rgba(96,78,62,0.12)]">
-              <div className="grid grid-cols-[92px,1fr] gap-4 py-3.5 border-b border-[rgba(96,78,62,0.10)]">
-                <div className="text-[10.5px] tracking-[0.20em] text-[rgba(96,78,62,0.55)]">
+            <div className="border-y border-ink/12">
+              <div className="grid grid-cols-[92px,1fr] gap-4 py-3.5 border-b border-ink/10">
+                <div className="text-[10.5px] tracking-[0.20em] text-ink/55">
                   予約方法
                 </div>
-                <div className="text-[14px] leading-[1.9] text-[rgba(96,78,62,0.82)]">
+                <div className="text-[14px] leading-[1.9] text-ink/82">
                   HotPepper Beauty から
                 </div>
               </div>
 
-              <div className="grid grid-cols-[92px,1fr] gap-4 py-3.5 border-b border-[rgba(96,78,62,0.10)]">
-                <div className="text-[10.5px] tracking-[0.20em] text-[rgba(96,78,62,0.55)]">
+              {/* ✅ TEL追加（表記はTELだけ） */}
+              <div className="grid grid-cols-[92px,1fr] gap-4 py-3.5 border-b border-ink/10">
+                <div className="text-[10.5px] tracking-[0.20em] text-ink/55">
+                  TEL
+                </div>
+                <div className="text-[14px] leading-[1.9] text-ink/82">
+                  <a
+                    href={TEL_HREF}
+                    className="underline underline-offset-2 decoration-ink/25 hover:decoration-ink/40"
+                    aria-label={`電話する ${TEL_DISPLAY}`}
+                  >
+                    {TEL_DISPLAY}
+                  </a>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-[92px,1fr] gap-4 py-3.5 border-b border-ink/10">
+                <div className="text-[10.5px] tracking-[0.20em] text-ink/55">
                   所要
                 </div>
-                <div className="text-[14px] leading-[1.9] text-[rgba(96,78,62,0.82)]">
+                <div className="text-[14px] leading-[1.9] text-ink/82">
                   空席確認〜予約まで約1分
                 </div>
               </div>
 
-              <div className="grid grid-cols-[92px,1fr] gap-4 py-3.5 border-b border-[rgba(96,78,62,0.10)]">
-                <div className="text-[10.5px] tracking-[0.20em] text-[rgba(96,78,62,0.55)]">
+              <div className="grid grid-cols-[92px,1fr] gap-4 py-3.5 border-b border-ink/10">
+                <div className="text-[10.5px] tracking-[0.20em] text-ink/55">
                   当日予約
                 </div>
-                <div className="text-[14px] leading-[1.9] text-[rgba(96,78,62,0.82)]">
+                <div className="text-[14px] leading-[1.9] text-ink/82">
                   空きがあれば可能
                 </div>
               </div>
 
               <div className="grid grid-cols-[92px,1fr] gap-4 py-3.5">
-                <div className="text-[10.5px] tracking-[0.20em] text-[rgba(96,78,62,0.55)]">
+                <div className="text-[10.5px] tracking-[0.20em] text-ink/55">
                   朝7:00
                 </div>
-                <div className="text-[14px] leading-[1.9] text-[rgba(96,78,62,0.82)]">
+                <div className="text-[14px] leading-[1.9] text-ink/82">
                   朝7:00はWEB予約のみ
                   <br />
-                  <span className="text-[rgba(96,78,62,0.62)]">
-                    8:00以降はTEL/WEBどちらも可
-                  </span>
+                  <span className="text-ink/62">8:00以降はTEL/WEBどちらも可</span>
                 </div>
               </div>
             </div>
 
-            <p className="mt-5 text-[13.5px] leading-[1.9] text-[rgba(96,78,62,0.72)]">
-              カットだけの日も、少し疲れている日も。
+            <p className="mt-5 text-[13.5px] leading-[1.9] text-ink/72">
+              今日は手早く、今日はしっかり。
               <br />
-              その日の状態に合わせて、無理なく整えられます。
+              お客さまの雰囲気に合わせて、進め方を合わせます。
             </p>
 
-            {/* CTA（SPはフル幅） */}
+            {/* ✅ CTA：ボタンは1つだけ（予約） */}
             <div className="mt-7">
               <a
                 href={RESERVE_URL}
@@ -246,42 +267,17 @@ export default function FinalCTA_SP() {
                     空席を確認して予約する
                   </div>
                 </div>
-                <span
-                  aria-hidden
-                  className="text-[18px] opacity-85 transition-transform duration-300 group-active:translate-x-[2px]"
-                >
-                  →
-                </span>
+     
               </a>
             </div>
 
-            <div className="mt-4">
-              <a
-                href={COUPON_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="
-                  inline-flex items-center gap-2
-                  text-[12.5px]
-                  text-[rgba(96,78,62,0.68)]
-                  hover:text-[rgba(96,78,62,0.86)]
-                  transition-colors
-                "
-              >
-                <span className="underline underline-offset-[5px] decoration-[rgba(96,78,62,0.28)]">
-                  クーポン・メニューだけ先に見る
-                </span>
-                <span aria-hidden className="opacity-60">↗</span>
-              </a>
-            </div>
-
-            <p className="mt-5 text-[11px] leading-[1.75] text-[rgba(96,78,62,0.50)]">
+            <p className="mt-5 text-[11px] leading-[1.75] text-ink/50">
               ※ 外部サイトへ移動します。予約内容はHotPepper側で確定します。
             </p>
           </div>
 
           {/* BOTTOM RULE */}
-          <div className="h-[1px] bg-[rgba(96,78,62,0.14)]" />
+          <div className="h-[1px] bg-ink/14" />
         </div>
       </div>
     </section>

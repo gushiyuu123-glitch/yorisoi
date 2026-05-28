@@ -226,16 +226,15 @@ export default function FooterSP({
           </p>
 
           {/* ✅ 追加：変更・キャンセルTEL */}
-          <p className="mt-4 text-[12.5px] leading-[1.8] text-ink/70">
-            予約の変更・キャンセル：
-            <a
-              href={TEL_HREF}
-              className="underline underline-offset-2 decoration-ink/25 ml-1"
-              aria-label="予約の変更・キャンセルの電話番号"
-            >
-              TEL {TEL_DISPLAY}
-            </a>
-          </p>
+  <p className="mt-4 text-[13px] leading-[1.75] text-ink/70">
+  <a
+    href={TEL_HREF}
+    className="underline underline-offset-2 decoration-ink/25 hover:decoration-ink/40"
+    aria-label={`電話番号 ${TEL_DISPLAY}`}
+  >
+    TEL {TEL_DISPLAY}
+  </a>
+</p>
         </div>
 
         {/* 制作クレジット */}

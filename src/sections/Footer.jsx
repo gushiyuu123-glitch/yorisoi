@@ -223,18 +223,15 @@ export default function Footer({
             定休日：毎週月曜日
           </p>
 
-          {/* ✅ 追加：変更・キャンセルTEL（誤解を生まない言い方） */}
-          <p className="mt-4 text-[13px] leading-[1.75] text-ink/70">
-            予約の変更・キャンセル：
-            <a
-              href={TEL_HREF}
-              className="underline underline-offset-2 decoration-ink/25 hover:decoration-ink/40 ml-1"
-              aria-label="予約の変更・キャンセルの電話番号"
-            >
-              TEL {TEL_DISPLAY}
-            </a>
-          </p>
-
+<p className="mt-4 text-[13px] leading-[1.75] text-ink/70">
+  <a
+    href={TEL_HREF}
+    className="underline underline-offset-2 decoration-ink/25 hover:decoration-ink/40"
+    aria-label={`電話番号 ${TEL_DISPLAY}`}
+  >
+    TEL {TEL_DISPLAY}
+  </a>
+</p>
           <p className="mt-4 text-[12px] leading-[1.75] text-ink/55">
             ※ 最新の営業時間・メニューはHotPepperをご確認ください。
           </p>

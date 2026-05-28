@@ -28,7 +28,7 @@ export default function ReserveFloatingSP() {
   // ✅ 実番号
   const TEL_DISPLAY = "090-7357-0926";
   const TEL_HREF = useMemo(
-    () => `tel:${TEL_DISPLAY.replace(/[^\d]/g, "")}`, // tel:09073570926
+    () => `tel:${TEL_DISPLAY.replace(/[^\d]/g, "")}`,
     [TEL_DISPLAY]
   );
 
@@ -144,15 +144,15 @@ export default function ReserveFloatingSP() {
         予約（HotPepper）
       </a>
 
-  {/* ✅ 電話（予約変更・キャンセル用）— 小さく／Heroでは出さない／二段階タップ */}
+{/* ✅ 電話 — 表示は「TEL + 番号」だけ／二段階タップ */}
 <a
   data-float-item="tel"
   href={TEL_HREF}
   onClick={onTelClick}
   aria-label={
     armed
-      ? "もう一度タップで発信（予約変更・キャンセル）"
-      : "電話する（予約変更・キャンセル）"
+      ? `もう一度タップで発信（${TEL_DISPLAY}）`
+      : `電話する（${TEL_DISPLAY}）`
   }
   className={`
     inline-flex items-center justify-end
@@ -170,21 +170,13 @@ export default function ReserveFloatingSP() {
     transition-all
     cursor-pointer
 
-    max-w-[78vw]  /* ✅ 長文でもはみ出さない */
+    max-w-[78vw]
     ${showTel ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}
   `}
 >
-  <span className="flex flex-col items-end leading-[1.15]">
-    <span className="text-[10px] tracking-[0.10em] opacity-[0.78]">
-      予約変更・キャンセル
-    </span>
-
-    <span className="text-[10.8px] tracking-[0.06em]">
-      TEL {TEL_DISPLAY}
-      {armed && (
-        <span className="ml-2 text-[10px] opacity-[0.72]">もう一度</span>
-      )}
-    </span>
+  <span className="text-[11px] tracking-[0.10em] font-medium whitespace-nowrap">
+    TEL {TEL_DISPLAY}
+    {armed && <span className="ml-2 text-[10px] opacity-[0.72]">もう一度</span>}
   </span>
 </a>
     </div>

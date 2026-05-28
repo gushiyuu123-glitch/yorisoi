@@ -8,6 +8,7 @@ const GOOGLE_MAPS_URL =
 const HOTPEPPER_MAP_URL = "https://beauty.hotpepper.jp/slnH000706136/map/";
 
 // ✅ 店主からの番号（予約変更・キャンセル）
+// ✅ 店主からの番号（予約変更・キャンセル）
 const TEL_DISPLAY = "090-7357-0926";
 const TEL_HREF = "tel:09073570926";
 
@@ -224,20 +225,15 @@ export default function Access() {
               }
             />
 
-            {/* ✅ 2箇所目：本文側で電話番号を明示 */}
-       <DlRow
-  dt="予約の変更・キャンセル"
+<DlRow
+  dt="TEL"
   dd={
-    <>
-      変更・キャンセルのご連絡は{" "}
-      <a
-        href={TEL_HREF}
-        className="underline underline-offset-2 decoration-ink/25 hover:decoration-ink/40"
-      >
-        TEL {TEL_DISPLAY}
-      </a>
-      へ。
-    </>
+    <a
+      href={TEL_HREF}
+      className="underline underline-offset-2 decoration-ink/25 hover:decoration-ink/40"
+    >
+      TEL {TEL_DISPLAY}
+    </a>
   }
 />
 
@@ -275,7 +271,7 @@ export default function Access() {
         <Reveal delay={0.24} y={12} blur={0.10} duration={0.66}>
           <div className="flex flex-wrap justify-center gap-3 mb-12">
             <Pill href={GOOGLE_MAPS_URL}>Google Mapsで開く</Pill>
-            <Pill href={HOTPEPPER_MAP_URL}>HotPepperで地図を見る</Pill>
+  
           </div>
 
           <p className="text-center text-[12px] leading-[1.8] text-ink/50">
