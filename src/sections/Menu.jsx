@@ -7,6 +7,7 @@ import HandwrittenSvgTitle from "../components/HandwrittenSvgTitle";
 gsap.registerPlugin(ScrollTrigger);
 
 const PAPER = "/yorisoi/menu-paper2.png"; // 透過PNG推奨（2016x1300目安）
+const RESERVE_URL = "https://beauty.hotpepper.jp/CSP/bt/reserve/?storeId=H000706136";
 
 const MICROCMS_DOMAIN = import.meta.env.VITE_MICROCMS_SERVICE_DOMAIN;
 const MICROCMS_KEY = import.meta.env.VITE_MICROCMS_API_KEY;
@@ -113,10 +114,7 @@ const GROUPS = [
 ];
 
 function groupSummary(group) {
-  // 手動で入れたい場合：GROUPS に summary を足す（任意）
   if (typeof group?.summary === "string" && group.summary.trim()) return group.summary.trim();
-
-  // 先頭のメニューを代表として表示（最小改修）
   const first = group?.items?.[0];
   if (!first) return "";
   const [name, price] = first;
@@ -170,9 +168,7 @@ function AccordionItem({ group, openKey, setOpenKey }) {
         </div>
 
         <div className="shrink-0 flex items-center gap-4 pt-[2px]">
-          <span className="text-[13px] text-ink/52">
-            {isOpen ? "閉じる" : "開く"}
-          </span>
+          <span className="text-[13px] text-ink/52">{isOpen ? "閉じる" : "開く"}</span>
           <PlusIcon open={isOpen} />
         </div>
       </button>
@@ -196,9 +192,7 @@ function AccordionItem({ group, openKey, setOpenKey }) {
                 "
               >
                 <span className="pr-6 text-ink/84">{name}</span>
-                <span className="shrink-0 font-semibold text-ink/88">
-                  {price}
-                </span>
+                <span className="shrink-0 font-semibold text-ink/88">{price}</span>
               </div>
             ))}
           </div>
@@ -208,38 +202,39 @@ function AccordionItem({ group, openKey, setOpenKey }) {
   );
 }
 
-function FeaturedCell({ item }) {
+function FeaturedCell({ item, dense = false }) {
   return (
-    <article className="bg-[rgba(255,255,255,0.16)] px-[clamp(14px,1.45vw,20px)] py-[clamp(12px,1.25vw,16px)]">
-      <div className="flex items-start justify-between gap-4 mb-2.5">
+    <article
+      className={`
+        bg-[rgba(255,255,255,0.14)]
+        ${dense ? "px-[16px] py-[14px]" : "px-[clamp(14px,1.25vw,18px)] py-[clamp(12px,1.1vw,15px)]"}
+      `}
+    >
+      <div className="flex items-start justify-between gap-4 mb-2">
         <div className="min-w-0">
-          <p className="text-[9px] tracking-[0.18em] text-ink/50 mb-1.5">
-            {item.label}
-          </p>
+          <p className="text-[9px] tracking-[0.18em] text-ink/48 mb-1.5">{item.label}</p>
           <h4 className="text-[14px] leading-[1.55] text-ink/88 font-semibold">
             {item.title}
           </h4>
         </div>
 
         <div className="shrink-0 text-right">
-          <p className="text-[10px] text-ink/54 mb-0.5">{item.note}</p>
-          <p className="text-[17px] tracking-[0.01em] text-ink/88 font-bold">
-            {item.price}
-          </p>
+          <p className="text-[10px] text-ink/52 mb-0.5">{item.note}</p>
+          <p className="text-[17px] tracking-[0.01em] text-ink/88 font-bold">{item.price}</p>
         </div>
       </div>
 
-      <p className="text-[12.8px] leading-[1.85] text-ink/78">{item.desc}</p>
+      <p className="text-[12.8px] leading-[1.78] text-ink/78">{item.desc}</p>
 
       <div className="mt-3">
         <span
           className="
-            inline-block
+            inline-flex items-center
             text-[9px]
             tracking-[0.22em]
-            text-ink/58
-            border border-ink/15
-            bg-[rgba(255,255,255,0.22)]
+            text-ink/56
+            border border-ink/14
+            bg-[rgba(255,255,255,0.18)]
             px-2.5 py-[3px]
           "
         >
@@ -253,7 +248,6 @@ function FeaturedCell({ item }) {
 export default function Menu() {
   const sectionRef = useRef(null);
 
-  // 初期は閉じておく
   const [openKey, setOpenKey] = useState(null);
   const [cms, setCms] = useState(null);
 
@@ -283,7 +277,6 @@ export default function Menu() {
     const patched = g.items.map(([name, price], i) => {
       const r = rows[i];
       if (!r) return [name, price];
-
       const n = pickStr(r, ["name", "menuName", "title"]) ?? name;
       const p = pickStr(r, ["price"]) ?? price;
       return [n, p];
@@ -330,13 +323,13 @@ export default function Menu() {
     <section
       id="menu"
       ref={sectionRef}
-      className="w-full bg-base pt-[22vh] pb-[18vh] px-[6vw]"
+      className="w-full bg-base pt-[18vh] pb-[16vh] px-[6vw]"
       aria-label="メニュー"
     >
-      {/* Heading */}
-      <div className="mn mx-auto max-w-[980px] mb-14">
+      {/* Heading（余白を締める） */}
+      <div className="mn mx-auto max-w-[980px] mb-12">
         {/* ✅ menu1.svg（Figmaタイポ） */}
-        <div className="mb-7 overflow-hidden">
+        <div className="mb-6 overflow-hidden">
           <div
             style={{
               width: "min(32vw, 440px)",
@@ -360,49 +353,46 @@ export default function Menu() {
         </div>
 
         <p className="text-[12px] tracking-[0.32em] text-ink/55 mb-1">料金</p>
-        <p className="text-[10px] tracking-[0.34em] text-ink/35 mb-6">PRICE</p>
+        <p className="text-[10px] tracking-[0.34em] text-ink/35 mb-5">PRICE</p>
 
-        <h2 className="text-[clamp(28px,2.8vw,38px)] leading-[1.45] text-ink/90 font-medium max-w-[860px]">
+        <h2 className="text-[clamp(28px,2.8vw,38px)] leading-[1.5] text-ink/90 font-medium max-w-[860px]">
           迷いやすい方のために、よく選ばれるメニューを先にまとめました。
         </h2>
 
-        <p className="mt-5 text-[14.5px] leading-[1.95] text-ink/72 max-w-[720px]">
+        <p className="mt-4 text-[14.5px] leading-[1.92] text-ink/72 max-w-[740px]">
           上によく選ばれるメニュー、下にカテゴリ別の一覧をご用意しています。
-          詳しい内容や空席確認はHotPepperからご確認いただけます。
+          <span className="inline-block w-[0.35em]" />
+          空席確認・予約はHotPepperから進められます。
         </p>
       </div>
 
       {/* Featured */}
-      <div className="mn mx-auto max-w-[1040px] mb-[12vh]">
-        {/* 見出し：左右に押し出される感じを消す（線で繋ぐ） */}
-        <div className="flex items-end gap-6 mb-7">
+      <div className="mn mx-auto max-w-[1040px] mb-[10vh]">
+        {/* 見出し：押し出され感を消す（gridで固定） */}
+        <div className="grid grid-cols-[auto,1fr,auto] items-end gap-6 mb-6">
           <div>
-            <p className="text-[12px] tracking-[0.24em] text-ink/46 mb-2">
-              PICK UP
-            </p>
+            <p className="text-[12px] tracking-[0.24em] text-ink/46 mb-2">PICK UP</p>
             <h3 className="text-[22px] text-ink/90 font-medium">人気メニュー</h3>
           </div>
 
-          <div aria-hidden className="flex-1 h-px bg-ink/12 mb-[6px]" />
+          <div aria-hidden className="h-px bg-ink/12 mb-[10px]" />
 
-          <p className="text-[13px] text-ink/52 tracking-[0.02em] whitespace-nowrap pb-[2px]">
+          <p className="text-[12.5px] text-ink/50 tracking-[0.02em] whitespace-nowrap mb-[6px]">
             よく選ばれるものから見やすく
           </p>
         </div>
 
-        {/* カード：余白を削って“中身密度”を上げる（紙はテクスチャとして薄く） */}
-        <div className="relative overflow-hidden border border-ink/12">
+        {/* 紙：テクスチャは残すが“白モヤ”に寄せない */}
+        <div className="relative overflow-hidden border border-ink/12 bg-[rgba(255,255,255,0.58)]">
           <img
             src={PAPER}
             alt=""
             aria-hidden="true"
             className="
-              absolute inset-0
-              w-full h-full
-              object-cover
-              opacity-[0.34]
-              scale-[1.04]
-              [filter:brightness(1.05)_contrast(0.92)]
+              absolute inset-0 w-full h-full object-cover
+              opacity-[0.26]
+              scale-[1.035]
+              [filter:brightness(1.04)_contrast(0.90)_saturate(0.92)]
             "
             loading="lazy"
             decoding="async"
@@ -411,18 +401,20 @@ export default function Menu() {
             aria-hidden="true"
             className="
               absolute inset-0
-              bg-[radial-gradient(circle_at_30%_18%,rgba(255,253,249,0.92),rgba(255,253,249,0.78)_55%,rgba(255,253,249,0.88)_100%)]
+              bg-[radial-gradient(circle_at_26%_18%,rgba(255,253,249,0.68),rgba(255,253,249,0.26)_56%,rgba(255,253,249,0.52)_100%)]
             "
           />
+          {/* 薄い内側シーム（“紙の枠”） */}
           <div
             aria-hidden="true"
-            className="absolute inset-0 shadow-[0_18px_42px_rgba(0,0,0,0.07)]"
+            className="absolute inset-0 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.42)] pointer-events-none"
           />
 
-          <div className="relative p-[clamp(16px,2.2vw,28px)]">
+          {/* 余白を詰める */}
+          <div className="relative p-[clamp(14px,1.8vw,22px)]">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-ink/12 border border-ink/12">
               {featuredUI.map((item, idx) => (
-                <FeaturedCell key={item.label ?? idx} item={item} />
+                <FeaturedCell key={item.label ?? idx} item={item} dense />
               ))}
             </div>
           </div>
@@ -430,11 +422,9 @@ export default function Menu() {
       </div>
 
       {/* Accordion */}
-      <div className="mn mx-auto max-w-[980px] mb-[12vh]">
-        <div className="mb-7">
-          <p className="text-[12px] tracking-[0.24em] text-ink/46 mb-2">
-            ALL MENU
-          </p>
+      <div className="mn mx-auto max-w-[980px] mb-[10vh]">
+        <div className="mb-6">
+          <p className="text-[12px] tracking-[0.24em] text-ink/46 mb-2">ALL MENU</p>
           <h3 className="text-[22px] text-ink/90 font-medium">その他のメニュー</h3>
         </div>
 
@@ -450,35 +440,36 @@ export default function Menu() {
         </div>
       </div>
 
-      {/* CTA */}
+      {/* CTA（ボタン1つ：予約に統一） */}
       <div className="mn mx-auto max-w-[980px] text-center">
-        <p className="text-[14px] text-ink/68 mb-4">
-          空席・最新メニュー・クーポンはHotPepperで確認できます
-        </p>
+
 
         <a
-          href="https://beauty.hotpepper.jp/slnH000706136/coupon/"
+          href={RESERVE_URL}
           target="_blank"
           rel="noopener noreferrer"
           className="
-            inline-block
-            px-8 py-3.5
-            rounded-[999px]
-            bg-[rgba(228,170,188,0.22)]
-            text-[#7c4e5b]
+            inline-flex items-center justify-center gap-3
+            px-9 py-4
+            bg-[rgba(124,78,91,0.72)]
+            text-white/92
             text-[14px]
-            tracking-[0.08em]
-            shadow-[0_6px_20px_rgba(0,0,0,0.06)]
-            hover:bg-[rgba(228,170,188,0.30)]
+            tracking-[0.10em]
+            shadow-[0_10px_26px_rgba(0,0,0,0.10)]
+            hover:bg-[rgba(124,78,91,0.82)]
+            active:scale-[0.99]
             transition-all
           "
+          aria-label="HotPepperで空席を確認して予約する"
         >
-          HotPepperで詳しく見る
+          <span className="tracking-[0.22em] text-white/70 text-[12px]">HOTPEPPER</span>
+          <span className="font-semibold">空席を確認して予約する</span>
+
         </a>
 
         <p className="text-[12px] mt-5 leading-[1.8] text-ink/48">
           ※ 表示価格は税込です。内容は変更になる場合があります。<br />
-          最新情報はHotPepperをご確認ください。
+          予約内容はHotPepper側で確定します。
         </p>
       </div>
     </section>

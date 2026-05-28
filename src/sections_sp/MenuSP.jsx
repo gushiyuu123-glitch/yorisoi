@@ -1,16 +1,18 @@
 // src/sections_sp/MenuSP.jsx
-import { useEffect, useRef, useState } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useEffect, useMemo, useState } from "react";
+import { Reveal } from "../components/Reveal";
 import HandwrittenSvgTitle from "../components/HandwrittenSvgTitle";
-
-gsap.registerPlugin(ScrollTrigger);
 
 const PAPER = "/yorisoi/menu-paper2.png"; // ✅ PCと同じ紙
 
 const MICROCMS_DOMAIN = import.meta.env.VITE_MICROCMS_SERVICE_DOMAIN;
 const MICROCMS_KEY = import.meta.env.VITE_MICROCMS_API_KEY;
 const MICROCMS_MENU_API_ID = import.meta.env.VITE_MICROCMS_MENU_API_ID ?? "menu";
+
+const RESERVE_URL =
+  "https://beauty.hotpepper.jp/CSP/bt/reserve/?storeId=H000706136";
+// ※控えめリンクとして残す（ボタンは1つ）
+const COUPON_URL = "https://beauty.hotpepper.jp/slnH000706136/coupon/";
 
 async function fetchMenuPatch({ signal } = {}) {
   if (!MICROCMS_DOMAIN || !MICROCMS_KEY) return null;
@@ -113,7 +115,8 @@ const GROUPS = [
 ];
 
 function groupSummary(group) {
-  if (typeof group?.summary === "string" && group.summary.trim()) return group.summary.trim();
+  if (typeof group?.summary === "string" && group.summary.trim())
+    return group.summary.trim();
   const first = group?.items?.[0];
   if (!first) return "";
   const [name, price] = first;
@@ -166,7 +169,7 @@ function AccordionSP({ group, openKey, setOpenKey }) {
       <div
         className={`
           grid transition-[grid-template-rows,opacity] duration-500 ease-out
-          ${isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-80"}
+          ${isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-85"}
         `}
       >
         <div className="overflow-hidden">
@@ -193,13 +196,13 @@ function AccordionSP({ group, openKey, setOpenKey }) {
 
 function FeaturedCellSP({ item }) {
   return (
-    <article className="spCell bg-[rgba(255,255,255,0.16)] px-4 py-4">
+    <article className="spCell bg-[rgba(255,255,255,0.22)] px-4 py-4">
       <div className="flex items-start justify-between gap-4 mb-2.5">
         <div className="min-w-0">
           <p className="text-[9.5px] tracking-[0.18em] text-ink/52 mb-1.5">
             {item.label}
           </p>
-          <h3 className="text-[14.5px] leading-[1.55] text-ink/88 font-semibold">
+          <h3 className="text-[14.6px] leading-[1.55] text-ink/88 font-semibold">
             {item.title}
           </h3>
         </div>
@@ -222,7 +225,7 @@ function FeaturedCellSP({ item }) {
             tracking-[0.22em]
             text-ink/60
             border border-ink/20
-            bg-[rgba(255,255,255,0.28)]
+            bg-[rgba(255,255,255,0.30)]
             px-2.5 py-[3px]
           "
         >
@@ -234,9 +237,6 @@ function FeaturedCellSP({ item }) {
 }
 
 export default function MenuSP() {
-  const sectionRef = useRef(null);
-
-  // 初期は閉じておく
   const [openKey, setOpenKey] = useState(null);
   const [cms, setCms] = useState(null);
 
@@ -248,234 +248,221 @@ export default function MenuSP() {
     return () => ac.abort();
   }, []);
 
-  const featuredUI = FEATURED.map((it, i) => {
-    const p = cms?.featured?.[i];
-    if (!p) return it;
+  const featuredUI = useMemo(() => {
+    return FEATURED.map((it, i) => {
+      const p = cms?.featured?.[i];
+      if (!p) return it;
 
-    const title = pickStr(p, ["title", "menuName", "name"]) ?? it.title;
-    const price = pickStr(p, ["price"]) ?? it.price;
-    const note = pickStr(p, ["note", "sub", "caption"]) ?? it.note;
+      const title = pickStr(p, ["title", "menuName", "name"]) ?? it.title;
+      const price = pickStr(p, ["price"]) ?? it.price;
+      const note = pickStr(p, ["note", "sub", "caption"]) ?? it.note;
+      const desc = pickStr(p, ["desc", "description"]) ?? it.desc;
 
-    return { ...it, title, price, note };
-  });
-
-  const groupsUI = GROUPS.map((g) => {
-    const rows = cms?.[g.key];
-    if (!Array.isArray(rows) || rows.length === 0) return g;
-
-    const patched = g.items.map(([name, price], i) => {
-      const r = rows[i];
-      if (!r) return [name, price];
-
-      const n = pickStr(r, ["name", "menuName", "title"]) ?? name;
-      const p = pickStr(r, ["price"]) ?? price;
-      return [n, p];
+      return { ...it, title, price, note, desc };
     });
+  }, [cms]);
 
-    for (let i = g.items.length; i < rows.length; i++) {
-      const r = rows[i];
-      const n = pickStr(r, ["name", "menuName", "title"]);
-      const p = pickStr(r, ["price"]);
-      if (n && p) patched.push([n, p]);
-    }
+  const groupsUI = useMemo(() => {
+    return GROUPS.map((g) => {
+      const rows = cms?.[g.key];
+      if (!Array.isArray(rows) || rows.length === 0) return g;
 
-    return { ...g, items: patched };
-  });
+      const patched = g.items.map(([name, price], i) => {
+        const r = rows[i];
+        if (!r) return [name, price];
 
-  useEffect(() => {
-    const el = sectionRef.current;
-    if (!el) return;
+        const n = pickStr(r, ["name", "menuName", "title"]) ?? name;
+        const p = pickStr(r, ["price"]) ?? price;
+        return [n, p];
+      });
 
-    // ✅ display:none 側で ScrollTrigger が暴れない保険
-    const rect = el.getBoundingClientRect();
-    if (rect.height < 20) return;
-
-    const reduce =
-      window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;
-    if (reduce) return;
-
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        el.querySelectorAll(".mnSP"),
-        { opacity: 0, y: 18, filter: "blur(0.16px)" },
-        {
-          opacity: 1,
-          y: 0,
-          filter: "blur(0px)",
-          duration: 0.68,
-          ease: "power3.out",
-          stagger: 0.07,
-          scrollTrigger: { trigger: el, start: "top 84%", once: true },
-        }
-      );
-
-      const featured = el.querySelector(".spFeatured");
-      if (featured) {
-        gsap.fromTo(
-          featured.querySelectorAll(".spCell"),
-          { opacity: 0, y: 14, filter: "blur(0.14px)" },
-          {
-            opacity: 1,
-            y: 0,
-            filter: "blur(0px)",
-            duration: 0.62,
-            ease: "power3.out",
-            stagger: 0.06,
-            scrollTrigger: { trigger: featured, start: "top 86%", once: true },
-          }
-        );
+      for (let i = g.items.length; i < rows.length; i++) {
+        const r = rows[i];
+        const n = pickStr(r, ["name", "menuName", "title"]);
+        const p = pickStr(r, ["price"]);
+        if (n && p) patched.push([n, p]);
       }
-    }, el);
 
-    return () => ctx.revert();
-  }, []);
+      return { ...g, items: patched };
+    });
+  }, [cms]);
 
   return (
     <section
       id="menu-sp"
-      ref={sectionRef}
       className="w-full bg-base pt-[18vh] pb-[16vh] px-[6vw]"
       aria-label="メニュー"
     >
       <div className="mx-auto max-w-[560px]">
-        {/* Heading：PC文法（menu1.svg + 料金） */}
-        <div className="mnSP mb-10">
-          <div className="mb-5 overflow-hidden">
-            <div
-              style={{
-                width: "min(72vw, 300px)",
-                minWidth: 190,
-                opacity: 0.9,
-                filter: "contrast(0.92) saturate(0.92)",
-              }}
-            >
-              <HandwrittenSvgTitle
-                src="/yorisoi/menu1.svg"
-                label="MENU"
-                className="block w-full"
-                mode="preserve"
-                start="top 90%"
-                once={true}
-                revealY={6}
-                revealBlur={0.08}
-                revealDuration={0.6}
-              />
+        {/* Heading */}
+        <Reveal y={12} blur={0.12} duration={0.62}>
+          <div className="mb-10">
+            <div className="mb-5 overflow-hidden">
+              <div
+                style={{
+                  width: "min(72vw, 300px)",
+                  minWidth: 190,
+                  opacity: 0.9,
+                  filter: "contrast(0.92) saturate(0.92)",
+                }}
+              >
+                <HandwrittenSvgTitle
+                  src="/yorisoi/menu1.svg"
+                  label="MENU"
+                  className="block w-full"
+                  mode="preserve"
+                  start="top 90%"
+                  once={true}
+                  revealY={6}
+                  revealBlur={0.08}
+                  revealDuration={0.6}
+                />
+              </div>
             </div>
+
+            <p className="text-[11px] tracking-[0.32em] text-ink/55 mb-4">料金</p>
+
+            <h2 className="text-[clamp(20px,5.8vw,26px)] leading-[1.55] text-ink/90 font-medium">
+              迷いやすい方のために、<br />
+              よく選ばれるメニューを先にまとめました。
+            </h2>
+
+            <p className="mt-4 text-[13.5px] leading-[1.9] text-ink/70">
+              上は「人気メニュー」、下は「カテゴリ別一覧」です。
+              <br />
+              最新の内容・空席はHotPepperでご確認ください。
+            </p>
           </div>
-
-          <p className="text-[11px] tracking-[0.32em] text-ink/55 mb-4">料金</p>
-
-          <h2 className="text-[clamp(20px,5.8vw,26px)] leading-[1.55] text-ink/90 font-medium">
-            迷いやすい方のために、よく選ばれるメニューを先にまとめました。
-          </h2>
-
-          <p className="mt-4 text-[13.5px] leading-[1.9] text-ink/70">
-            上によく選ばれるメニュー、下にカテゴリ別の一覧をご用意しています。
-            詳しい内容や空席確認はHotPepperからご確認いただけます。
-          </p>
-        </div>
+        </Reveal>
 
         {/* Featured */}
-        <div className="mnSP mb-[10vh]">
-          <div className="flex items-end justify-between mb-5">
-            <div>
+        <Reveal delay={0.06} y={12} blur={0.12} duration={0.62}>
+          <div className="mb-[9vh]">
+            {/* ✅ 押し出され感を消す：右に逃がさない */}
+            <div className="mb-5">
               <p className="text-[11px] tracking-[0.24em] text-ink/46 mb-1.5">
                 PICK UP
               </p>
               <h3 className="text-[18px] text-ink/90 font-medium">人気メニュー</h3>
+              <p className="mt-2 text-[12.5px] text-ink/56">
+                よく選ばれるものから見やすく
+              </p>
             </div>
-            <p className="text-[12px] text-ink/52">まずここから</p>
-          </div>
 
-          <div className="spFeatured relative overflow-hidden border border-ink/12">
-            <img
-              src={PAPER}
-              alt=""
-              aria-hidden="true"
-              className="
-                absolute inset-0
-                w-full h-full
-                object-cover
-                opacity-[0.50]
-                scale-[1.06]
-              "
-              loading="lazy"
-              decoding="async"
-            />
-            <div
-              aria-hidden="true"
-              className="
-                absolute inset-0
-                bg-[radial-gradient(circle_at_30%_18%,rgba(255,253,249,0.92),rgba(255,253,249,0.76)_55%,rgba(255,253,249,0.86)_100%)]
-              "
-            />
-            <div
-              aria-hidden="true"
-              className="absolute inset-0 shadow-[0_16px_34px_rgba(0,0,0,0.08)]"
-            />
+            <div className="spFeatured relative overflow-hidden border border-ink/12">
+              {/* 紙 */}
+              <img
+                src={PAPER}
+                alt=""
+                aria-hidden="true"
+                className="
+                  absolute inset-0 w-full h-full object-cover
+                  opacity-[0.40]
+                  scale-[1.06]
+                "
+                loading="lazy"
+                decoding="async"
+              />
+              {/* ✅ 白モヤを作りすぎない：濃度を落として“紙っぽさ”だけ残す */}
+              <div
+                aria-hidden="true"
+                className="
+                  absolute inset-0
+                  bg-[radial-gradient(circle_at_28%_18%,rgba(255,253,249,0.72),rgba(255,253,249,0.50)_56%,rgba(255,253,249,0.62)_100%)]
+                "
+              />
+              <div
+                aria-hidden="true"
+                className="absolute inset-0 shadow-[0_14px_30px_rgba(0,0,0,0.07)]"
+              />
 
-            <div className="relative p-[clamp(14px,4.2vw,22px)]">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-px bg-ink/12 border border-ink/12">
-                {featuredUI.map((item, idx) => (
-                  <FeaturedCellSP key={item.label ?? idx} item={item} />
-                ))}
+              {/* ✅ 余白を削る */}
+              <div className="relative p-[clamp(12px,4vw,18px)]">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-px bg-ink/12 border border-ink/12">
+                  {featuredUI.map((item, idx) => (
+                    <FeaturedCellSP key={item.label ?? idx} item={item} />
+                  ))}
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        </Reveal>
 
         {/* Accordion */}
-        <div className="mnSP mb-[10vh]">
-          <div className="mb-5">
-            <p className="text-[11px] tracking-[0.22em] text-ink/46 mb-2">
-              ALL MENU
+        <Reveal delay={0.08} y={12} blur={0.12} duration={0.62}>
+          <div className="mb-[9vh]">
+            <div className="mb-5">
+              <p className="text-[11px] tracking-[0.22em] text-ink/46 mb-2">
+                ALL MENU
+              </p>
+              <h3 className="text-[20px] text-ink/90 font-medium">その他のメニュー</h3>
+            </div>
+
+            <div className="border-b border-ink/10">
+              {groupsUI.map((group) => (
+                <AccordionSP
+                  key={group.key}
+                  group={group}
+                  openKey={openKey}
+                  setOpenKey={setOpenKey}
+                />
+              ))}
+            </div>
+          </div>
+        </Reveal>
+
+        {/* CTA（✅ ボタンは1つ：予約へ） */}
+        <Reveal delay={0.10} y={12} blur={0.10} duration={0.62}>
+          <div className="text-center">
+        
+            <a
+              href={RESERVE_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="
+                inline-flex items-center justify-center
+                px-8 py-3.5
+                rounded-full
+                bg-[rgba(228,170,188,0.22)]
+                text-[#7c4e5b]
+                text-[13.5px]
+                tracking-[0.08em]
+                shadow-[0_5px_16px_rgba(0,0,0,0.06)]
+                active:scale-[0.985]
+                transition-all
+              "
+              aria-label="HotPepperで空席確認して予約する"
+            >
+              空席を確認して予約する
+            </a>
+
+            {/* 控えめ導線（ボタンにしない） */}
+            <div className="mt-4">
+              <a
+                href={COUPON_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="
+                  inline-flex items-center gap-2
+                  text-[13px]
+                  text-ink/72
+                  tracking-[0.04em]
+                  underline underline-offset-4 decoration-ink/25
+                  active:opacity-80
+                  transition
+                "
+              >
+
+              </a>
+            </div>
+
+            <p className="text-[11px] mt-5 leading-[1.7] text-ink/45">
+              ※ メニュー・価格・クーポン内容は変動する場合があります。
+              <br />
+              最新情報はHotPepperをご確認ください。
             </p>
-            <h3 className="text-[20px] text-ink/90 font-medium">その他のメニュー</h3>
           </div>
-
-          <div className="border-b border-ink/10">
-            {groupsUI.map((group) => (
-              <AccordionSP
-                key={group.key}
-                group={group}
-                openKey={openKey}
-                setOpenKey={setOpenKey}
-              />
-            ))}
-          </div>
-        </div>
-
-        {/* CTA */}
-        <div className="mnSP text-center">
-          <p className="text-[13px] text-ink/65 mb-4">
-            最新クーポン・空席確認はHotPepperから
-          </p>
-
-          <a
-            href="https://beauty.hotpepper.jp/slnH000706136/coupon/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="
-              inline-block
-              px-7 py-3
-              rounded-full
-              bg-[rgba(228,170,188,0.24)]
-              text-[#7c4e5b]
-              text-[13.5px]
-              tracking-[0.08em]
-              shadow-[0_5px_16px_rgba(0,0,0,0.06)]
-              active:scale-[0.98]
-              transition-all
-            "
-          >
-            HotPepperで詳しく見る
-          </a>
-
-          <p className="text-[11px] mt-5 leading-[1.7] text-ink/45">
-            ※ メニュー・価格・クーポン内容は変動する場合があります。<br />
-            最新情報はHotPepperをご確認ください。
-          </p>
-        </div>
+        </Reveal>
       </div>
     </section>
   );
