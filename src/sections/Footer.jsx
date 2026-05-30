@@ -77,7 +77,7 @@ export default function Footer({
   const gushikenUrl = "https://gushikendesign.com/";
   const gushikenInsta = "https://www.instagram.com/gushiken_design/";
 
-  // ✅ 電話（予約変更・キャンセル用）
+  // ✅ TEL（予約変更・キャンセル用）
   const TEL_DISPLAY = "090-7357-0926";
   const TEL_HREF = "tel:09073570926";
 
@@ -227,7 +227,7 @@ export default function Footer({
   <a
     href={TEL_HREF}
     className="underline underline-offset-2 decoration-ink/25 hover:decoration-ink/40"
-    aria-label={`電話番号 ${TEL_DISPLAY}`}
+    aria-label={`TEL番号 ${TEL_DISPLAY}`}
   >
     TEL {TEL_DISPLAY}
   </a>

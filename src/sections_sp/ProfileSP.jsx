@@ -2,8 +2,6 @@
 import { Reveal } from "../components/Reveal";
 
 export default function ProfileSP() {
-  const REVIEW_URL = "https://beauty.hotpepper.jp/slnH000706136/review/";
-
   return (
     <section
       className="
@@ -30,7 +28,6 @@ export default function ProfileSP() {
               aspect-[4/5]
             "
           />
-
           <div
             aria-hidden="true"
             className="
@@ -45,7 +42,6 @@ export default function ProfileSP() {
           />
         </Reveal>
 
-        {/* ✅ SPはPCと同文を避ける */}
         <Reveal
           as="p"
           delay={0.06}
@@ -72,8 +68,9 @@ export default function ProfileSP() {
             mb-6
           "
         >
-          印象が締まる、<br />
-          その一手。
+          似合う形を、
+          <br />
+          きれいに仕上げる。
         </Reveal>
 
         <Reveal
@@ -89,23 +86,22 @@ export default function ProfileSP() {
           "
         >
           <p>
-            東京で副店長を経験し、担当歴は18年。<br />
-            メンズのカットとパーマを中心に積み重ねてきました。
+            東京で副店長として18年。
+            <br />
+            カットとパーマの現場で経験を重ねてきました。
           </p>
 
+          {/* ✅ 修正③（落とします削減：収める） */}
           <p>
-            最初に、変えたい所と毎朝の手入れの癖を押さえます。<br />
-            骨格と毛流れから、落ち着く輪郭へ落とします。
-          </p>
-
-          <p>
-            パーマは必要なときだけ。<br />
-            強さは段階で選べます。
+            まず、直したい部分と日頃の手入れの癖を把握します。
+            <br />
+            骨格と毛流れから、顔まわりが落ち着く形へ収めます。
           </p>
 
           <p className="text-ink/70">
-            会話の量はお任せください。<br />
-            要点だけ確認して、そのまま進めます。
+            よくしゃべる日も、静かな日も。その場の空気を読んでペースを切り替えます。
+            <br />
+            言い忘れがあれば、途中で追加してもらえれば大丈夫です。
           </p>
         </Reveal>
 
@@ -127,7 +123,7 @@ export default function ProfileSP() {
             </div>
             <div className="flex gap-3">
               <dt className="w-[5.5em] text-ink/88 font-medium">評価</dt>
-              <dd>★5.0（61件）※2026年3月時点</dd>
+              <dd>★5.0（61件）／2026.03時点</dd>
             </div>
           </dl>
         </Reveal>

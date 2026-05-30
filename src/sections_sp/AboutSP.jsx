@@ -14,7 +14,13 @@ export default function AboutSP() {
       aria-label="ヨリソイについて"
     >
       <div className="mx-auto max-w-[520px]">
-        <Reveal delay={0.0} y={12} blur={0.14} duration={0.62} className="flex justify-start mb-4 opacity-85">
+        <Reveal
+          delay={0.0}
+          y={12}
+          blur={0.14}
+          duration={0.62}
+          className="flex justify-start mb-4 opacity-85"
+        >
           <img
             src="/yorisoi/bird-logo.png"
             alt=""
@@ -36,7 +42,6 @@ export default function AboutSP() {
           </div>
         </Reveal>
 
-        {/* ✅ SPはPCと同文を避ける */}
         <Reveal
           as="p"
           delay={0.10}
@@ -45,7 +50,7 @@ export default function AboutSP() {
           duration={0.62}
           className="text-[11px] tracking-[0.24em] text-[rgba(96,78,62,0.50)] mb-3"
         >
-          距離感のつくり方
+          安心のつくり方
         </Reveal>
 
         <Reveal
@@ -63,8 +68,9 @@ export default function AboutSP() {
             mb-6
           "
         >
-          気を張らずに、<br />
-          頼めるように。
+          話さなくても、
+          <br />
+          伝わるように。
         </Reveal>
 
         <Reveal
@@ -80,18 +86,22 @@ export default function AboutSP() {
           "
         >
           <p>
-            悩みは同じでも、求めるゴールは日によって変わります。<br />
-            今日は相談。今日は短く。どちらでも大丈夫です。
+            髪の悩みは同じでも、求めるゴールは日によって変わります。
+            <br />
+            今日は整えるだけ。今日は相談したい。どちらでも大丈夫です。
           </p>
 
           <p>
-            はじめに、直したい所と日常の手入れの癖を聞き取ります。<br />
-            そこから、落ち着く着地点を探します。
+            最初に、直したい箇所と、いつもの整え方を確認します。
+            <br />
+            そこから仕上がりを組みます。
           </p>
 
+          {/* ✅ 修正④（重複回避） */}
           <p>
-            仕上がりは、家で迷いにくい収まりへ。<br />
-            翌朝の支度がスムーズになる形を狙います。
+            仕上げは、家でも再現しやすい収まりへ。
+            <br />
+            朝のひと手間が減る形を目指します。
           </p>
         </Reveal>
 
@@ -121,8 +131,9 @@ export default function AboutSP() {
           "
         >
           <p className="text-[13.6px] text-[rgba(96,78,62,0.74)] leading-[1.9]">
-            会話の量もペースも、空気を見てこちらで調子を取ります。<br />
-            言い忘れは途中のひと言で大丈夫です。
+            会話の量もペースも、空気を見てこちらで揃えます。
+            <br />
+            言いづらいことは途中のひと言でも大丈夫です。
           </p>
         </Reveal>
       </div>

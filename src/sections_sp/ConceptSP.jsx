@@ -18,7 +18,8 @@ export default function ConceptSP() {
       {
         kicker: "POINT 02",
         title: "先に聞き取って、迷いを減らす。",
-        desc: "直したい所と日頃のスタイリングを先に押さえ、\n向きの形へ落とします。",
+        /* ✅ 修正③（落とします削減） */
+        desc: "直したい所と日頃のスタイリングを先に押さえ、\nその人向きの形を見立てます。",
         sub: ["途中変更OK", "必要な順で進める"],
         img: "/yorisoi/concept-cut.png",
         alt: "施術前に確認している様子",
@@ -28,7 +29,8 @@ export default function ConceptSP() {
       {
         kicker: "POINT 03",
         title: "翌朝の支度が、短くなる形へ。",
-        desc: "乾かして手ぐしで形が出るように。\nセットに時間がかからない収まりを狙います。",
+        desc:
+          "乾かして手ぐしで形が出るように。\nセットに時間がかからない収まりを狙います。",
         sub: ["乾かして形が出る", "髪質・骨格に応じて微調整"],
         img: "/yorisoi/concept-home.png",
         alt: "自宅で髪を支度している様子",
@@ -49,7 +51,6 @@ export default function ConceptSP() {
       "
       aria-label="コンセプト"
     >
-      {/* 背景：鳥は気配だけ */}
       <div aria-hidden className="absolute inset-0 -z-10">
         <img
           src="/yorisoi/bird.png"
@@ -70,7 +71,6 @@ export default function ConceptSP() {
       </div>
 
       <div className="mx-auto max-w-[560px]">
-        {/* 見出し */}
         <Reveal
           as="p"
           y={12}
@@ -89,7 +89,8 @@ export default function ConceptSP() {
           duration={0.60}
           className="text-[clamp(20px,6vw,26px)] leading-[1.48] text-ink/90 font-medium"
         >
-          任せやすさを、<br />
+          任せやすさを、
+          <br />
           3つにまとめました。
         </Reveal>
 
@@ -114,7 +115,6 @@ export default function ConceptSP() {
           aria-hidden
         />
 
-        {/* POINTS */}
         <div className="mt-[9vh] space-y-[10vh]">
           {POINTS.map((p, i) => {
             const flip = i === 1;
@@ -123,7 +123,6 @@ export default function ConceptSP() {
 
             return (
               <div key={p.kicker} className="pt-10 border-t border-ink/12">
-                {/* 画像（SPはブリードで箱感を消す） */}
                 <Reveal y={12} blur={0.12} duration={0.60}>
                   <figure className="-mx-[6vw]">
                     <img
@@ -144,7 +143,6 @@ export default function ConceptSP() {
                   </figure>
                 </Reveal>
 
-                {/* テキスト */}
                 <div className={`mt-7 ${textAlign}`}>
                   <Reveal
                     y={12}
