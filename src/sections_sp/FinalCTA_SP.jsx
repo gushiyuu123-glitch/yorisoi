@@ -185,7 +185,7 @@ export default function FinalCTA_SP() {
                   予約方法
                 </div>
                 <div className="text-[14px] leading-[1.9] text-ink/82">
-                  HotPepper Beauty から
+                    HotPepper Beauty またはTELから
                 </div>
               </div>
 

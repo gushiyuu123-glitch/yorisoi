@@ -33,7 +33,6 @@ export default function HareStyleSP() {
       const x = el.scrollLeft || 0;
       const max = el.scrollWidth - el.clientWidth;
 
-      // そもそも横にスクロールできない → 全非表示
       const can = max > 6;
       setCanSwipe(can);
 
@@ -43,7 +42,6 @@ export default function HareStyleSP() {
         return;
       }
 
-      // 壁側は矢印を消す（微小誤差を吸収）
       const atStart = x <= 6;
       const atEnd = x >= max - 6;
 
@@ -56,13 +54,9 @@ export default function HareStyleSP() {
       raf = requestAnimationFrame(update);
     };
 
-    // 初回
     update();
-
-    // スクロール監視
     el.addEventListener("scroll", onScroll, { passive: true });
 
-    // リサイズ・画像読み込み等で幅が変わるケースを拾う
     let ro;
     if ("ResizeObserver" in window) {
       ro = new ResizeObserver(() => update());
@@ -71,7 +65,6 @@ export default function HareStyleSP() {
       window.addEventListener("resize", update, { passive: true });
     }
 
-    // 画像遅延ロードで scrollWidth が後から変わる保険
     const t = window.setTimeout(update, 220);
 
     return () => {
@@ -122,7 +115,7 @@ export default function HareStyleSP() {
           "
         >
           パーマも、フェードも。<br />
-          朝が楽になる形を、写真で見せます。
+          手入れが軽い方向を、写真で見せます。
         </Reveal>
 
         <Reveal
@@ -132,15 +125,14 @@ export default function HareStyleSP() {
           duration={0.62}
           className="mt-4 text-[13.5px] leading-[1.9] text-ink/72"
         >
-          実際に施術したスタイルを掲載しています。<br />
-          扱いやすさが残る形を基準に。
+          施術例を並べています。<br />
+          仕上がりは「扱いやすさ」を優先したものです。
         </Reveal>
       </div>
 
-      {/* ✅ Swipe Gallery（scroll-snap） */}
+      {/* Swipe Gallery */}
       <Reveal delay={0.18} y={12} blur={0.12} duration={0.62}>
         <div className="relative mb-[7vh]">
-          {/* 端フェード（矢印と同じ条件で出す） */}
           <div
             aria-hidden
             className={`
@@ -160,7 +152,6 @@ export default function HareStyleSP() {
             `}
           />
 
-          {/* ✅ 矢印ヒント（壁側は消える / スクロール不可なら消える） */}
           <div
             aria-hidden
             className={`
@@ -213,7 +204,6 @@ export default function HareStyleSP() {
             </span>
           </div>
 
-          {/* スワイプ領域（ブリード） */}
           <div
             ref={scrollerRef}
             className="
@@ -222,7 +212,6 @@ export default function HareStyleSP() {
               [scrollbar-width:none]
               [-ms-overflow-style:none]
               [&::-webkit-scrollbar]:hidden
-
               snap-x snap-mandatory
               scroll-px-[6vw]
               touch-pan-x
@@ -260,7 +249,6 @@ export default function HareStyleSP() {
                     "
                   />
 
-                  {/* 上：タグ */}
                   <div
                     className="
                       absolute left-0 top-0
@@ -275,7 +263,6 @@ export default function HareStyleSP() {
                     {s.tag}
                   </div>
 
-                  {/* 下：スタイル名 */}
                   <figcaption
                     className="
                       absolute bottom-0 left-0 right-0
@@ -291,14 +278,12 @@ export default function HareStyleSP() {
                 </figure>
               ))}
 
-              {/* 右端の余韻 */}
               <div aria-hidden className="min-w-[6vw]" />
             </div>
           </div>
         </div>
       </Reveal>
 
-      {/* CTA */}
       <div className="text-center">
         <Reveal delay={0.24} y={12} blur={0.12} duration={0.62}>
           <a

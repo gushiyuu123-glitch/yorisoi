@@ -4,11 +4,10 @@ import { Reveal } from "../components/Reveal";
 const FAQS = [
   {
     q: "初めてでも大丈夫ですか？",
-    a: "はい。最初に「気になるところ」と「普段のセット」だけ確認して、合う形を一緒に決めます。",
+    a: "はい。はじめに「直したい部分」と「日頃のスタイリング」を聞き取り、方向をその場で決めます。",
   },
   {
     q: "所要時間はどれくらい？",
-    // ✅ 店主指定：パーマ 120〜150分
     a: "目安は、カットのみで約40〜50分。パーマ込みで約120〜150分です。",
   },
   {
@@ -17,11 +16,11 @@ const FAQS = [
   },
   {
     q: "当日予約はできますか？",
-    a: "空きがあれば可能です。朝7時枠のみWEB予約で受け付けています。",
+    a: "空きがあれば可能です。朝7時の枠のみWEB予約で受け付けています。",
   },
   {
     q: "何を伝えればいいですか？",
-    a: "「なりたい雰囲気」「困っているところ」「普段のセット」——この3つで十分です。写真があれば見せてください（なくても大丈夫です）。",
+    a: "「なりたい雰囲気」「手を入れたい箇所」「毎朝の手入れの癖」——この3つで十分です。写真があれば見せてください（なくても問題ありません）。",
   },
 ];
 
@@ -59,9 +58,7 @@ export default function FAQSP() {
             duration={0.62}
             className="text-[24px] leading-[1.45] text-ink/90 font-medium"
           >
-            初めての方が
-            <br />
-            気になるところ
+            予約前に確認しておきたいこと
           </Reveal>
 
           <Reveal
@@ -71,9 +68,7 @@ export default function FAQSP() {
             duration={0.62}
             className="mt-4 text-[13.5px] leading-[1.9] text-ink/72"
           >
-            予約前に迷いがちな点を、
-            <br />
-            先にまとめました。
+            予約前に迷いがちな点を、先にまとめました。
           </Reveal>
 
           <Reveal
@@ -86,7 +81,7 @@ export default function FAQSP() {
           />
         </div>
 
-        {/* List（SPは“質問→回答”を縦で気持ちよく） */}
+        {/* List */}
         <div className="border-y border-ink/14">
           {FAQS.map((item, i) => (
             <Reveal
@@ -107,7 +102,7 @@ export default function FAQSP() {
                 </h3>
               </div>
 
-              {/* Answer（薄い罫線で“段”を作る） */}
+              {/* Answer */}
               <div className="pt-4 border-t border-ink/10">
                 <p className="text-[14.5px] leading-[1.95] text-ink/80">
                   {item.a}
@@ -117,7 +112,7 @@ export default function FAQSP() {
           ))}
         </div>
 
-        {/* 余韻（押し売りしない） */}
+        {/* 余韻 */}
         <Reveal
           delay={0.08}
           y={10}
@@ -125,8 +120,7 @@ export default function FAQSP() {
           duration={0.62}
           className="mt-8 text-center text-[11px] tracking-[0.16em] text-ink/50 leading-[1.8]"
         >
-          ほかにも気になる点があれば、<br />
-          ご予約時に一言で大丈夫です。
+          ほかに確認したいことがあれば、ご予約時に一言で大丈夫です。
         </Reveal>
       </div>
     </section>

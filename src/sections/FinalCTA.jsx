@@ -185,9 +185,9 @@ export default function FinalCTA() {
                 <div className="text-[11px] tracking-[0.20em] text-ink/55">
                   予約方法
                 </div>
-                <div className="text-[14.5px] leading-[1.9] text-ink/82">
-                  HotPepper Beauty から
-                </div>
+<div className="text-[14.5px] leading-[1.9] text-ink/82">
+  HotPepper Beauty またはTELから
+</div>
               </div>
 
               <div className="grid grid-cols-[120px,1fr] gap-5 py-4 border-b border-ink/10">

@@ -10,7 +10,6 @@ export default function ProfileC() {
       aria-label="店主プロフィール"
     >
       <div className="mx-auto max-w-[1080px] grid grid-cols-1 lg:grid-cols-2 gap-[7vw] items-start">
-        {/* 左：写真 */}
         <Reveal delay={0.0} y={14} blur={0.16} duration={0.68} className="w-full">
           <figure className="w-full">
             <img
@@ -34,7 +33,6 @@ export default function ProfileC() {
           </figure>
         </Reveal>
 
-        {/* 右：本文 */}
         <div>
           <Reveal
             as="p"
@@ -42,12 +40,7 @@ export default function ProfileC() {
             y={14}
             blur={0.16}
             duration={0.68}
-            className="
-              text-[13px]
-              tracking-[0.32em]
-              text-ink/55
-              mb-6
-            "
+            className="text-[13px] tracking-[0.32em] text-ink/55 mb-6"
           >
             店主について
           </Reveal>
@@ -67,8 +60,8 @@ export default function ProfileC() {
               max-w-[580px]
             "
           >
-            似合う形を、<br />
-            きれいに仕上げる。
+            印象をまとめる、<br />
+            確かな一手。
           </Reveal>
 
           <Reveal
@@ -79,22 +72,21 @@ export default function ProfileC() {
             className="text-[15.5px] leading-[2] text-ink/80 max-w-[580px]"
           >
             <p className="mb-5">
-              東京で副店長として18年。
-              カットとパーマの現場で経験を重ねてきました。
+              東京のサロンで副店長を務め、現場で18年のキャリアを積みました。<br />
+              カットとパーマを中心に、男性の顔まわりが引き締まる仕上がりを作ってきました。
             </p>
 
             <p className="mb-5">
-              最初に「気になるところ」と「普段のセット」を確認して、<br />
-              髪質・骨格に合わせて仕上がりを決めていきます。
+              まず、直したい部分と日頃の手入れの癖を把握します。<br />
+              骨格と毛流れから、顔の輪郭が落ち着く形を組み立てます。
             </p>
 
-<p className="mb-0 text-ink/74">
-  その日の雰囲気を見ながら、テンポも距離感も合わせます。<br />
-  気になるところは、途中でもそのまま言ってください。
-</p>
+            <p className="mb-0 text-ink/74">
+              よくしゃべる日も、静かな日も。その場の空気を読んでペースを切り替えます。<br />
+              言い忘れがあれば、途中で追加してもらえれば大丈夫です。
+            </p>
           </Reveal>
 
-          {/* 事実（箱ではなく、線とレイアウトで） */}
           <Reveal
             delay={0.24}
             y={14}
@@ -117,7 +109,7 @@ export default function ProfileC() {
               </div>
               <div>
                 <dt className="inline text-ink/90 font-medium">経歴：</dt>
-                <dd className="inline ml-1">東京 副店長 18年</dd>
+                <dd className="inline ml-1">東京 副店長 / 現場18年</dd>
               </div>
               <div>
                 <dt className="inline text-ink/90 font-medium">得意：</dt>
@@ -125,14 +117,10 @@ export default function ProfileC() {
               </div>
               <div>
                 <dt className="inline text-ink/90 font-medium">評価：</dt>
-                <dd className="inline ml-1">★5.0（61件）／2026.03時点</dd>
+                <dd className="inline ml-1">★5.0（61件）／2026年3月時点</dd>
               </div>
             </dl>
-
-
           </Reveal>
-
-    
         </div>
       </div>
     </section>

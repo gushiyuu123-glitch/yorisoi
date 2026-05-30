@@ -57,10 +57,9 @@ export default function HareStyle() {
           "
         >
           パーマも、フェードも。<br />
-          朝が楽になる形を、写真で見せます。
+          翌朝の支度が短く済む形を、写真で見せます。
         </Reveal>
 
-        {/* ✅ ミニモ文言は撤去（B-9対応） */}
         <Reveal
           delay={0.12}
           y={14}
@@ -69,14 +68,13 @@ export default function HareStyle() {
           className="mt-6 text-[15px] leading-[1.95] text-ink/76 max-w-[760px]"
         >
           実際に施術したスタイルを掲載しています。<br />
-          「雰囲気」よりも、扱いやすさが残る形を基準に。
+          「雰囲気」よりも、扱いやすさが残る例を基準に。
         </Reveal>
       </div>
 
       {/* 横スクロール（自動ループ） */}
       <Reveal delay={0.16} y={14} blur={0.14} duration={0.68}>
         <div className="relative w-full overflow-hidden mb-[10vh]">
-          {/* ✅ 端のフェード（切れ味を消す） */}
           <div
             aria-hidden
             className="
@@ -130,7 +128,6 @@ export default function HareStyle() {
                   decoding="async"
                 />
 
-                {/* 上：タグ（黒じゃなくink寄せ） */}
                 <div
                   className="
                     absolute left-0 top-0
@@ -145,7 +142,6 @@ export default function HareStyle() {
                   {s.tag}
                 </div>
 
-                {/* 下：スタイル名（黒ベタではなくink膜） */}
                 <figcaption
                   className="
                     absolute bottom-0 left-0 right-0
@@ -164,7 +160,7 @@ export default function HareStyle() {
         </div>
       </Reveal>
 
-      {/* 外部リンク（丸ピルやめて、下線リンクで統一） */}
+      {/* 外部リンク */}
       <div className="text-center">
         <Reveal delay={0.20} y={12} blur={0.12} duration={0.62}>
           <a

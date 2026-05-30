@@ -15,7 +15,6 @@ export default function ProfileSP() {
       aria-label="店主プロフィール"
     >
       <div className="mx-auto max-w-[520px]">
-        {/* 写真 */}
         <Reveal delay={0.0} y={12} blur={0.14} duration={0.62} className="relative mb-8">
           <img
             src="/yorisoi/profile2.jpg"
@@ -32,7 +31,6 @@ export default function ProfileSP() {
             "
           />
 
-          {/* 上部の薄い光膜（強すぎない） */}
           <div
             aria-hidden="true"
             className="
@@ -47,7 +45,7 @@ export default function ProfileSP() {
           />
         </Reveal>
 
-        {/* 見出し */}
+        {/* ✅ SPはPCと同文を避ける */}
         <Reveal
           as="p"
           delay={0.06}
@@ -59,7 +57,6 @@ export default function ProfileSP() {
           店主について
         </Reveal>
 
-        {/* タイトル（“整える”連打を避ける） */}
         <Reveal
           as="h2"
           delay={0.12}
@@ -75,11 +72,10 @@ export default function ProfileSP() {
             mb-6
           "
         >
-          似合う形を、<br />
-          きれいに仕上げる。
+          印象が締まる、<br />
+          その一手。
         </Reveal>
 
-        {/* ストーリー（“初回の安心”を先に混ぜる） */}
         <Reveal
           delay={0.18}
           y={12}
@@ -93,27 +89,26 @@ export default function ProfileSP() {
           "
         >
           <p>
-            東京で副店長として18年。<br />
-            カットとパーマの現場で経験を重ねてきました。
+            東京で副店長を経験し、担当歴は18年。<br />
+            メンズのカットとパーマを中心に積み重ねてきました。
           </p>
 
           <p>
-            最初に「気になるところ」と「普段のセット」を確認して、<br />
-            髪質・骨格に合わせて仕上がりを決めていきます。
+            最初に、変えたい所と毎朝の手入れの癖を押さえます。<br />
+            骨格と毛流れから、落ち着く輪郭へ落とします。
           </p>
 
           <p>
-            パーマは、朝が楽になることを基準に。<br />
-            ニュアンス〜しっかりめまで、相談しながら整えます。
+            パーマは必要なときだけ。<br />
+            強さは段階で選べます。
           </p>
 
-  <p className="text-ink/70">
-  その日の雰囲気を見ながら、テンポも距離感も合わせます。<br />
-  気になるところは、途中でもそのまま言ってください。
-</p>
+          <p className="text-ink/70">
+            会話の量はお任せください。<br />
+            要点だけ確認して、そのまま進めます。
+          </p>
         </Reveal>
 
-        {/* 事実（箱をやめて線と余白で） */}
         <Reveal
           delay={0.24}
           y={12}
@@ -132,14 +127,10 @@ export default function ProfileSP() {
             </div>
             <div className="flex gap-3">
               <dt className="w-[5.5em] text-ink/88 font-medium">評価</dt>
-              <dd>★5.0（61件）／2026.03時点</dd>
+              <dd>★5.0（61件）※2026年3月時点</dd>
             </div>
           </dl>
-
-
         </Reveal>
-
-
       </div>
     </section>
   );

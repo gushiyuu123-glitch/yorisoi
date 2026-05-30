@@ -8,8 +8,8 @@ export default function Concept() {
       {
         kicker: "POINT 01",
         title: "半個室の2席で、落ち着いて進める。",
-        desc: "周りが気になりにくい空間で、最初から最後までしっかり担当します。",
-        sub: ["席数は2席", "最初から最後まで担当"],
+        desc: "周りが気になりにくい空間で、最初から最後までひとりが担当します。",
+        sub: ["席数は2席", "ひとりが通しで担当"],
         img: "/yorisoi/concept-room.png",
         alt: "ヨリソイの店内（半個室の席）",
         cap: "SCENE 01 / ROOM",
@@ -17,8 +17,8 @@ export default function Concept() {
       },
       {
         kicker: "POINT 02",
-        title: "先に確認して、迷わず決める。",
-        desc: "「気になるところ」と「普段のセット」を先に聞いて、\n合う形を一緒に決めます。",
+        title: "先に把握して、方向を決める。",
+        desc: "直したい点と日頃のスタイリングを先に聞き取り、\nその人向きの形を見立てます。",
         sub: ["途中で変わってOK", "必要なことから順に進める"],
         img: "/yorisoi/concept-cut.png",
         alt: "施術前に確認している様子",
@@ -27,11 +27,11 @@ export default function Concept() {
       },
       {
         kicker: "POINT 03",
-        title: "家でのセットが、楽になる形へ。",
-        desc: "乾かして手ぐしで形が出るように。朝のセットが楽になる仕上がりを目指します。",
-        sub: ["乾かして形が出る", "髪質・骨格に合わせて調整"],
+        title: "翌朝の手順が、少なくなる形へ。",
+        desc: "乾かして手ぐしで形が出るように。セットに時間をかけずに済む仕上がりを目指します。",
+        sub: ["乾かして形が出る", "髪質・骨格に応じて調整"],
         img: "/yorisoi/concept-home.png",
-        alt: "自宅で髪を整える様子",
+        alt: "自宅で髪を支度している様子",
         cap: "SCENE 03 / HOME",
         aspect: "aspect-[4/3]",
       },
@@ -100,9 +100,9 @@ export default function Concept() {
             duration={0.62}
             className="mt-8 text-[15.5px] leading-[2.0] text-ink/78"
           >
-            店内の安心があって、先に確認して、最後は家で楽になる。
+            空間で落ち着いて、先に把握して、最後は家でスムーズに。
             <br />
-            その順番が、いちばん自然だと思っています。
+            この順番が、いちばん自然だと思っています。
           </Reveal>
 
           <Reveal

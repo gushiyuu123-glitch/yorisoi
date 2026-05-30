@@ -11,7 +11,6 @@ const MICROCMS_MENU_API_ID = import.meta.env.VITE_MICROCMS_MENU_API_ID ?? "menu"
 
 const RESERVE_URL =
   "https://beauty.hotpepper.jp/CSP/bt/reserve/?storeId=H000706136";
-// ※控えめリンクとして残す（ボタンは1つ）
 const COUPON_URL = "https://beauty.hotpepper.jp/slnH000706136/coupon/";
 
 async function fetchMenuPatch({ signal } = {}) {
@@ -42,21 +41,21 @@ const FEATURED = [
     label: "POPULAR 01",
     title: "カット・シャンプー＋眉シェービング",
     price: "¥4,280",
-    desc: "迷ったらまずこれ。清潔感を整えやすい人気メニューです。",
+    desc: "迷ったらこれから。顔まわりの印象をまとめたい方に選ばれています。",
     note: "人気No.1",
   },
   {
     label: "POPULAR 02",
     title: "カット・シャンプー＋眉・顔全体シェービング",
     price: "¥4,800",
-    desc: "顔まわりまで整えて、印象をしっかり整えたい方へ。",
+    desc: "顔まわりまできちんと仕上げて、印象を引き締めたい方向け。",
     note: "極上清潔感",
   },
   {
     label: "POPULAR 03",
     title: "極上ヘッドスパ＋カットシャンプー（60分）",
     price: "¥5,880",
-    desc: "疲れをほぐしながら、髪も頭も整えたい日に。",
+    desc: "疲れをほぐしながら、頭まわりまで軽くしたい日に。",
     note: "癒し時間",
   },
   {
@@ -294,7 +293,6 @@ export default function MenuSP() {
       aria-label="メニュー"
     >
       <div className="mx-auto max-w-[560px]">
-        {/* Heading */}
         <Reveal y={12} blur={0.12} duration={0.62}>
           <div className="mb-10">
             <div className="mb-5 overflow-hidden">
@@ -323,8 +321,8 @@ export default function MenuSP() {
             <p className="text-[11px] tracking-[0.32em] text-ink/55 mb-4">料金</p>
 
             <h2 className="text-[clamp(20px,5.8vw,26px)] leading-[1.55] text-ink/90 font-medium">
-              迷いやすい方のために、<br />
-              よく選ばれるメニューを先にまとめました。
+              迷いを減らすために、<br />
+              よく選ばれるメニューを先に並べました。
             </h2>
 
             <p className="mt-4 text-[13.5px] leading-[1.9] text-ink/70">
@@ -335,10 +333,8 @@ export default function MenuSP() {
           </div>
         </Reveal>
 
-        {/* Featured */}
         <Reveal delay={0.06} y={12} blur={0.12} duration={0.62}>
           <div className="mb-[9vh]">
-            {/* ✅ 押し出され感を消す：右に逃がさない */}
             <div className="mb-5">
               <p className="text-[11px] tracking-[0.24em] text-ink/46 mb-1.5">
                 PICK UP
@@ -350,7 +346,6 @@ export default function MenuSP() {
             </div>
 
             <div className="spFeatured relative overflow-hidden border border-ink/12">
-              {/* 紙 */}
               <img
                 src={PAPER}
                 alt=""
@@ -363,7 +358,6 @@ export default function MenuSP() {
                 loading="lazy"
                 decoding="async"
               />
-              {/* ✅ 白モヤを作りすぎない：濃度を落として“紙っぽさ”だけ残す */}
               <div
                 aria-hidden="true"
                 className="
@@ -376,7 +370,6 @@ export default function MenuSP() {
                 className="absolute inset-0 shadow-[0_14px_30px_rgba(0,0,0,0.07)]"
               />
 
-              {/* ✅ 余白を削る */}
               <div className="relative p-[clamp(12px,4vw,18px)]">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-px bg-ink/12 border border-ink/12">
                   {featuredUI.map((item, idx) => (
@@ -388,7 +381,6 @@ export default function MenuSP() {
           </div>
         </Reveal>
 
-        {/* Accordion */}
         <Reveal delay={0.08} y={12} blur={0.12} duration={0.62}>
           <div className="mb-[9vh]">
             <div className="mb-5">
@@ -411,10 +403,8 @@ export default function MenuSP() {
           </div>
         </Reveal>
 
-        {/* CTA（✅ ボタンは1つ：予約へ） */}
         <Reveal delay={0.10} y={12} blur={0.10} duration={0.62}>
           <div className="text-center">
-        
             <a
               href={RESERVE_URL}
               target="_blank"
@@ -436,7 +426,6 @@ export default function MenuSP() {
               空席を確認して予約する
             </a>
 
-            {/* 控えめ導線（ボタンにしない） */}
             <div className="mt-4">
               <a
                 href={COUPON_URL}
@@ -452,7 +441,7 @@ export default function MenuSP() {
                   transition
                 "
               >
-
+                クーポンを見る
               </a>
             </div>
 

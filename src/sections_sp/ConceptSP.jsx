@@ -7,9 +7,9 @@ export default function ConceptSP() {
     () => [
       {
         kicker: "POINT 01",
-        title: "半個室の2席で、落ち着いて進める。",
-        desc: "周りが気になりにくい空間で、最初から最後までしっかり担当します。",
-        sub: ["席数は2席", "最初から最後まで担当"],
+        title: "半個室の2席で、静かに進める。",
+        desc: "まわりの視線が入りにくい空間で、最後までひとりで担当します。",
+        sub: ["2席のみ", "通しで担当"],
         img: "/yorisoi/concept-room.png",
         alt: "ヨリソイの店内（半個室の席）",
         cap: "SCENE 01 / ROOM",
@@ -17,9 +17,9 @@ export default function ConceptSP() {
       },
       {
         kicker: "POINT 02",
-        title: "先に確認して、迷わず決める。",
-        desc: "「気になるところ」と「普段のセット」を先に聞いて、合う形を一緒に決めます。",
-        sub: ["途中で変わってOK", "必要なことから順に進める"],
+        title: "先に聞き取って、迷いを減らす。",
+        desc: "直したい所と日頃のスタイリングを先に押さえ、\n向きの形へ落とします。",
+        sub: ["途中変更OK", "必要な順で進める"],
         img: "/yorisoi/concept-cut.png",
         alt: "施術前に確認している様子",
         cap: "SCENE 02 / CUT",
@@ -27,11 +27,11 @@ export default function ConceptSP() {
       },
       {
         kicker: "POINT 03",
-        title: "家でのセットが、楽になる形へ。",
-        desc: "乾かして手ぐしで形が出るように。朝のセットが楽になる仕上がりを目指します。",
-        sub: ["乾かして形が出る", "髪質・骨格に合わせて調整"],
+        title: "翌朝の支度が、短くなる形へ。",
+        desc: "乾かして手ぐしで形が出るように。\nセットに時間がかからない収まりを狙います。",
+        sub: ["乾かして形が出る", "髪質・骨格に応じて微調整"],
         img: "/yorisoi/concept-home.png",
-        alt: "自宅で髪を整える様子",
+        alt: "自宅で髪を支度している様子",
         cap: "SCENE 03 / HOME",
         aspect: "aspect-[4/3]",
       },
@@ -89,7 +89,7 @@ export default function ConceptSP() {
           duration={0.60}
           className="text-[clamp(20px,6vw,26px)] leading-[1.48] text-ink/90 font-medium"
         >
-          任せやすい理由を、<br />
+          任せやすさを、<br />
           3つにまとめました。
         </Reveal>
 
@@ -100,9 +100,9 @@ export default function ConceptSP() {
           duration={0.60}
           className="mt-7 text-[15px] leading-[1.95] text-ink/78"
         >
-          店内の安心があって、先に確認して、最後は家で楽になる。
+          空間で落ち着いて、先に聞き取って、家では手順を短く。
           <br />
-          その順番が、いちばん自然だと思っています。
+          この流れが自然だと思っています。
         </Reveal>
 
         <Reveal
@@ -171,7 +171,7 @@ export default function ConceptSP() {
                     y={12}
                     blur={0.14}
                     duration={0.60}
-                    className="mt-3 text-[14.6px] leading-[1.95] text-ink/76"
+                    className="mt-3 text-[14.6px] leading-[1.95] text-ink/76 whitespace-pre-line"
                   >
                     {p.desc}
                   </Reveal>

@@ -13,7 +13,6 @@ export default function About() {
       aria-label="ヨリソイについて"
     >
       <div className="mx-auto max-w-[860px]">
-        {/* ✅ SVG見出し（控えめサイズ） */}
         <div className="mb-6 overflow-hidden">
           <div style={{ width: "min(22vw, 330px)", minWidth: 190 }}>
             <HandwrittenSvgTitle
@@ -30,7 +29,6 @@ export default function About() {
           </div>
         </div>
 
-        {/* ラベル */}
         <Reveal
           as="p"
           delay={0.0}
@@ -44,10 +42,9 @@ export default function About() {
             mb-6
           "
         >
-          寄り添いの理由
+          任せやすさの理由
         </Reveal>
 
-        {/* タイトル */}
         <Reveal
           as="h2"
           delay={0.06}
@@ -63,10 +60,9 @@ export default function About() {
             max-w-[760px]
           "
         >
-          気をつかわず、任せられる距離感。
+          かまえず頼める、ちょうどいい距離感。
         </Reveal>
 
-        {/* 本文（抽象を増やさず、初回が安心する順） */}
         <Reveal
           delay={0.12}
           y={14}
@@ -81,27 +77,25 @@ export default function About() {
           "
         >
           <p className="mb-5">
-            髪の悩みは人それぞれです。<br />
-            しっかり相談して決めたい日もあれば、今日は長さを揃えるだけで十分な日もある。
+            髪の悩みは、人それぞれです。<br />
+            じっくり話したい日もあれば、さっと長さを切るだけでいい日もある。
           </p>
 
           <p className="mb-5">
-            最初に「気になるところ」と「普段のセット」を確認して、<br />
-            無理なく合う形を一緒に決めていきます。
+            冒頭で、手を入れたい箇所と日頃のスタイリングの癖を聞き取ります。<br />
+            そこから、無理のない着地点を組み立てます。
           </p>
 
           <p className="mb-0">
-            仕上げは、家でも同じ形になりやすいように収めます。<br />
-            朝のセットが楽になるラインを目指します。
+            仕上げは、家で迷わない収まりへ。<br />
+            明日の身だしなみが手短に決まる形を目指します。
           </p>
         </Reveal>
 
-
-        {/* 写真 */}
         <Reveal delay={0.20} y={14} blur={0.14} duration={0.68} className="mt-14 w-full">
           <img
             src="/yorisoi/about2.png"
-            alt="ヨリソイの店内の雰囲気"
+            alt="ヨリソイの空間イメージ"
             loading="lazy"
             decoding="async"
             className="
@@ -113,23 +107,23 @@ export default function About() {
           />
         </Reveal>
 
-   <Reveal
-  as="p"
-  delay={0.26}
-  y={14}
-  blur={0.14}
-  duration={0.68}
-  className="
-    mt-10
-    text-[14.5px]
-    text-[rgba(96,78,62,0.72)]
-    leading-[1.95]
-    max-w-[760px]
-  "
->
-  お客さまの雰囲気に合わせて、進め方をこちらで調整します。<br />
-  気になるところだけ、先に聞かせてください。
-</Reveal>
+        <Reveal
+          as="p"
+          delay={0.26}
+          y={14}
+          blur={0.14}
+          duration={0.68}
+          className="
+            mt-10
+            text-[14.5px]
+            text-[rgba(96,78,62,0.72)]
+            leading-[1.95]
+            max-w-[760px]
+          "
+        >
+          話す量も、進めるテンポも。その日の様子を見てこちらで調節します。<br />
+          最初は、手を入れたい点をひとつだけ一言ください。
+        </Reveal>
       </div>
     </section>
   );

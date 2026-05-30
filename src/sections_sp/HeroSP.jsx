@@ -16,13 +16,11 @@ export default function HeroSP() {
       ? window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false
       : false;
 
-  // ✅ スマホでの安定優先：blurを使わない（スクロール体感を守る）
   const coarse =
     typeof window !== "undefined"
       ? window.matchMedia?.("(pointer:coarse)")?.matches ?? true
       : true;
 
-  // 1行をnowrapで保持（改行事故防止）
   const splitLine = (text) => (
     <span className="inline-block whitespace-nowrap" aria-hidden="true">
       {text.split("").map((c, i) => (
@@ -48,7 +46,6 @@ export default function HeroSP() {
       const chars = title.querySelectorAll(".char");
       if (!chars.length) return;
 
-      // ✅ スマホはblur無し（0px固定）
       const bLogo = coarse ? "blur(0px)" : "blur(0.22px)";
       const bTags = coarse ? "blur(0px)" : "blur(0.18px)";
       const bChar = coarse ? "blur(0px)" : "blur(0.22px)";
@@ -57,14 +54,12 @@ export default function HeroSP() {
 
       const tl = gsap.timeline({ delay: 0.16 });
 
-      // ロゴ
       tl.fromTo(
         logo,
         { opacity: 0, y: 10, filter: bLogo },
         { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.62, ease: "power3.out" }
       );
 
-      // タグ（S-1）
       if (tags) {
         tl.fromTo(
           tags,
@@ -74,7 +69,6 @@ export default function HeroSP() {
         );
       }
 
-      // H1（文字）
       tl.fromTo(
         chars,
         { opacity: 0, y: 14, filter: bChar },
@@ -89,7 +83,6 @@ export default function HeroSP() {
         "-=0.18"
       );
 
-      // サブ
       tl.fromTo(
         sub,
         { opacity: 0, y: 10, filter: bSub },
@@ -97,7 +90,6 @@ export default function HeroSP() {
         "-=0.36"
       );
 
-      // 写真（像の立ち上がり：スマホはblur無し）
       tl.fromTo(
         photo,
         { opacity: 0.72, scale: 1.02, x: 8, filter: bPhoto },
@@ -109,20 +101,15 @@ export default function HeroSP() {
     return () => ctxRef.current?.revert?.();
   }, [reduce, coarse]);
 
-  // ✅ Hero一撃：業種認識（OGPと同じ）
   const LINE1 = "浦添のメンズ専門理容室。";
   const LINE2 = "朝7時から。";
-
-  // ✅ タグ：被りゼロで“理容室感”を増やす（最強セット）
   const TAGS = ["半個室", "マンツーマン", "シェービング", "駐車場あり"];
 
-  // ✅ “寄り添う/丁寧”を抽象で言わず、行動で言う
-  const LEAD = "半個室で、最初から最後まで担当します。";
-
-  // サブ（安心の順番）
-  const SUB_1 = "気になるところだけ教えてください。";
-  const SUB_2 = "髪質とセットの癖に合わせて、朝が楽になる形を作ります。";
-  const SUB_3 = "パーマで扱いやすくなる方には、あわせてご提案します。";
+  // ✅ SPはPCと同文を避ける（同義で分散）
+  const LEAD = "一人で通し。途中で担当が変わりません。";
+  const SUB_1 = "最初に、直したい所だけ教えてください。";
+  const SUB_2 = "毛流れと生え方を見て、乾かしただけで決まる輪郭に落とします。";
+  const SUB_3 = "必要なときは、持ち重視のパーマも選べます。";
 
   return (
     <section
@@ -131,7 +118,6 @@ export default function HeroSP() {
       className="relative w-full overflow-hidden bg-[#f7f4ef]"
       aria-label="ヨリソイ Hero（スマホ）"
     >
-      {/* 1) 背景写真 */}
       <div className="relative w-full min-h-[100svh] z-[0] overflow-hidden">
         <img
           ref={photoRef}
@@ -147,7 +133,6 @@ export default function HeroSP() {
         />
       </div>
 
-      {/* 2) テキスト帯（可読性の土台） */}
       <div
         aria-hidden="true"
         className="
@@ -167,7 +152,6 @@ export default function HeroSP() {
         "
       />
 
-      {/* 3) テキスト */}
       <div
         className="
           absolute inset-x-0
@@ -190,7 +174,6 @@ export default function HeroSP() {
             ヨリソイ Hair&Spa
           </div>
 
-          {/* タグ */}
           <ul
             ref={tagsRef}
             className="
@@ -210,7 +193,6 @@ export default function HeroSP() {
             ))}
           </ul>
 
-          {/* H1：業種一撃 */}
           <h1
             ref={titleRef}
             aria-label={`${LINE1} ${LINE2}`}
@@ -227,7 +209,6 @@ export default function HeroSP() {
             <span className="block whitespace-nowrap mt-[0.28em]">{splitLine(LINE2)}</span>
           </h1>
 
-          {/* リード：抽象を避けて“行動”で言い切る */}
           <p
             className="
               mt-4
@@ -241,7 +222,6 @@ export default function HeroSP() {
             {LEAD}
           </p>
 
-          {/* サブ */}
           <p
             ref={subRef}
             className="
@@ -261,11 +241,9 @@ export default function HeroSP() {
           </p>
         </div>
 
-        {/* 下側は空ける：下固定UIに被らない */}
         <div className="flex-1" />
       </div>
 
-      {/* reduce-motion：強制表示（念のため） */}
       {reduce && (
         <style>{`
           .char { opacity: 1 !important; transform: none !important; filter: none !important; }

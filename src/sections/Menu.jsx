@@ -41,21 +41,21 @@ const FEATURED = [
     label: "POPULAR 01",
     title: "カット・シャンプー＋眉シェービング",
     price: "¥4,280",
-    desc: "迷ったらまずこれ。清潔感を整えやすい人気メニューです。",
+    desc: "迷ったらまずこれ。顔まわりの印象をまとめやすい人気メニューです。",
     note: "人気No.1",
   },
   {
     label: "POPULAR 02",
     title: "カット・シャンプー＋眉・顔全体シェービング",
     price: "¥4,800",
-    desc: "顔まわりまで整えて、印象をしっかり整えたい方へ。",
+    desc: "顔まわりまでしっかり仕上げて、印象を引き締めたい方へ。",
     note: "極上清潔感",
   },
   {
     label: "POPULAR 03",
     title: "極上ヘッドスパ＋カットシャンプー（60分）",
     price: "¥5,880",
-    desc: "疲れをほぐしながら、髪も頭も整えたい日に。",
+    desc: "疲れをほぐしながら、髪も頭もすっきりさせたい日に。",
     note: "癒し時間",
   },
   {
@@ -114,7 +114,8 @@ const GROUPS = [
 ];
 
 function groupSummary(group) {
-  if (typeof group?.summary === "string" && group.summary.trim()) return group.summary.trim();
+  if (typeof group?.summary === "string" && group.summary.trim())
+    return group.summary.trim();
   const first = group?.items?.[0];
   if (!first) return "";
   const [name, price] = first;
@@ -326,9 +327,7 @@ export default function Menu() {
       className="w-full bg-base pt-[18vh] pb-[16vh] px-[6vw]"
       aria-label="メニュー"
     >
-      {/* Heading（余白を締める） */}
       <div className="mn mx-auto max-w-[980px] mb-12">
-        {/* ✅ menu1.svg（Figmaタイポ） */}
         <div className="mb-6 overflow-hidden">
           <div
             style={{
@@ -366,9 +365,7 @@ export default function Menu() {
         </p>
       </div>
 
-      {/* Featured */}
       <div className="mn mx-auto max-w-[1040px] mb-[10vh]">
-        {/* 見出し：押し出され感を消す（gridで固定） */}
         <div className="grid grid-cols-[auto,1fr,auto] items-end gap-6 mb-6">
           <div>
             <p className="text-[12px] tracking-[0.24em] text-ink/46 mb-2">PICK UP</p>
@@ -382,7 +379,6 @@ export default function Menu() {
           </p>
         </div>
 
-        {/* 紙：テクスチャは残すが“白モヤ”に寄せない */}
         <div className="relative overflow-hidden border border-ink/12 bg-[rgba(255,255,255,0.58)]">
           <img
             src={PAPER}
@@ -404,13 +400,11 @@ export default function Menu() {
               bg-[radial-gradient(circle_at_26%_18%,rgba(255,253,249,0.68),rgba(255,253,249,0.26)_56%,rgba(255,253,249,0.52)_100%)]
             "
           />
-          {/* 薄い内側シーム（“紙の枠”） */}
           <div
             aria-hidden="true"
             className="absolute inset-0 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.42)] pointer-events-none"
           />
 
-          {/* 余白を詰める */}
           <div className="relative p-[clamp(14px,1.8vw,22px)]">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-ink/12 border border-ink/12">
               {featuredUI.map((item, idx) => (
@@ -421,7 +415,6 @@ export default function Menu() {
         </div>
       </div>
 
-      {/* Accordion */}
       <div className="mn mx-auto max-w-[980px] mb-[10vh]">
         <div className="mb-6">
           <p className="text-[12px] tracking-[0.24em] text-ink/46 mb-2">ALL MENU</p>
@@ -440,10 +433,7 @@ export default function Menu() {
         </div>
       </div>
 
-      {/* CTA（ボタン1つ：予約に統一） */}
       <div className="mn mx-auto max-w-[980px] text-center">
-
-
         <a
           href={RESERVE_URL}
           target="_blank"
@@ -464,7 +454,6 @@ export default function Menu() {
         >
           <span className="tracking-[0.22em] text-white/70 text-[12px]">HOTPEPPER</span>
           <span className="font-semibold">空席を確認して予約する</span>
-
         </a>
 
         <p className="text-[12px] mt-5 leading-[1.8] text-ink/48">

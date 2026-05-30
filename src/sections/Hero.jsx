@@ -20,7 +20,6 @@ export default function HeroC() {
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({ delay: 0.12 });
 
-      // ロゴ（極薄blurで“像が立つ”）
       if (logoRef.current) {
         tl.fromTo(
           logoRef.current,
@@ -35,7 +34,6 @@ export default function HeroC() {
         );
       }
 
-      // 強みタグ（S-1：最優先で見せる）
       if (tagsRef.current) {
         tl.fromTo(
           tagsRef.current,
@@ -51,7 +49,6 @@ export default function HeroC() {
         );
       }
 
-      // H1（文字ごと）
       const letters = titleRef.current?.querySelectorAll?.(".char");
       if (letters?.length) {
         tl.fromTo(
@@ -69,7 +66,6 @@ export default function HeroC() {
         );
       }
 
-      // サブ
       if (subRef.current) {
         tl.fromTo(
           subRef.current,
@@ -85,7 +81,6 @@ export default function HeroC() {
         );
       }
 
-      // CTA（Hero内）
       if (ctaRef.current) {
         tl.fromTo(
           ctaRef.current,
@@ -101,7 +96,6 @@ export default function HeroC() {
         );
       }
 
-      // 写真（過剰blur禁止：scale/xで“入ってくる”）
       if (photoRef.current) {
         tl.fromTo(
           photoRef.current,
@@ -132,23 +126,18 @@ export default function HeroC() {
     </span>
   );
 
-  // ✅ “業種認識”を最上段へ（OGPと同じ一撃）
   const LINE_1 = "浦添のメンズ専門理容室。";
   const LINE_2 = "朝7時から。";
 
-  // リード（世界観はここに残す）
-  const LEAD = "半個室で、最初から最後まで担当します。";
+  // ✅ Claudeベース（PC）
+  const LEAD = "担当はひとり。流れを切らず、最後まで仕上げます。";
+  const SUB_1 = "まず、変えたい部分を一言だけ聞かせてください。";
+  const SUB_2 =
+    "髪の動きと生え方を読んで、乾かすだけで形が出るラインを作ります。";
+  const SUB_3 = "必要であれば、持ちのいいパーマも視野に入れます。";
 
-  // S-1：強み5つ（タグ）
-  const TAGS =["半個室","マンツーマン","シェービング","駐車場あり"];
-
-  // Hero内CTA（外部）
+  const TAGS = ["半個室", "マンツーマン", "シェービング", "駐車場あり"];
   const RESERVE_URL = "https://beauty.hotpepper.jp/slnH000706136/";
-
-  // サブ（受け入れ → 具体 → パーマは最後）
-  const SUB_1 = "気になるところだけ教えてください。";
-  const SUB_2 = "髪質とセットの癖に合わせて、朝が楽になる形を作ります。";
-  const SUB_3 = "パーマで扱いやすくなる方には、あわせてご提案します。";
 
   return (
     <section
@@ -157,10 +146,8 @@ export default function HeroC() {
       className="relative min-h-[100svh] w-full overflow-hidden bg-[#f7f4ef]"
       aria-label="ヨリソイ Hero"
     >
-      {/* ナビ */}
       <NavYorisoiFloating bottom="10vh" />
 
-      {/* 左：光膜（装飾） */}
       <div
         className="absolute inset-y-0 left-0 w-[60vw] pointer-events-none z-[0] overflow-hidden"
         aria-hidden="true"
@@ -184,7 +171,6 @@ export default function HeroC() {
         />
       </div>
 
-      {/* 右：写真 */}
       <div className="absolute inset-y-0 right-0 w-[42vw] overflow-hidden z-[2] bg-[#eae6df]">
         <img
           ref={photoRef}
@@ -196,7 +182,6 @@ export default function HeroC() {
         />
       </div>
 
-      {/* 薄膜（装飾） */}
       <div
         aria-hidden="true"
         className="
@@ -205,9 +190,7 @@ export default function HeroC() {
         "
       />
 
-      {/* テキスト */}
       <div className="relative z-[10] pt-[20vh] pl-[8vw] max-w-[620px]">
-        {/* ロゴ行 */}
         <div className="relative mb-4 flex items-center gap-2">
           <svg
             className="w-[18px] h-[18px] text-[rgba(96,78,62,0.55)]"
@@ -238,7 +221,6 @@ export default function HeroC() {
           <div className="h-[1px] w-[120px] border-t border-dashed border-[rgba(96,78,62,0.35)] translate-y-[0.5px]" />
         </div>
 
-        {/* 強みタグ */}
         <ul
           ref={tagsRef}
           className="
@@ -258,7 +240,6 @@ export default function HeroC() {
           ))}
         </ul>
 
-        {/* H1：業種認識の一撃 */}
         <h1
           ref={titleRef}
           aria-label={`${LINE_1} ${LINE_2}`}
@@ -276,11 +257,7 @@ export default function HeroC() {
           {splitChunk(LINE_2)}
         </h1>
 
-        {/* サブ（リード＋説明） */}
-        <div
-          ref={subRef}
-          className="mt-6 max-w-[520px]"
-        >
+        <div ref={subRef} className="mt-6 max-w-[520px]">
           <p className="text-[15px] leading-[1.9] tracking-[0.01em] text-[rgba(93,76,63,0.78)]">
             {LEAD}
           </p>
@@ -302,7 +279,6 @@ export default function HeroC() {
             {SUB_3}
           </p>
         </div>
-
       </div>
     </section>
   );
