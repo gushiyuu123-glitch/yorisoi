@@ -98,3 +98,26 @@ img {
     filter: blur(0px);
   }
 }
+/* src/index.css */
+
+/* SP typography override（崩れない版） */
+@media (max-width: 768px) {
+  /* 本文（読む情報）だけ上げる */
+  [data-sp-root] section:not(#hero)
+    :where(p, li, dd, dt, label):not([data-kicker]):not([data-no-scale]) {
+    font-size: clamp(16px, 4.2vw, 18px) !important;
+    line-height: 1.9 !important;
+  }
+
+  /* ラベル/注釈（小さく残す情報） */
+  [data-sp-root] section:not(#hero) [data-kicker] {
+    font-size: clamp(12px, 3.4vw, 14px) !important;
+    line-height: 1.75 !important;
+  }
+
+  /* 価格など“デザイン上このサイズ固定” */
+  [data-sp-root] section:not(#hero) [data-no-scale] {
+    font-size: revert !important;
+    line-height: revert !important;
+  }
+}

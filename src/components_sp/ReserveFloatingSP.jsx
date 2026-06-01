@@ -174,7 +174,7 @@ export default function ReserveFloatingSP() {
     ${showTel ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"}
   `}
 >
-  <span className="text-[11px] tracking-[0.10em] font-medium whitespace-nowrap">
+  <span className="text-[12.5px] tracking-[0.10em] font-medium whitespace-nowrap">
     TEL {TEL_DISPLAY}
     {armed && <span className="ml-2 text-[10px] opacity-[0.72]">もう一度</span>}
   </span>

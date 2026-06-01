@@ -129,15 +129,11 @@ export default function HeroC() {
   const LINE_1 = "浦添のメンズ専門理容室。";
   const LINE_2 = "朝7時から。";
 
-  // ✅ Claudeベース（PC）
-  const LEAD = "担当はひとり。流れを切らず、最後まで仕上げます。";
-  const SUB_1 = "まず、変えたい部分を一言だけ聞かせてください。";
-  const SUB_2 =
-    "髪の動きと生え方を読んで、乾かすだけで形が出るラインを作ります。";
-  const SUB_3 = "必要であれば、持ちのいいパーマも視野に入れます。";
+  // ✅ PCサブ文（2行に圧縮）
+  const SUB_1 = "担当はひとり。最後まで仕上げます。";
+  const SUB_2 = "毛流れを見て、乾かすだけで決まる形に。必要ならパーマも。";
 
   const TAGS = ["半個室", "マンツーマン", "シェービング", "駐車場あり"];
-  const RESERVE_URL = "https://beauty.hotpepper.jp/slnH000706136/";
 
   return (
     <section
@@ -258,25 +254,11 @@ export default function HeroC() {
         </h1>
 
         <div ref={subRef} className="mt-6 max-w-[520px]">
+          {/* ✅ 2行だけ */}
           <p className="text-[15px] leading-[1.9] tracking-[0.01em] text-[rgba(93,76,63,0.78)]">
-            {LEAD}
-          </p>
-
-          <p
-            className="
-              mt-4
-              text-[clamp(12.5px,3.6vw,14.5px)]
-              leading-[2.0]
-              font-normal
-              tracking-[0.01em]
-              text-[rgba(115,92,75,0.70)]
-            "
-          >
             {SUB_1}
             <br />
             {SUB_2}
-            <br />
-            {SUB_3}
           </p>
         </div>
       </div>

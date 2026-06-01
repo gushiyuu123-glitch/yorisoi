@@ -9,7 +9,7 @@ export default function AboutSP() {
         w-full bg-base
         pt-[18vh]
         px-[6vw]
-        pb-[calc(14vh+110px+env(safe-area-inset-bottom))]
+         pb-[calc(76px+env(safe-area-inset-bottom))]
       "
       aria-label="ヨリソイについて"
     >
@@ -73,6 +73,7 @@ export default function AboutSP() {
           伝わるように。
         </Reveal>
 
+        {/* ✅ 本文：クライアント指定のコンセプト文に差し替え */}
         <Reveal
           delay={0.20}
           y={12}
@@ -86,22 +87,7 @@ export default function AboutSP() {
           "
         >
           <p>
-            髪の悩みは同じでも、求めるゴールは日によって変わります。
-            <br />
-            今日は整えるだけ。今日は相談したい。どちらでも大丈夫です。
-          </p>
-
-          <p>
-            最初に、直したい箇所と、いつもの整え方を確認します。
-            <br />
-            そこから仕上がりを組みます。
-          </p>
-
-          {/* ✅ 修正④（重複回避） */}
-          <p>
-            仕上げは、家でも再現しやすい収まりへ。
-            <br />
-            朝のひと手間が減る形を目指します。
+            「ヨリソイ」は、お客様に寄り添った形を日々追求するサロンでございます。お客様が一生涯通いたくなるような、魅力的なサロンを目指しており、お客様の年代によって髪の悩みが異なりますので、一緒に考えながら年を重ねていきたいと思います。
           </p>
         </Reveal>
 
@@ -132,7 +118,6 @@ export default function AboutSP() {
         >
           <p className="text-[13.6px] text-[rgba(96,78,62,0.74)] leading-[1.9]">
             会話の量もペースも、空気を見てこちらで揃えます。
-            <br />
             言いづらいことは途中のひと言でも大丈夫です。
           </p>
         </Reveal>

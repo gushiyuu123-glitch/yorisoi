@@ -49,11 +49,15 @@ export default function AppSP() {
                 <section id="home">
                   <HeroSP />
                 </section>
-
+<div data-sp-root>
                 <NavYorisoiFloatingSP />
 
                 <section id="about">
                   <AboutSP />
+                </section>
+
+                <section id="menu">
+                  <MenuSP />
                 </section>
 
                 <section id="profile">
@@ -66,10 +70,6 @@ export default function AppSP() {
 
                 <section id="concept">
                   <ConceptSP />
-                </section>
-
-                <section id="menu">
-                  <MenuSP />
                 </section>
 
                 <section id="gallery">
@@ -94,6 +94,7 @@ export default function AppSP() {
                 </section>
 
                 <FooterSP />
+                 </div>
               </>
             }
           />
@@ -115,6 +116,7 @@ export default function AppSP() {
           <Route path="/news/:id" element={<NewsDetailSP />} />
 
           <Route path="*" element={<Navigate to="/" replace />} />
+         
         </Routes>
       </main>
     </BrowserRouter>

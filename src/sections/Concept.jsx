@@ -20,7 +20,7 @@ export default function Concept() {
         title: "先に把握して、方向を決める。",
         desc: "直したい点と日頃のスタイリングを先に聞き取り、\nその人向きの形を見立てます。",
         sub: ["途中で変わってOK", "必要なことから順に進める"],
-        img: "/yorisoi/concept-cut.png",
+        img: "/yorisoi/concept-cut1.png",
         alt: "施術前に確認している様子",
         cap: "SCENE 02 / CUT",
         aspect: "aspect-[16/10]",
@@ -100,7 +100,7 @@ export default function Concept() {
             duration={0.62}
             className="mt-8 text-[15.5px] leading-[2.0] text-ink/78"
           >
-            空間で落ち着いて、先に把握して、最後は家でスムーズに。
+          空間で落ち着けて、先に方向が決まって、最後は手がかからない仕上がりへ。
             <br />
             この順番が、いちばん自然だと思っています。
           </Reveal>

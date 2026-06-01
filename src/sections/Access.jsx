@@ -203,7 +203,7 @@ export default function Access() {
               <div className="text-[15px] leading-[1.85] text-ink/84">
                 駐車場 2台 + バイク1台
                 <br />
-                <span className="text-ink/62">（満車時は近隣P）</span>
+          
               </div>
             </div>
           </div>

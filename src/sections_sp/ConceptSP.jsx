@@ -21,7 +21,7 @@ export default function ConceptSP() {
         /* ✅ 修正③（落とします削減） */
         desc: "直したい所と日頃のスタイリングを先に押さえ、\nその人向きの形を見立てます。",
         sub: ["途中変更OK", "必要な順で進める"],
-        img: "/yorisoi/concept-cut.png",
+        img: "/yorisoi/concept-cut1.png",
         alt: "施術前に確認している様子",
         cap: "SCENE 02 / CUT",
         aspect: "aspect-[16/10]",
@@ -101,7 +101,7 @@ export default function ConceptSP() {
           duration={0.60}
           className="mt-7 text-[15px] leading-[1.95] text-ink/78"
         >
-          空間で落ち着いて、先に聞き取って、家では手順を短く。
+          空間で落ち着けて、先に方向が決まって、最後は手がかからない仕上がりへ。
           <br />
           この流れが自然だと思っています。
         </Reveal>

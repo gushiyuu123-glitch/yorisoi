@@ -136,13 +136,22 @@ function AccordionSP({ group, openKey, setOpenKey }) {
         aria-expanded={isOpen}
       >
         <div className="min-w-0">
-          <p className="text-[10.5px] tracking-[0.18em] text-ink/45 mb-1">
+          <p
+            data-kicker
+            className="text-[clamp(11px,3.1vw,12px)] tracking-[0.18em] text-ink/45 mb-1"
+          >
             {group.en}
           </p>
-          <h3 className="text-[16px] text-ink/90 font-medium">{group.title}</h3>
+
+          <h3 className="text-[clamp(17px,4.4vw,18px)] text-ink/90 font-medium">
+            {group.title}
+          </h3>
 
           {!!summary && (
-            <p className="mt-2 text-[12.6px] leading-[1.75] text-ink/62">
+            <p
+              data-kicker
+              className="mt-2 text-[clamp(13px,3.6vw,14.5px)] leading-[1.75] text-ink/62"
+            >
               <span className="mr-2 text-ink/40" aria-hidden>
                 └
               </span>
@@ -178,10 +187,10 @@ function AccordionSP({ group, openKey, setOpenKey }) {
                 key={`${group.key}-${i}`}
                 className="flex justify-between gap-4 py-2.5 border-b border-ink/10"
               >
-                <span className="text-[13.5px] leading-[1.8] text-ink/82 pr-3">
+                <span className="text-[clamp(14px,3.9vw,15px)] leading-[1.75] text-ink/82 pr-3">
                   {name}
                 </span>
-                <span className="shrink-0 text-[13.5px] font-medium text-ink/88">
+                <span className="shrink-0 text-[clamp(14px,3.9vw,15px)] font-medium text-ink/88">
                   {price}
                 </span>
               </div>
@@ -198,26 +207,30 @@ function FeaturedCellSP({ item }) {
     <article className="spCell bg-[rgba(255,255,255,0.22)] px-4 py-4">
       <div className="flex items-start justify-between gap-4 mb-2.5">
         <div className="min-w-0">
-          <p className="text-[9.5px] tracking-[0.18em] text-ink/52 mb-1.5">
+          <p data-kicker className="text-[10px] tracking-[0.18em] text-ink/52 mb-1.5">
             {item.label}
           </p>
-          <h3 className="text-[14.6px] leading-[1.55] text-ink/88 font-semibold">
+          <h3 className="text-[clamp(15px,4.0vw,16px)] leading-[1.5] text-ink/88 font-semibold">
             {item.title}
           </h3>
         </div>
 
         <div className="shrink-0 text-right">
-          <p className="text-[10.5px] text-ink/56 mb-0.5">{item.note}</p>
-          <p className="text-[17.5px] tracking-[0.01em] text-ink/88 font-bold">
+          <p data-kicker className="text-[clamp(11px,3.2vw,12px)] text-ink/56 mb-0.5">
+            {item.note}
+          </p>
+          <p data-no-scale className="text-[17.5px] tracking-[0.01em] text-ink/88 font-bold">
             {item.price}
           </p>
         </div>
       </div>
 
-      <p className="text-[12.8px] leading-[1.85] text-ink/80">{item.desc}</p>
+      {/* ここは“読む情報”なので大きくなってOK */}
+      <p className="text-[13.2px] leading-[1.75] text-ink/80">{item.desc}</p>
 
       <div className="mt-3">
         <span
+          data-kicker
           className="
             inline-block
             text-[9.5px]
@@ -318,17 +331,20 @@ export default function MenuSP() {
               </div>
             </div>
 
-            <p className="text-[11px] tracking-[0.32em] text-ink/55 mb-4">料金</p>
+            <p data-kicker className="text-[11px] tracking-[0.32em] text-ink/55 mb-4">
+              料金
+            </p>
 
             <h2 className="text-[clamp(20px,5.8vw,26px)] leading-[1.55] text-ink/90 font-medium">
-              迷いを減らすために、<br />
-              よく選ばれるメニューを先に並べました。
+              迷いを減らすために、
+              <br />
+              よく選ばれるメニューを
+              <br />
+              先に並べました。
             </h2>
 
             <p className="mt-4 text-[13.5px] leading-[1.9] text-ink/70">
-              上は「人気メニュー」、下は「カテゴリ別一覧」です。
-              <br />
-              最新の内容・空席はHotPepperでご確認ください。
+              上は「人気メニュー」、下は「カテゴリ別一覧」です。最新の内容・空席はHotPepperでご確認ください。
             </p>
           </div>
         </Reveal>
@@ -336,11 +352,11 @@ export default function MenuSP() {
         <Reveal delay={0.06} y={12} blur={0.12} duration={0.62}>
           <div className="mb-[9vh]">
             <div className="mb-5">
-              <p className="text-[11px] tracking-[0.24em] text-ink/46 mb-1.5">
+              <p data-kicker className="text-[11px] tracking-[0.24em] text-ink/46 mb-1.5">
                 PICK UP
               </p>
               <h3 className="text-[18px] text-ink/90 font-medium">人気メニュー</h3>
-              <p className="mt-2 text-[12.5px] text-ink/56">
+              <p data-kicker className="mt-2 text-[clamp(13px,3.6vw,14px)] text-ink/56">
                 よく選ばれるものから見やすく
               </p>
             </div>
@@ -365,10 +381,7 @@ export default function MenuSP() {
                   bg-[radial-gradient(circle_at_28%_18%,rgba(255,253,249,0.72),rgba(255,253,249,0.50)_56%,rgba(255,253,249,0.62)_100%)]
                 "
               />
-              <div
-                aria-hidden="true"
-                className="absolute inset-0 shadow-[0_14px_30px_rgba(0,0,0,0.07)]"
-              />
+              <div aria-hidden="true" className="absolute inset-0 shadow-[0_14px_30px_rgba(0,0,0,0.07)]" />
 
               <div className="relative p-[clamp(12px,4vw,18px)]">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-px bg-ink/12 border border-ink/12">
@@ -384,7 +397,7 @@ export default function MenuSP() {
         <Reveal delay={0.08} y={12} blur={0.12} duration={0.62}>
           <div className="mb-[9vh]">
             <div className="mb-5">
-              <p className="text-[11px] tracking-[0.22em] text-ink/46 mb-2">
+              <p data-kicker className="text-[11px] tracking-[0.22em] text-ink/46 mb-2">
                 ALL MENU
               </p>
               <h3 className="text-[20px] text-ink/90 font-medium">その他のメニュー</h3>
@@ -445,7 +458,7 @@ export default function MenuSP() {
               </a>
             </div>
 
-            <p className="text-[11px] mt-5 leading-[1.7] text-ink/45">
+            <p data-kicker className="text-[11px] mt-5 leading-[1.7] text-ink/45">
               ※ メニュー・価格・クーポン内容は変動する場合があります。
               <br />
               最新情報はHotPepperをご確認ください。
