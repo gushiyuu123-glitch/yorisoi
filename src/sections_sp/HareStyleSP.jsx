@@ -55,37 +55,47 @@ function StyleCardSP({ style }) {
         {style.tag}
       </div>
 
-      <figcaption
-        className="
-          absolute bottom-0 left-0 right-0
-          px-4 py-4
-        "
-      >
-        <p
-          data-kicker
-          className="
-            mb-1.5
-            text-[10px]
-            tracking-[0.22em]
-            text-white/72
-            drop-shadow-[0_1px_6px_rgba(0,0,0,0.55)]
-          "
-        >
-          HAIR STYLE
-        </p>
+     <figcaption
+  className="
+    absolute bottom-0 left-0 right-0
+    px-4 pt-12 pb-4
+    bg-[linear-gradient(to_top,rgba(8,7,6,0.88)_0%,rgba(8,7,6,0.58)_52%,rgba(8,7,6,0.00)_100%)]
+  "
+>
+  <p
+    className="
+      mb-2
+      inline-block
+      text-[10.5px]
+      tracking-[0.26em]
+      font-semibold
+      !text-white
+      opacity-100
+    "
+    style={{
+      textShadow:
+        "0 1px 2px rgba(0,0,0,0.95), 0 4px 14px rgba(0,0,0,0.85)",
+    }}
+  >
+    HAIR STYLE
+  </p>
 
-        <h3
-          className="
-            text-[15px]
-            leading-[1.45]
-            font-medium
-            text-white
-            drop-shadow-[0_2px_10px_rgba(0,0,0,0.65)]
-          "
-        >
-          {style.name}
-        </h3>
-      </figcaption>
+  <h3
+    className="
+      text-[15px]
+      leading-[1.45]
+      font-medium
+      !text-white
+      opacity-100
+    "
+    style={{
+      textShadow:
+        "0 2px 4px rgba(0,0,0,0.9), 0 6px 18px rgba(0,0,0,0.7)",
+    }}
+  >
+    {style.name}
+  </h3>
+</figcaption>
     </figure>
   );
 }
@@ -262,26 +272,25 @@ export default function HareStyleSP() {
         <Reveal delay={0.18} y={12} blur={0.1} duration={0.62}>
           <div className="relative mb-[7vh]">
             <div className="mb-4 flex items-center justify-between gap-4">
-              <p
-                data-kicker
-                className="text-[11px] tracking-[0.24em] text-ink/46"
-              >
-                STYLE SAMPLE
-              </p>
+   <p
+  className="
+    inline-block
+    text-[10px]
+    tracking-[0.36em]
+    font-light
+    text-ink/36
 
-              {canSwipe && (
-                <p
-                  className={`
-                    text-[12px]
-                    tracking-[0.08em]
-                    text-ink/46
-                    transition-opacity duration-300
-                    ${showRight ? "opacity-100" : "opacity-0"}
-                  `}
-                >
-                  横にスワイプ →
-                </p>
-              )}
+    italic
+    -skew-x-[6deg]
+    origin-left
+
+    [font-family:'Cormorant_Garamond',serif]
+  "
+>
+  STYLE
+</p>
+
+         
             </div>
 
             <div
@@ -386,9 +395,7 @@ export default function HareStyleSP() {
               "
             >
               他のスタイルも見る
-              <span aria-hidden="true" className="text-ink/50">
-                →
-              </span>
+       
             </a>
 
             <p
