@@ -1,5 +1,10 @@
 // scripts/generate-sitemap.mjs
+import dotenv from "dotenv";
 
+dotenv.config({ path: ".env" });
+dotenv.config({ path: ".env.local", override: true });
+dotenv.config({ path: ".env.production", override: true });
+dotenv.config({ path: ".env.production.local", override: true });
 const SITE_URL = "https://yorisoi-nine.vercel.app";
 const MICROCMS_ENDPOINT =
   "https://pqhxs89idk.microcms.io/api/v1/news?orders=-date&limit=100&fields=id,date,publishedAt,createdAt,updatedAt,title,body";
