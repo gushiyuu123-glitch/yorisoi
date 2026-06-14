@@ -6,6 +6,7 @@ import AppPC from "./AppPC";
 import AppSP from "./AppSP";
 import ScrollToTop from "./components/ScrollToTop";
 import HashScroll from "./components/HashScroll";
+import { Analytics } from "@vercel/analytics/react";
 
 const BREAKPOINT = 820;
 
@@ -47,6 +48,8 @@ export default function App() {
       <HashScroll />
 
       {isSP ? <AppSP /> : <AppPC />}
+
+      <Analytics />
     </BrowserRouter>
   );
 }
