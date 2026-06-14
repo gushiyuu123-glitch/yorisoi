@@ -25,11 +25,11 @@ function formatDate(value) {
   return d.toLocaleDateString("ja-JP").replace(/\//g, ".");
 }
 
-function toDateTime(value) {
+function toIsoDateTime(value) {
   if (!value) return undefined;
 
   if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
-    return value;
+    return `${value}T00:00:00+09:00`;
   }
 
   const d = new Date(value);
@@ -147,8 +147,8 @@ export default function NewsDetailSP() {
   const published = item?.date || item?.publishedAt || item?.createdAt;
   const modified = item?.updatedAt || published;
 
-  const publishedDateTime = toDateTime(published);
-  const modifiedDateTime = toDateTime(modified);
+  const publishedDateTime = toIsoDateTime(published);
+  const modifiedDateTime = toIsoDateTime(modified);
 
   const ogImage = item?.image?.url || DEFAULT_OG;
 
@@ -189,12 +189,29 @@ export default function NewsDetailSP() {
             "@type": "WebPage",
             "@id": pageUrl,
           },
+          url: pageUrl,
           headline: item.title,
           description: excerpt || undefined,
+          articleBody: bodyText || undefined,
           image: ogImage ? [ogImage] : undefined,
-          datePublished: publishedDateTime || published || undefined,
-          dateModified: modifiedDateTime || modified || undefined,
+          datePublished: publishedDateTime || undefined,
+          dateModified: modifiedDateTime || publishedDateTime || undefined,
           inLanguage: "ja-JP",
+          about: [
+            {
+              "@type": "LocalBusiness",
+              name: SITE_NAME,
+              url: SITE_URL,
+            },
+            {
+              "@type": "Thing",
+              name: "浦添市内間のメンズ専門理容室",
+            },
+            {
+              "@type": "Thing",
+              name: "メンズカット・メンズパーマ・シェービング・ヘッドスパ",
+            },
+          ],
           author: {
             "@type": "Organization",
             name: SITE_NAME,
@@ -206,7 +223,7 @@ export default function NewsDetailSP() {
             url: SITE_URL,
             logo: {
               "@type": "ImageObject",
-              url: `${SITE_URL}/yorisoi/bird-logo.png`,
+              url: DEFAULT_OG,
             },
           },
         },
@@ -217,9 +234,8 @@ export default function NewsDetailSP() {
     item,
     pageUrl,
     excerpt,
+    bodyText,
     ogImage,
-    published,
-    modified,
     publishedDateTime,
     modifiedDateTime,
   ]);

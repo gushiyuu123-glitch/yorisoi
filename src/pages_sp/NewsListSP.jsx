@@ -1,13 +1,19 @@
 // src/pages_sp/NewsListSP.jsx
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import Seo from "../components/Seo";
 
 gsap.registerPlugin(ScrollTrigger);
 
+const SITE_URL = "https://yorisoi-nine.vercel.app";
+const SITE_NAME = "ヨリソイ Hair＆Spa";
+const DEFAULT_OG = `${SITE_URL}/yorisoi/ogp.png`;
+
 const ENDPOINT =
-  "https://pqhxs89idk.microcms.io/api/v1/news?orders=-date&limit=100&fields=id,title,date,body,image";
+  "https://pqhxs89idk.microcms.io/api/v1/news?orders=-date&limit=100&fields=id,title,date,body,image,publishedAt,createdAt,updatedAt";
 
 function formatDate(value) {
   if (!value) return "";
@@ -22,17 +28,17 @@ function formatDate(value) {
   return d.toLocaleDateString("ja-JP").replace(/\//g, ".");
 }
 
-function toDateTime(value) {
+function toIsoDateTime(value) {
   if (!value) return undefined;
 
   if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
-    return value;
+    return `${value}T00:00:00+09:00`;
   }
 
   const d = new Date(value);
   if (Number.isNaN(d.getTime())) return undefined;
 
-  return d.toISOString().slice(0, 10);
+  return d.toISOString();
 }
 
 function decodeHtmlEntities(text) {
@@ -80,6 +86,10 @@ function isPlaceholder(item, plain) {
   if (badWords.includes(body)) return true;
 
   return false;
+}
+
+function safeJson(data) {
+  return JSON.stringify(data).replace(/</g, "\\u003c");
 }
 
 export default function NewsListSP() {
@@ -144,17 +154,99 @@ export default function NewsListSP() {
 
         if (isPlaceholder(item, plain)) return null;
 
+        const published = item?.date || item?.publishedAt || item?.createdAt;
+        const modified = item?.updatedAt || published;
+
         return {
           id: item.id,
-          date: formatDate(item.date),
-          dateTime: toDateTime(item.date),
+          date: formatDate(published),
+          dateTime: toIsoDateTime(published),
+          modifiedTime: toIsoDateTime(modified),
           title: item.title || "最新情報",
           excerpt: makeExcerpt(plain, 78),
           imageUrl: item?.image?.url || "",
+          url: `${SITE_URL}/news/${item.id}`,
         };
       })
       .filter(Boolean);
   }, [news]);
+
+  const jsonLd = useMemo(() => {
+    return {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "BreadcrumbList",
+          "@id": `${SITE_URL}/news#breadcrumb`,
+          itemListElement: [
+            {
+              "@type": "ListItem",
+              position: 1,
+              name: "ホーム",
+              item: `${SITE_URL}/`,
+            },
+            {
+              "@type": "ListItem",
+              position: 2,
+              name: "最新情報一覧",
+              item: `${SITE_URL}/news`,
+            },
+          ],
+        },
+        {
+          "@type": "CollectionPage",
+          "@id": `${SITE_URL}/news#webpage`,
+          url: `${SITE_URL}/news`,
+          name: `${SITE_NAME} 最新情報一覧`,
+          description:
+            "ヨリソイ Hair＆Spaの営業情報、メニュー、予約前の確認、メンズカット、パーマ、シェービング、ヘッドスパに関する最新情報一覧です。",
+          inLanguage: "ja-JP",
+          isPartOf: {
+            "@type": "WebSite",
+            name: SITE_NAME,
+            url: SITE_URL,
+          },
+          about: {
+            "@type": "LocalBusiness",
+            name: SITE_NAME,
+            url: SITE_URL,
+          },
+        },
+        {
+          "@type": "ItemList",
+          "@id": `${SITE_URL}/news#itemlist`,
+          name: `${SITE_NAME}の最新情報`,
+          itemListOrder: "https://schema.org/ItemListOrderDescending",
+          numberOfItems: list.length,
+          itemListElement: list.map((item, index) => ({
+            "@type": "ListItem",
+            position: index + 1,
+            url: item.url,
+            item: {
+              "@type": "Article",
+              "@id": `${item.url}#article`,
+              url: item.url,
+              headline: item.title,
+              description: item.excerpt || undefined,
+              image: item.imageUrl || DEFAULT_OG,
+              datePublished: item.dateTime || undefined,
+              dateModified: item.modifiedTime || item.dateTime || undefined,
+              author: {
+                "@type": "Organization",
+                name: SITE_NAME,
+                url: SITE_URL,
+              },
+              publisher: {
+                "@type": "Organization",
+                name: SITE_NAME,
+                url: SITE_URL,
+              },
+            },
+          })),
+        },
+      ],
+    };
+  }, [list]);
 
   useEffect(() => {
     const el = sectionRef.current;
@@ -213,6 +305,17 @@ export default function NewsListSP() {
       aria-label="最新情報一覧"
       aria-busy={isLoading ? "true" : "false"}
     >
+      <Seo
+        title="最新情報一覧"
+        description="ヨリソイ Hair＆Spaの営業情報、メニュー、予約前の確認など、ご来店前に役立つ最新情報一覧です。"
+        path="/news"
+        image={DEFAULT_OG}
+      />
+
+      <Helmet>
+        <script type="application/ld+json">{safeJson(jsonLd)}</script>
+      </Helmet>
+
       <p className="sr-only">
         ヨリソイ Hair＆Spaの最新情報一覧です。営業情報、メニュー、予約前の確認、
         メンズカット、パーマ、シェービング、ヘッドスパに関する案内を掲載しています。
@@ -380,7 +483,7 @@ export default function NewsListSP() {
                   text-[14px]
                   tracking-[0.22em]
                   text-[#5d4c3f]
-                  border-b border-[#5d4f]/45
+                  border-b border-[#5d4c3f]/45
                   pb-[3px]
                   transition
                   hover:opacity-60
