@@ -58,24 +58,18 @@ function StyleCardSP({ style }) {
       <figcaption
         className="
           absolute bottom-0 left-0 right-0
-          px-4 pt-12 pb-4
-          bg-[linear-gradient(to_top,rgba(8,7,6,0.88)_0%,rgba(8,7,6,0.58)_52%,rgba(8,7,6,0.00)_100%)]
+          px-4 py-4
         "
       >
         <p
+          data-kicker
           className="
-            mb-2
-            inline-block
-            text-[10.5px]
-            tracking-[0.26em]
-            font-semibold
-            !text-white
-            opacity-100
+            mb-1.5
+            text-[10px]
+            tracking-[0.22em]
+            text-white/72
+            drop-shadow-[0_1px_6px_rgba(0,0,0,0.55)]
           "
-          style={{
-            textShadow:
-              "0 1px 2px rgba(0,0,0,0.95), 0 4px 14px rgba(0,0,0,0.85)",
-          }}
         >
           HAIR STYLE
         </p>
@@ -85,13 +79,9 @@ function StyleCardSP({ style }) {
             text-[15px]
             leading-[1.45]
             font-medium
-            !text-white
-            opacity-100
+            text-white
+            drop-shadow-[0_2px_10px_rgba(0,0,0,0.65)]
           "
-          style={{
-            textShadow:
-              "0 2px 4px rgba(0,0,0,0.9), 0 6px 18px rgba(0,0,0,0.7)",
-          }}
         >
           {style.name}
         </h3>
@@ -103,46 +93,14 @@ function StyleCardSP({ style }) {
 export default function HareStyleSP() {
   const styles = useMemo(
     () => [
-      {
-        name: "スペインカール",
-        img: "/yorisoi/style/spanish.png",
-        tag: "PERM",
-      },
-      {
-        name: "ツイスト＆ニュアンス",
-        img: "/yorisoi/style/twist-nuance.png",
-        tag: "PERM",
-      },
-      {
-        name: "ニュアンスパーマ",
-        img: "/yorisoi/style/nuance.png",
-        tag: "PERM",
-      },
-      {
-        name: "スパイラルパーマ",
-        img: "/yorisoi/style/spiral.png",
-        tag: "PERM",
-      },
-      {
-        name: "波巻きパーマ",
-        img: "/yorisoi/style/karma.png",
-        tag: "PERM",
-      },
-      {
-        name: "ローフェード",
-        img: "/yorisoi/style/lowfade.png",
-        tag: "CUT",
-      },
-      {
-        name: "2ブロフェードスタイル",
-        img: "/yorisoi/style/2bro.png",
-        tag: "CUT",
-      },
-      {
-        name: "プードルパーマ",
-        img: "/yorisoi/style/poodle.png",
-        tag: "PERM",
-      },
+      { name: "スペインカール", img: "/yorisoi/style/spanish.png", tag: "PERM" },
+      { name: "ツイスト＆ニュアンス", img: "/yorisoi/style/twist-nuance.png", tag: "PERM" },
+      { name: "ニュアンスパーマ", img: "/yorisoi/style/nuance.png", tag: "PERM" },
+      { name: "スパイラルパーマ", img: "/yorisoi/style/spiral.png", tag: "PERM" },
+      { name: "波巻きパーマ", img: "/yorisoi/style/karma.png", tag: "PERM" },
+      { name: "ローフェード", img: "/yorisoi/style/lowfade.png", tag: "CUT" },
+      { name: "2ブロフェードスタイル", img: "/yorisoi/style/2bro.png", tag: "CUT" },
+      { name: "プードルパーマ", img: "/yorisoi/style/poodle.png", tag: "PERM" },
     ],
     []
   );
@@ -167,6 +125,7 @@ export default function HareStyleSP() {
       return;
     }
 
+    // 右にまだ余白がある時だけ矢印を出す
     setShowRight(scrollLeft < max - 10);
   }, []);
 
@@ -186,7 +145,6 @@ export default function HareStyleSP() {
     el.addEventListener("scroll", onScroll, { passive: true });
 
     let ro;
-
     if ("ResizeObserver" in window) {
       ro = new ResizeObserver(updateSwipeState);
       ro.observe(el);
@@ -234,10 +192,7 @@ export default function HareStyleSP() {
         スペインカール、ツイスト、ニュアンスパーマなどの施術例を掲載しています。
       </p>
 
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 z-0 pointer-events-none"
-      >
+      <div aria-hidden="true" className="absolute inset-0 z-0 pointer-events-none">
         <div
           className="
             absolute inset-0
@@ -308,19 +263,10 @@ export default function HareStyleSP() {
           <div className="relative mb-[7vh]">
             <div className="mb-4 flex items-center justify-between gap-4">
               <p
-                className="
-                  inline-block
-                  text-[10px]
-                  tracking-[0.36em]
-                  font-light
-                  text-ink/36
-                  italic
-                  -skew-x-[6deg]
-                  origin-left
-                  [font-family:'Cormorant_Garamond',serif]
-                "
+                data-kicker
+                className="text-[11px] tracking-[0.24em] text-ink/46"
               >
-                STYLE
+                STYLE SAMPLE
               </p>
 
               {canSwipe && (
@@ -329,8 +275,7 @@ export default function HareStyleSP() {
                     text-[12px]
                     tracking-[0.08em]
                     text-ink/46
-                    transition-opacity
-                    duration-300
+                    transition-opacity duration-300
                     ${showRight ? "opacity-100" : "opacity-0"}
                   `}
                 >
