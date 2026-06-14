@@ -5,8 +5,13 @@ import gsap from "gsap";
 
 export default function NavYorisoiFloatingSP() {
   const navRef = useRef(null);
+
   const [active, setActive] = useState("");
   const [keyboardOpen, setKeyboardOpen] = useState(false);
+
+  // Safari下UI対策：上スクロール時に下ナビを逃がす
+  const [navHidden, setNavHidden] = useState(true);
+  const navHiddenRef = useRef(true);
 
   const navigate = useNavigate();
   const { pathname, hash } = useLocation();
@@ -18,14 +23,20 @@ export default function NavYorisoiFloatingSP() {
     );
   }, []);
 
+  const setHidden = useCallback((value) => {
+    if (navHiddenRef.current === value) return;
+    navHiddenRef.current = value;
+    setNavHidden(value);
+  }, []);
+
   const list = useMemo(
     () => [
-  { label: "お店", key: "about", target: "#about" },
-  { label: "メニュー", key: "menu", target: "#menu" },
-  { label: "店主", key: "profile", target: "#profile" },
-  { label: "地図", key: "access", target: "#access" },
-  { label: "お知らせ", key: "news", target: "/news" },
-],
+      { label: "お店", key: "about", target: "#about" },
+      { label: "メニュー", key: "menu", target: "#menu" },
+      { label: "店主", key: "profile", target: "#profile" },
+      { label: "地図", key: "access", target: "#access" },
+      { label: "お知らせ", key: "news", target: "/news" },
+    ],
     []
   );
 
@@ -65,6 +76,31 @@ export default function NavYorisoiFloatingSP() {
       </>
     ),
   };
+
+  const scrollToTarget = useCallback(
+    (target, behavior = reduce ? "auto" : "smooth") => {
+      if (typeof window === "undefined") return false;
+
+      const el = document.querySelector(target);
+      if (!el) return false;
+
+      // 上固定UIぶんだけ着地点を下げる
+      const headerOffset = 118;
+
+      const y = Math.max(
+        0,
+        window.scrollY + el.getBoundingClientRect().top - headerOffset
+      );
+
+      window.scrollTo({
+        top: y,
+        behavior,
+      });
+
+      return true;
+    },
+    [reduce]
+  );
 
   // 初回フェード：軽め
   useEffect(() => {
@@ -119,6 +155,63 @@ export default function NavYorisoiFloatingSP() {
     };
   }, []);
 
+  // Safari下UI対策：スクロール方向で下ナビを制御
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    let lastY = window.scrollY || 0;
+    let raf = 0;
+
+    const TOP_HIDE = 96;
+    const SHOW_AFTER = 150;
+    const DELTA = 10;
+
+    const onScroll = () => {
+      if (raf) return;
+
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+
+        const currentY = window.scrollY || 0;
+        const diff = currentY - lastY;
+
+        // ページ上部では出さない
+        if (currentY < TOP_HIDE) {
+          setHidden(true);
+          lastY = currentY;
+          return;
+        }
+
+        // 微細な揺れでは反応しない
+        if (Math.abs(diff) < DELTA) return;
+
+        const scrollingDown = diff > 0;
+        const scrollingUp = diff < 0;
+
+        if (scrollingDown && currentY > SHOW_AFTER) {
+          setHidden(false);
+        }
+
+        if (scrollingUp) {
+          setHidden(true);
+        }
+
+        lastY = currentY;
+      });
+    };
+
+    onScroll();
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("pageshow", onScroll);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("pageshow", onScroll);
+    };
+  }, [setHidden]);
+
   // /news系では「お知らせ」をアクティブ
   useEffect(() => {
     if (pathname === "/news" || pathname.startsWith("/news/")) {
@@ -135,22 +228,21 @@ export default function NavYorisoiFloatingSP() {
   useEffect(() => {
     if (pathname !== "/" || !hash) return;
 
-    let raf = 0;
+    let raf1 = 0;
+    let raf2 = 0;
 
-    raf = requestAnimationFrame(() => {
-      const el = document.querySelector(hash);
-      if (!el) return;
-
-      el.scrollIntoView({
-        behavior: "auto",
-        block: "start",
+    raf1 = requestAnimationFrame(() => {
+      raf2 = requestAnimationFrame(() => {
+        const ok = scrollToTarget(hash, "auto");
+        if (ok) setActive(hash);
       });
-
-      setActive(hash);
     });
 
-    return () => cancelAnimationFrame(raf);
-  }, [pathname, hash]);
+    return () => {
+      cancelAnimationFrame(raf1);
+      cancelAnimationFrame(raf2);
+    };
+  }, [pathname, hash, scrollToTarget]);
 
   // 現在地ハイライト：LPトップのときだけ
   useEffect(() => {
@@ -177,7 +269,7 @@ export default function NavYorisoiFloatingSP() {
       },
       {
         threshold: [0.18, 0.28, 0.38],
-        rootMargin: "-22% 0px -58% 0px",
+        rootMargin: "-24% 0px -56% 0px",
       }
     );
 
@@ -201,54 +293,59 @@ export default function NavYorisoiFloatingSP() {
       }
 
       // 同一ページ内スクロール
-      const el = document.querySelector(target);
+      const ok = scrollToTarget(target);
 
-      if (el) {
-        el.scrollIntoView({
-          behavior: reduce ? "auto" : "smooth",
-          block: "start",
-        });
-
+      if (ok) {
         window.history.replaceState(null, "", target);
         setActive(target);
       }
     },
-    [navigate, pathname, reduce]
+    [navigate, pathname, scrollToTarget]
   );
 
+  const isHidden = keyboardOpen || navHidden;
+
   return (
-<nav
+ <nav
   ref={navRef}
   className={`
     fixed left-0 right-0 z-[80]
 
     bg-[linear-gradient(
       to_top,
-      rgba(247,244,239,0.86)_0%,
-      rgba(247,244,239,0.78)_54%,
-      rgba(247,244,239,0.62)_100%
+      rgba(248,245,240,0.82)_0%,
+      rgba(248,245,240,0.68)_58%,
+      rgba(248,245,240,0.18)_100%
     )]
-    supports-[backdrop-filter]:bg-[rgba(247,244,239,0.72)]
-    supports-[backdrop-filter]:backdrop-blur-[5px]
+
+    supports-[backdrop-filter]:bg-[rgba(248,245,240,0.46)]
+    supports-[backdrop-filter]:backdrop-blur-[10px]
     supports-[backdrop-filter]:backdrop-saturate-[1.08]
 
-    border-t border-[rgba(255,255,255,0.46)]
-    shadow-[0_-10px_28px_rgba(62,47,35,0.065),inset_0_1px_0_rgba(255,255,255,0.58)]
+    shadow-[0_-1px_0_rgba(255,255,255,0.46),0_-14px_34px_rgba(88,72,56,0.045)]
 
-    px-[4.2vw]
-    pt-[9px]
-    pb-[calc(9px+env(safe-area-inset-bottom))]
+    px-[4.6vw]
+    pt-[10px]
+    pb-[calc(10px+env(safe-area-inset-bottom))]
 
     flex justify-between
 
-    transition-[opacity,transform] duration-200 ease-out
-    [transform:translate3d(0,0,0)]
+    transform-gpu
+    will-change-transform
     [contain:paint]
 
-    ${keyboardOpen ? "opacity-0 translate-y-[16px] pointer-events-none" : "opacity-100 translate-y-0"}
+    transition-[opacity,transform,filter]
+    duration-300
+    ease-[cubic-bezier(.22,.8,.24,1)]
+
+    ${
+      isHidden
+        ? "opacity-0 translate-y-[calc(100%+18px)] pointer-events-none blur-[1px]"
+        : "opacity-100 translate-y-0 pointer-events-auto blur-0"
+    }
   `}
   style={{
-    bottom: "max(6px, env(safe-area-inset-bottom))",
+    bottom: 0,
   }}
   aria-label="ページ内ナビゲーション"
 >
@@ -265,15 +362,23 @@ export default function NavYorisoiFloatingSP() {
               nav-sp-item
               relative flex flex-col items-center justify-center
               w-[17vw]
+              min-h-[45px]
+
               text-[11.2px]
               tracking-[0.085em]
               font-medium
+
               select-none
               touch-manipulation
 
-              transition-[color,opacity,transform] duration-150
+              transition-[color,opacity,transform]
+              duration-150
 
-              ${isActive ? "text-[rgba(96,78,62,0.96)]" : "text-[rgba(96,78,62,0.62)]"}
+              ${
+                isActive
+                  ? "text-[rgba(96,78,62,0.96)]"
+                  : "text-[rgba(96,78,62,0.62)]"
+              }
 
               active:opacity-[0.82]
               active:scale-[0.94]
@@ -304,7 +409,7 @@ export default function NavYorisoiFloatingSP() {
               <span
                 className="
                   absolute left-1/2 -translate-x-1/2
-                  bottom-[-6px]
+                  bottom-[-3px]
                   w-[20px] h-[1.6px]
                   rounded-full
                   bg-[rgba(96,78,62,0.34)]

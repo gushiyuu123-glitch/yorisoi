@@ -1,5 +1,5 @@
 // src/sections_sp/HareStyleSP.jsx
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Reveal } from "../components/Reveal";
 
 function StyleCardSP({ style }) {
@@ -40,6 +40,7 @@ function StyleCardSP({ style }) {
       />
 
       <div
+        aria-hidden="true"
         className="
           absolute left-0 top-0
           px-3 py-2
@@ -57,18 +58,24 @@ function StyleCardSP({ style }) {
       <figcaption
         className="
           absolute bottom-0 left-0 right-0
-          px-4 py-4
+          px-4 pt-12 pb-4
+          bg-[linear-gradient(to_top,rgba(8,7,6,0.88)_0%,rgba(8,7,6,0.58)_52%,rgba(8,7,6,0.00)_100%)]
         "
       >
         <p
-          data-kicker
           className="
-            mb-1.5
-            text-[10px]
-            tracking-[0.22em]
-            text-white/72
-            drop-shadow-[0_1px_6px_rgba(0,0,0,0.55)]
+            mb-2
+            inline-block
+            text-[10.5px]
+            tracking-[0.26em]
+            font-semibold
+            !text-white
+            opacity-100
           "
+          style={{
+            textShadow:
+              "0 1px 2px rgba(0,0,0,0.95), 0 4px 14px rgba(0,0,0,0.85)",
+          }}
         >
           HAIR STYLE
         </p>
@@ -78,9 +85,13 @@ function StyleCardSP({ style }) {
             text-[15px]
             leading-[1.45]
             font-medium
-            text-white
-            drop-shadow-[0_2px_10px_rgba(0,0,0,0.65)]
+            !text-white
+            opacity-100
           "
+          style={{
+            textShadow:
+              "0 2px 4px rgba(0,0,0,0.9), 0 6px 18px rgba(0,0,0,0.7)",
+          }}
         >
           {style.name}
         </h3>
@@ -92,14 +103,46 @@ function StyleCardSP({ style }) {
 export default function HareStyleSP() {
   const styles = useMemo(
     () => [
-      { name: "スペインカール", img: "/yorisoi/style/spanish.png", tag: "PERM" },
-      { name: "ツイスト＆ニュアンス", img: "/yorisoi/style/twist-nuance.png", tag: "PERM" },
-      { name: "ニュアンスパーマ", img: "/yorisoi/style/nuance.png", tag: "PERM" },
-      { name: "スパイラルパーマ", img: "/yorisoi/style/spiral.png", tag: "PERM" },
-      { name: "波巻きパーマ", img: "/yorisoi/style/karma.png", tag: "PERM" },
-      { name: "ローフェード", img: "/yorisoi/style/lowfade.png", tag: "CUT" },
-      { name: "2ブロフェードスタイル", img: "/yorisoi/style/2bro.png", tag: "CUT" },
-      { name: "プードルパーマ", img: "/yorisoi/style/poodle.png", tag: "PERM" },
+      {
+        name: "スペインカール",
+        img: "/yorisoi/style/spanish.png",
+        tag: "PERM",
+      },
+      {
+        name: "ツイスト＆ニュアンス",
+        img: "/yorisoi/style/twist-nuance.png",
+        tag: "PERM",
+      },
+      {
+        name: "ニュアンスパーマ",
+        img: "/yorisoi/style/nuance.png",
+        tag: "PERM",
+      },
+      {
+        name: "スパイラルパーマ",
+        img: "/yorisoi/style/spiral.png",
+        tag: "PERM",
+      },
+      {
+        name: "波巻きパーマ",
+        img: "/yorisoi/style/karma.png",
+        tag: "PERM",
+      },
+      {
+        name: "ローフェード",
+        img: "/yorisoi/style/lowfade.png",
+        tag: "CUT",
+      },
+      {
+        name: "2ブロフェードスタイル",
+        img: "/yorisoi/style/2bro.png",
+        tag: "CUT",
+      },
+      {
+        name: "プードルパーマ",
+        img: "/yorisoi/style/poodle.png",
+        tag: "PERM",
+      },
     ],
     []
   );
@@ -107,8 +150,25 @@ export default function HareStyleSP() {
   const scrollerRef = useRef(null);
 
   const [canSwipe, setCanSwipe] = useState(false);
-  const [showLeft, setShowLeft] = useState(false);
   const [showRight, setShowRight] = useState(false);
+
+  const updateSwipeState = useCallback(() => {
+    const el = scrollerRef.current;
+    if (!el) return;
+
+    const scrollLeft = el.scrollLeft || 0;
+    const max = el.scrollWidth - el.clientWidth;
+
+    const can = max > 6;
+    setCanSwipe(can);
+
+    if (!can) {
+      setShowRight(false);
+      return;
+    }
+
+    setShowRight(scrollLeft < max - 10);
+  }, []);
 
   useEffect(() => {
     const el = scrollerRef.current;
@@ -116,49 +176,45 @@ export default function HareStyleSP() {
 
     let raf = 0;
 
-    const update = () => {
-      const scrollLeft = el.scrollLeft || 0;
-      const max = el.scrollWidth - el.clientWidth;
-
-      const can = max > 6;
-      setCanSwipe(can);
-
-      if (!can) {
-        setShowLeft(false);
-        setShowRight(false);
-        return;
-      }
-
-      setShowLeft(scrollLeft > 6);
-      setShowRight(scrollLeft < max - 6);
-    };
-
     const onScroll = () => {
       cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(update);
+      raf = requestAnimationFrame(updateSwipeState);
     };
 
-    update();
+    updateSwipeState();
 
     el.addEventListener("scroll", onScroll, { passive: true });
 
     let ro;
+
     if ("ResizeObserver" in window) {
-      ro = new ResizeObserver(update);
+      ro = new ResizeObserver(updateSwipeState);
       ro.observe(el);
     } else {
-      window.addEventListener("resize", update, { passive: true });
+      window.addEventListener("resize", updateSwipeState, { passive: true });
     }
 
-    const timer = window.setTimeout(update, 240);
+    const timer = window.setTimeout(updateSwipeState, 240);
 
     return () => {
       cancelAnimationFrame(raf);
       el.removeEventListener("scroll", onScroll);
       ro?.disconnect?.();
-      window.removeEventListener("resize", update);
+      window.removeEventListener("resize", updateSwipeState);
       window.clearTimeout(timer);
     };
+  }, [updateSwipeState]);
+
+  const scrollNext = useCallback(() => {
+    const el = scrollerRef.current;
+    if (!el) return;
+
+    const amount = Math.round(el.clientWidth * 0.78);
+
+    el.scrollBy({
+      left: amount,
+      behavior: "smooth",
+    });
   }, []);
 
   return (
@@ -178,7 +234,10 @@ export default function HareStyleSP() {
         スペインカール、ツイスト、ニュアンスパーマなどの施術例を掲載しています。
       </p>
 
-      <div aria-hidden="true" className="absolute inset-0 z-0 pointer-events-none">
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 z-0 pointer-events-none"
+      >
         <div
           className="
             absolute inset-0
@@ -249,34 +308,36 @@ export default function HareStyleSP() {
           <div className="relative mb-[7vh]">
             <div className="mb-4 flex items-center justify-between gap-4">
               <p
-                data-kicker
-                className="text-[11px] tracking-[0.24em] text-ink/46"
+                className="
+                  inline-block
+                  text-[10px]
+                  tracking-[0.36em]
+                  font-light
+                  text-ink/36
+                  italic
+                  -skew-x-[6deg]
+                  origin-left
+                  [font-family:'Cormorant_Garamond',serif]
+                "
               >
-                STYLE SAMPLE
+                STYLE
               </p>
 
-            
+              {canSwipe && (
+                <p
+                  className={`
+                    text-[12px]
+                    tracking-[0.08em]
+                    text-ink/46
+                    transition-opacity
+                    duration-300
+                    ${showRight ? "opacity-100" : "opacity-0"}
+                  `}
+                >
+                  横にスワイプ →
+                </p>
+              )}
             </div>
-
-            <div
-              aria-hidden="true"
-              className={`
-                pointer-events-none absolute inset-y-[34px] left-0 z-10 w-[14vw]
-                bg-[linear-gradient(to_right,rgba(247,244,239,1),rgba(247,244,239,0))]
-                transition-opacity duration-300
-                ${canSwipe && showLeft ? "opacity-100" : "opacity-0"}
-              `}
-            />
-
-            <div
-              aria-hidden="true"
-              className={`
-                pointer-events-none absolute inset-y-[34px] right-0 z-10 w-[14vw]
-                bg-[linear-gradient(to_left,rgba(247,244,239,1),rgba(247,244,239,0))]
-                transition-opacity duration-300
-                ${canSwipe && showRight ? "opacity-100" : "opacity-0"}
-              `}
-            />
 
             <div
               ref={scrollerRef}
@@ -300,6 +361,60 @@ export default function HareStyleSP() {
                 <div aria-hidden="true" className="min-w-[6vw]" />
               </div>
             </div>
+
+            {canSwipe && (
+              <button
+                type="button"
+                onClick={scrollNext}
+                aria-label="右のスタイル写真を見る"
+                className={`
+                  absolute
+                  right-[2vw]
+                  top-1/2
+                  z-20
+                  -translate-y-1/2
+
+                  h-[42px]
+                  w-[42px]
+                  rounded-full
+
+                  inline-flex items-center justify-center
+
+                  bg-[rgba(247,244,239,0.46)]
+                  border border-[rgba(255,255,255,0.48)]
+                  text-[rgba(72,55,40,0.64)]
+
+                  backdrop-blur-[8px]
+                  backdrop-saturate-[1.08]
+
+                  shadow-[0_1px_0_rgba(255,255,255,0.42)_inset,0_8px_22px_rgba(72,55,40,0.075)]
+
+                  transition-[opacity,transform,filter]
+                  duration-300
+                  ease-[cubic-bezier(.22,.8,.24,1)]
+
+                  active:scale-[0.94]
+
+                  ${
+                    showRight
+                      ? "opacity-100 translate-x-0 pointer-events-auto blur-0"
+                      : "opacity-0 translate-x-[10px] pointer-events-none blur-[1px]"
+                  }
+                `}
+              >
+                <span
+                  aria-hidden="true"
+                  className="
+                    block
+                    text-[24px]
+                    leading-none
+                    translate-x-[1px]
+                  "
+                >
+                  →
+                </span>
+              </button>
+            )}
           </div>
         </Reveal>
 
