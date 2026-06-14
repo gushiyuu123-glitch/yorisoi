@@ -3,56 +3,190 @@
 @tailwind utilities;
 
 /* ---------------------------------------
-   YORISOI / 裕人仕様：質感 × 可読性 × 安定性
-   - smooth scroll はCSSでは常時ONにしない
-   - reduce-motion でフェード＆スクロールを無効化
+   YORISOI / 裕人仕様
+   質感 × 可読性 × Safari安定 × 体験設計
+
+   - bodyには下ナビ用 padding を入れない
+   - 下ナビの逃げは Footer / 各セクション側で調整
+   - smooth scroll はCSSで常時ONにしない
+   - iPhone Safari の fixed / safe-area / viewport 揺れを考慮
    - SPは読みやすさ優先
-   - iPhone Safariの固定UI・下ナビ干渉を軽減
 ---------------------------------------- */
 
-html {
-  -webkit-text-size-adjust: 100%;
-  text-rendering: optimizeLegibility;
-  scroll-behavior: auto;
+/* ---------------------------------------
+   Base
+---------------------------------------- */
+
+:root {
+  --yorisoi-bg: #f7f3ec;
+  --yorisoi-ink: #2e2a27;
+  --yorisoi-safe-bottom: env(safe-area-inset-bottom, 0px);
+  --yorisoi-safe-top: env(safe-area-inset-top, 0px);
 }
 
-html,
-body,
-#root {
+html {
+  width: 100%;
   min-height: 100%;
+
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+
+  text-rendering: optimizeLegibility;
+  scroll-behavior: auto;
+
+  background: var(--yorisoi-bg);
+
+  /* 固定ヘッダー/上部UIぶん。hash移動の保険 */
+  scroll-padding-top: calc(96px + var(--yorisoi-safe-top));
 }
 
 body {
   @apply bg-base text-text font-jp antialiased;
   @apply leading-relax tracking-cozy;
 
+  width: 100%;
+  min-height: 100%;
   margin: 0;
+
   overflow-x: hidden;
+
+  /*
+    重要：
+    bodyに padding-bottom を入れない。
+    ここに 82px 等を入れると Footer の外側に謎余白が出る。
+  */
+  padding: 0;
+
+  color: var(--yorisoi-ink);
+  background: var(--yorisoi-bg);
 
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
-  background: #f7f3ec;
+  overscroll-behavior-x: none;
 }
 
-/* タップ時の青/灰色ハイライトを少し抑える */
+#root {
+  width: 100%;
+  min-height: 100%;
+  isolation: isolate;
+  background: var(--yorisoi-bg);
+}
+
+/* overflow-x: clip が使える環境では clip 優先 */
+html,
+body {
+  overflow-x: clip;
+}
+
+@supports not (overflow: clip) {
+  html,
+  body {
+    overflow-x: hidden;
+  }
+}
+
+/* ---------------------------------------
+   Element reset
+---------------------------------------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 button,
 a {
   -webkit-tap-highlight-color: transparent;
 }
 
-button {
+button,
+input,
+textarea,
+select {
   font: inherit;
 }
 
-/* 画像：ドラッグ禁止 + 行間ゴミ除去 + なめらか表示 */
-img {
-  @apply select-none;
+button {
+  border: 0;
+  background: transparent;
+}
+
+a {
+  color: inherit;
+  text-decoration-thickness: from-font;
+}
+
+img,
+picture,
+video,
+canvas,
+svg {
   display: block;
   max-width: 100%;
+}
+
+img {
+  @apply select-none;
+
   height: auto;
   image-rendering: auto;
   -webkit-user-drag: none;
+}
+
+::selection {
+  background: rgba(96, 78, 62, 0.18);
+  color: var(--yorisoi-ink);
+}
+
+/* ---------------------------------------
+   Accessibility
+---------------------------------------- */
+
+:focus {
+  outline: none;
+}
+
+:focus-visible {
+  outline: 2px solid rgba(96, 78, 62, 0.28);
+  outline-offset: 4px;
+}
+
+/* ---------------------------------------
+   Viewport helpers
+   iPhone Safari の 100vh 揺れ対策用
+---------------------------------------- */
+
+.min-h-screen-safe {
+  min-height: 100svh;
+}
+
+.h-screen-safe {
+  height: 100svh;
+}
+
+@supports (height: 100dvh) {
+  .min-h-screen-safe {
+    min-height: 100dvh;
+  }
+
+  .h-screen-safe {
+    height: 100dvh;
+  }
+}
+
+/* ---------------------------------------
+   Scrollbar helpers
+---------------------------------------- */
+
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
 
 /* ---------------------------------------
@@ -61,7 +195,7 @@ img {
 
 @media (prefers-reduced-motion: reduce) {
   html {
-    scroll-behavior: auto;
+    scroll-behavior: auto !important;
   }
 
   *,
@@ -82,7 +216,7 @@ img {
 
 /* ---------------------------------------
    Fade Up
-   - PCはごく薄いblurで質感
+   - PCは薄いblurで質感
    - SP/coarseはblurなしで安定優先
 ---------------------------------------- */
 
@@ -144,35 +278,90 @@ img {
 
 /* ---------------------------------------
    SP typography override
-   - Heroは data-sp-root 外なので対象外
-   - 下ナビに隠れない余白もここで確保
+   - Heroは data-sp-root 外なら対象外
+   - bodyに下ナビ余白を入れない
+   - デザイン固定要素は data-no-scale で逃がす
 ---------------------------------------- */
 
 @media (max-width: 768px) {
+  html {
+    scroll-padding-top: calc(112px + var(--yorisoi-safe-top));
+  }
+
   body {
-    padding-bottom: calc(82px + env(safe-area-inset-bottom));
+    /*
+      重要：
+      下固定ナビ対策で body padding-bottom を入れない。
+      Footer外側の謎余白の原因になる。
+    */
+    padding-bottom: 0 !important;
   }
 
   [data-sp-root] {
-    padding-bottom: calc(24px + env(safe-area-inset-bottom));
+    /*
+      ここにも基本余白を入れない。
+      最下部の逃げは FooterSP の pb で見る。
+    */
+    padding-bottom: 0;
   }
 
-  /* 本文：読む情報だけ上げる */
+  /*
+    本文：読む情報だけ大きくする。
+    ボタン、ナビ、装飾、価格、写真上文字は巻き込まない。
+  */
   [data-sp-root] section
     :where(p, li, dd, dt, label):not([data-kicker]):not([data-no-scale]) {
     font-size: clamp(16px, 4.2vw, 18px) !important;
     line-height: 1.9 !important;
   }
 
-  /* ラベル/注釈 */
+  /*
+    ラベル/注釈。
+    ただし写真上・カード上で崩れる場合は data-kicker を外す。
+  */
   [data-sp-root] section [data-kicker] {
     font-size: clamp(12px, 3.4vw, 14px) !important;
     line-height: 1.75 !important;
   }
 
-  /* 価格・数字・デザイン固定要素 */
+  /*
+    価格・数字・ナビ・デザイン固定要素。
+    class側のサイズを優先する。
+  */
   [data-sp-root] section [data-no-scale] {
     font-size: revert !important;
     line-height: revert !important;
+  }
+}
+
+/* ---------------------------------------
+   iOS Safari fixed UI support
+   - 固定ガラスUIのチラつき軽減
+---------------------------------------- */
+
+@supports (-webkit-touch-callout: none) {
+  .ios-fixed-glass {
+    transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+  }
+}
+
+/* ---------------------------------------
+   Print
+---------------------------------------- */
+
+@media print {
+  *,
+  *::before,
+  *::after {
+    box-shadow: none !important;
+    text-shadow: none !important;
+    background: transparent !important;
+    color: #000 !important;
+  }
+
+  a {
+    text-decoration: underline;
   }
 }
