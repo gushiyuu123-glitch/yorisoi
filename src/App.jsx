@@ -1,7 +1,11 @@
 // src/App.jsx
 import { useEffect, useState } from "react";
+import { BrowserRouter } from "react-router-dom";
+
 import AppPC from "./AppPC";
 import AppSP from "./AppSP";
+import ScrollToTop from "./components/ScrollToTop";
+import HashScroll from "./components/HashScroll";
 
 const BREAKPOINT = 820;
 
@@ -12,21 +16,37 @@ export default function App() {
   });
 
   useEffect(() => {
-    const mql = window.matchMedia(`(max-width: ${BREAKPOINT}px)`);
-    const onChange = (e) => setIsSP(e.matches);
+    if (typeof window === "undefined") return;
 
-    // 初回同期（念のため）
+    const mql = window.matchMedia(`(max-width: ${BREAKPOINT}px)`);
+
+    const onChange = (e) => {
+      setIsSP(e.matches);
+    };
+
     setIsSP(mql.matches);
 
-    // modern / legacy Safari
-    if (mql.addEventListener) mql.addEventListener("change", onChange);
-    else mql.addListener(onChange);
+    if (mql.addEventListener) {
+      mql.addEventListener("change", onChange);
+    } else {
+      mql.addListener(onChange);
+    }
 
     return () => {
-      if (mql.removeEventListener) mql.removeEventListener("change", onChange);
-      else mql.removeListener(onChange);
+      if (mql.removeEventListener) {
+        mql.removeEventListener("change", onChange);
+      } else {
+        mql.removeListener(onChange);
+      }
     };
   }, []);
 
-  return isSP ? <AppSP /> : <AppPC />;
+  return (
+    <BrowserRouter>
+      <ScrollToTop />
+      <HashScroll />
+
+      {isSP ? <AppSP /> : <AppPC />}
+    </BrowserRouter>
+  );
 }

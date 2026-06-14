@@ -2,9 +2,9 @@
 <html lang="ja">
   <head>
     <meta charset="UTF-8" />
-
+<meta name="google-site-verification" content="iG_ZrJCqMsY5q1LbjYgdRdGnKp4rr3RKKLk7D8HNZ1w" />
     <!-- ===============================
-         基本設定
+      基本設定
     =============================== -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="google" content="notranslate" />
@@ -13,11 +13,8 @@
     <meta name="theme-color" content="#F7F3EC" />
     <meta name="application-name" content="ヨリソイ Hair＆Spa" />
     <meta name="apple-mobile-web-app-title" content="ヨリソイ" />
-
-    <!-- iOSの自動リンク化を止める（telリンクは <a href="tel:"> を使うので問題なし） -->
     <meta name="format-detection" content="telephone=no" />
 
-    <!-- 検索結果のリッチ化に寄せる（許容範囲で最大） -->
     <meta
       name="robots"
       content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1"
@@ -28,7 +25,7 @@
     />
 
     <!-- ===============================
-         Favicon
+      Favicon
     =============================== -->
     <link rel="icon" type="image/png" sizes="32x32" href="/yorisoi/favicon-32.png" />
     <link rel="icon" type="image/png" sizes="192x192" href="/yorisoi/favicon-192.png" />
@@ -36,30 +33,21 @@
     <link rel="icon" type="image/x-icon" href="/yorisoi/favicon.ico" />
 
     <!-- ===============================
-         TITLE（検索語順）
-         エリア → 業種 → 強み(3つまで) → 店名
-         ※強みを詰め込みすぎると後半が切れるので3つで止める
+      SEO fallback
+      ※React Helmetで各ページ上書き。
+      ※SNSクローラー向けにトップページの最低限はindexに残す。
     =============================== -->
-    <title>浦添・内間のメンズ専門理容室｜ヨリソイ Hair＆Spa｜朝7時〜／マンツーマン／半個室</title>
+    <title>浦添・内間のメンズ専門理容室｜朝7時〜・メンズカット・パーマ｜ヨリソイ Hair＆Spa</title>
 
-    <!-- ===============================
-         DESCRIPTION（条件・事実を優先）
-    =============================== -->
     <meta
       name="description"
-      content="沖縄県浦添市内間のメンズ専門理容室 ヨリソイ Hair＆Spa。朝7:00〜、マンツーマン×半個室で相談しやすい。メンズカット／フェード／パーマ／シェービング／ヘッドスパ対応。駐車場あり。"
+      content="沖縄県浦添市内間のメンズ専門理容室 ヨリソイ Hair＆Spa。浦添・那覇近くでメンズカット、フェード、メンズパーマ、眉シェービング、顔剃り、ヘッドスパ、白髪ぼかしに対応。朝7時から、マンツーマン×半個室、駐車場あり。"
     />
 
-    <!-- ===============================
-         Canonical / OGP URL
-         ※本番ドメインが決まったら必ず差し替え
-    =============================== -->
-    <!-- SITE_ORIGIN: https://yorisoi-nine.vercel.app -->
     <link rel="canonical" href="https://yorisoi-nine.vercel.app/" />
 
     <!-- ===============================
-         OGP / Twitter
-         ※og:image は 1200x630 推奨（同比率で）
+      OGP / Twitter
     =============================== -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="ヨリソイ Hair＆Spa" />
@@ -68,11 +56,11 @@
 
     <meta
       property="og:title"
-      content="浦添・内間｜メンズ専門理容室 ヨリソイ Hair＆Spa（朝7時〜／マンツーマン／半個室）"
+      content="浦添・内間のメンズ専門理容室｜ヨリソイ Hair＆Spa"
     />
     <meta
       property="og:description"
-      content="朝7:00〜／マンツーマン／半個室。カット・フェード・パーマ・シェービング・ヘッドスパ。駐車場あり。"
+      content="朝7時から。メンズカット・パーマ・フェード・シェービング・ヘッドスパ対応。マンツーマン×半個室、駐車場あり。"
     />
 
     <meta property="og:image" content="https://yorisoi-nine.vercel.app/yorisoi/ogp.png" />
@@ -83,25 +71,19 @@
     <meta property="og:image:alt" content="ヨリソイ Hair＆Spa（浦添・内間のメンズ専門理容室）" />
 
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="浦添・内間｜メンズ専門理容室 ヨリソイ Hair＆Spa" />
+    <meta name="twitter:title" content="浦添・内間のメンズ専門理容室｜ヨリソイ Hair＆Spa" />
     <meta
       name="twitter:description"
-      content="朝7:00〜／マンツーマン／半個室。カット・フェード・パーマ・シェービング・ヘッドスパ。駐車場あり。"
+      content="朝7時から。メンズカット・パーマ・フェード・シェービング・ヘッドスパ対応。マンツーマン×半個室、駐車場あり。"
     />
     <meta name="twitter:image" content="https://yorisoi-nine.vercel.app/yorisoi/ogp.png" />
     <meta name="twitter:image:alt" content="ヨリソイ Hair＆Spa（浦添・内間のメンズ専門理容室）" />
 
-    <!-- ===============================
-         制作クレジット（metaはOK）
-         ※店舗運営者と制作会社を混同させない（JSON-LDでも分離）
-    =============================== -->
     <meta name="author" content="GUSHIKEN DESIGN" />
 
     <!-- ===============================
-         構造化データ（実在店舗として強化）
-         - LocalBusiness(BarberShop) を明確化
-         - “geo座標”は誤差リスクがあるので入れない（住所+hasMapで十分）
-         - 星/口コミ数は入れない（不一致リスク）
+      構造化データ
+      ※口コミ星は入れない。表示内容・外部情報との差異リスクを避ける。
     =============================== -->
     <script type="application/ld+json">
       {
@@ -113,36 +95,55 @@
             "url": "https://yorisoi-nine.vercel.app/yorisoi/ogp.png",
             "contentUrl": "https://yorisoi-nine.vercel.app/yorisoi/ogp.png",
             "width": 1200,
-            "height": 630
+            "height": 630,
+            "caption": "ヨリソイ Hair＆Spa（浦添・内間のメンズ専門理容室）"
           },
           {
             "@type": "WebSite",
             "@id": "https://yorisoi-nine.vercel.app/#website",
             "url": "https://yorisoi-nine.vercel.app/",
             "name": "ヨリソイ Hair＆Spa 公式サイト",
+            "alternateName": "ヨリソイ",
             "inLanguage": "ja-JP",
-            "publisher": { "@id": "https://yorisoi-nine.vercel.app/#salon" }
+            "publisher": {
+              "@id": "https://yorisoi-nine.vercel.app/#salon"
+            }
           },
           {
             "@type": "WebPage",
             "@id": "https://yorisoi-nine.vercel.app/#webpage",
             "url": "https://yorisoi-nine.vercel.app/",
             "name": "浦添・内間のメンズ専門理容室｜ヨリソイ Hair＆Spa",
-            "isPartOf": { "@id": "https://yorisoi-nine.vercel.app/#website" },
-            "about": { "@id": "https://yorisoi-nine.vercel.app/#salon" },
-            "primaryImageOfPage": { "@id": "https://yorisoi-nine.vercel.app/#ogimage" },
-            "publisher": { "@id": "https://yorisoi-nine.vercel.app/#salon" },
-            "creator": { "@id": "https://gushikendesign.com/#org" }
+            "description": "沖縄県浦添市内間のメンズ専門理容室。朝7時から、マンツーマン×半個室で、メンズカット・パーマ・フェード・シェービング・ヘッドスパに対応しています。",
+            "isPartOf": {
+              "@id": "https://yorisoi-nine.vercel.app/#website"
+            },
+            "about": {
+              "@id": "https://yorisoi-nine.vercel.app/#salon"
+            },
+            "primaryImageOfPage": {
+              "@id": "https://yorisoi-nine.vercel.app/#ogimage"
+            },
+            "publisher": {
+              "@id": "https://yorisoi-nine.vercel.app/#salon"
+            },
+            "creator": {
+              "@id": "https://gushikendesign.com/#org"
+            },
+            "inLanguage": "ja-JP"
           },
           {
-            "@type": "BarberShop",
+            "@type": ["BarberShop", "HairSalon"],
             "@id": "https://yorisoi-nine.vercel.app/#salon",
             "name": "ヨリソイ Hair＆Spa",
-            "alternateName": "ヨリソイ",
+            "alternateName": ["ヨリソイ", "YORISOI Hair & Spa"],
             "url": "https://yorisoi-nine.vercel.app/",
-            "image": { "@id": "https://yorisoi-nine.vercel.app/#ogimage" },
+            "image": {
+              "@id": "https://yorisoi-nine.vercel.app/#ogimage"
+            },
             "logo": "https://yorisoi-nine.vercel.app/yorisoi/bird-logo.png",
-            "description": "沖縄県浦添市内間のメンズ専門理容室。朝7時から営業。マンツーマン×半個室で、相談しやすい環境を整えています。",
+            "description": "沖縄県浦添市内間のメンズ専門理容室。朝7時から営業。マンツーマン×半個室で、メンズカット、フェード、メンズパーマ、シェービング、ヘッドスパに対応しています。",
+            "slogan": "朝7時から。半個室の2席で、最初から最後まで担当します。",
             "telephone": "+81-90-7357-0926",
             "priceRange": "¥¥",
             "address": {
@@ -153,26 +154,148 @@
               "postalCode": "901-2121",
               "addressCountry": "JP"
             },
+            "areaServed": [
+              "浦添市",
+              "内間",
+              "那覇市",
+              "宜野湾市",
+              "沖縄県"
+            ],
+            "openingHours": "Tu-Su 07:00-19:00",
             "openingHoursSpecification": [
               {
                 "@type": "OpeningHoursSpecification",
-                "dayOfWeek": ["Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+                "dayOfWeek": [
+                  "Tuesday",
+                  "Wednesday",
+                  "Thursday",
+                  "Friday",
+                  "Saturday",
+                  "Sunday"
+                ],
                 "opens": "07:00",
                 "closes": "19:00"
               }
             ],
             "amenityFeature": [
-              { "@type": "LocationFeatureSpecification", "name": "駐車場", "value": true },
-              { "@type": "LocationFeatureSpecification", "name": "半個室", "value": true }
+              {
+                "@type": "LocationFeatureSpecification",
+                "name": "駐車場",
+                "value": true
+              },
+              {
+                "@type": "LocationFeatureSpecification",
+                "name": "半個室",
+                "value": true
+              },
+              {
+                "@type": "LocationFeatureSpecification",
+                "name": "マンツーマン対応",
+                "value": true
+              }
             ],
-            "serviceType": [
+            "paymentAccepted": "現金, クレジットカード, 電子マネー, QR決済, PayPay",
+            "currenciesAccepted": "JPY",
+            "knowsAbout": [
               "メンズカット",
-              "フェード",
               "メンズパーマ",
-              "シェービング",
-              "ヘッドスパ"
+              "フェードカット",
+              "眉シェービング",
+              "顔剃り",
+              "ヘッドスパ",
+              "白髪ぼかし",
+              "40代メンズヘア",
+              "ボリュームアップパーマ",
+              "スペインカール",
+              "ツイストパーマ",
+              "スパイラルパーマ",
+              "波巻きパーマ"
             ],
+            "hasOfferCatalog": {
+              "@type": "OfferCatalog",
+              "name": "ヨリソイ Hair＆Spa メニュー",
+              "itemListElement": [
+                {
+                  "@type": "Offer",
+                  "name": "メンズカット",
+                  "priceCurrency": "JPY",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "メンズカット",
+                    "serviceType": "カット・シャンプー"
+                  }
+                },
+                {
+                  "@type": "Offer",
+                  "name": "メンズパーマ",
+                  "priceCurrency": "JPY",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "メンズパーマ",
+                    "serviceType": "パーマ＋カット＋トリートメント"
+                  }
+                },
+                {
+                  "@type": "Offer",
+                  "name": "シェービング",
+                  "priceCurrency": "JPY",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "眉シェービング・顔剃り",
+                    "serviceType": "シェービング"
+                  }
+                },
+                {
+                  "@type": "Offer",
+                  "name": "ヘッドスパ",
+                  "priceCurrency": "JPY",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "極上ヘッドスパ",
+                    "serviceType": "ヘッドスパ"
+                  }
+                },
+                {
+                  "@type": "Offer",
+                  "name": "カラー・白髪ぼかし",
+                  "priceCurrency": "JPY",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "黒染め・白髪ぼかし",
+                    "serviceType": "ヘアカラー"
+                  }
+                }
+              ]
+            },
+            "employee": {
+              "@type": "Person",
+              "name": "照喜名 一樹",
+              "jobTitle": "店主・理容師",
+              "knowsAbout": [
+                "メンズカット",
+                "メンズパーマ",
+                "フェード",
+                "シェービング",
+                "ヘッドスパ"
+              ]
+            },
             "hasMap": "https://www.google.com/maps/search/?api=1&query=%E6%B2%96%E7%B8%84%E7%9C%8C%E6%B5%A6%E6%B7%BB%E5%B8%82%E5%86%85%E9%96%932%E4%B8%81%E7%9B%AE20-3%20%E3%83%A8%E3%83%AA%E3%82%BD%E3%82%A4%20Hair%EF%BC%86Spa",
+            "potentialAction": {
+              "@type": "ReserveAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://beauty.hotpepper.jp/slnH000706136/",
+                "inLanguage": "ja-JP",
+                "actionPlatform": [
+                  "https://schema.org/DesktopWebPlatform",
+                  "https://schema.org/MobileWebPlatform"
+                ]
+              },
+              "result": {
+                "@type": "Reservation",
+                "name": "HotPepper Beautyで予約"
+              }
+            },
             "sameAs": [
               "https://beauty.hotpepper.jp/slnH000706136/",
               "https://beauty.hotpepper.jp/slnH000706136/map/",
@@ -192,11 +315,17 @@
           {
             "@type": "CreativeWork",
             "@id": "https://yorisoi-nine.vercel.app/#website-credit",
-            "name": "ヨリソイ Hair＆Spa Webサイト（制作）",
+            "name": "ヨリソイ Hair＆Spa Webサイト制作",
             "url": "https://yorisoi-nine.vercel.app/",
-            "about": { "@id": "https://yorisoi-nine.vercel.app/#salon" },
-            "creator": { "@id": "https://gushikendesign.com/#org" },
-            "publisher": { "@id": "https://yorisoi-nine.vercel.app/#salon" }
+            "about": {
+              "@id": "https://yorisoi-nine.vercel.app/#salon"
+            },
+            "creator": {
+              "@id": "https://gushikendesign.com/#org"
+            },
+            "publisher": {
+              "@id": "https://yorisoi-nine.vercel.app/#salon"
+            }
           }
         ]
       }
@@ -204,6 +333,7 @@
 
     <!-- Vite -->
     <script type="module" src="/src/main.jsx"></script>
+    
   </head>
 
   <body>

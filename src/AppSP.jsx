@@ -1,8 +1,7 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+// src/AppSP.jsx
+import { Routes, Route, Navigate } from "react-router-dom";
 
-import ScrollToTop from "./components/ScrollToTop";
-import HashScroll from "./components/HashScroll";
-import Seo from "./components/Seo"; // ✅ 追加
+import Seo from "./components/Seo";
 
 // ---- LP Sections ----
 import HeroSP from "./sections_sp/HeroSP";
@@ -16,6 +15,7 @@ import AccessSP from "./sections_sp/AccessSP";
 import FinalCTA_SP from "./sections_sp/FinalCTA_SP";
 import FooterSP from "./sections_sp/FooterSP";
 import FAQSP from "./sections_sp/FAQSP";
+
 import NewsTopSP from "./pages_sp/NewsTopSP";
 import NewsListSP from "./pages_sp/NewsListSP";
 import NewsDetailSP from "./pages_sp/NewsDetailSP";
@@ -25,31 +25,37 @@ import LogoYorisoiFloatingSP from "./components_sp/LogoYorisoiFloatingSP";
 import NavYorisoiFloatingSP from "./components_sp/NavYorisoiFloatingSP";
 import ReserveFloatingSP from "./components_sp/ReserveFloatingSP";
 
+const TOP_TITLE =
+  "浦添・内間のメンズ専門理容室｜メンズカット・パーマ・朝7時から";
+
+const TOP_DESCRIPTION =
+  "沖縄県浦添市内間のメンズ専門理容室ヨリソイ Hair＆Spa。メンズカット、フェード、メンズパーマ、眉シェービング、顔剃り、ヘッドスパ、白髪ぼかしに対応。朝7時から、マンツーマン×半個室、駐車場あり。";
+
+const NEWS_DESCRIPTION =
+  "ヨリソイ Hair＆Spaの営業情報・メニュー・ホームページ更新などのお知らせを掲載しています。ご来店前の確認にご利用ください。";
+
 export default function AppSP() {
   return (
-    <BrowserRouter>
-      <ScrollToTop />
-      <HashScroll />
+    <main className="relative">
+      <LogoYorisoiFloatingSP />
+      <ReserveFloatingSP />
 
-      <main className="relative">
-        <LogoYorisoiFloatingSP />
-        <ReserveFloatingSP />
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <>
+              <Seo
+                title={TOP_TITLE}
+                description={TOP_DESCRIPTION}
+                path="/"
+              />
 
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <>
-                <Seo
-                  title="浦添のメンズ専門理容室。朝7時から。"
-                  description="沖縄県浦添市内間のメンズ専門理容室ヨリソイ Hair＆Spa。静かで落ち着く1対1の空間で、似合わせ×再現性を重視したメンズカット。フェード/パーマ/シェービング/ヘッドスパ対応。駐車場あり。"
-                  path="/"
-                />
+              <section id="home">
+                <HeroSP />
+              </section>
 
-                <section id="home">
-                  <HeroSP />
-                </section>
-<div data-sp-root>
+              <div data-sp-root>
                 <NavYorisoiFloatingSP />
 
                 <section id="about">
@@ -79,46 +85,43 @@ export default function AppSP() {
                 <section id="review">
                   <ReviewSP />
                 </section>
-{/* ✅ 追加：FAQ（Accessの前） */}
-<section id="faq">
-  <FAQSP />
-</section>
+
+                <section id="faq">
+                  <FAQSP />
+                </section>
 
                 <section id="access">
                   <AccessSP />
                 </section>
 
-                {/* ✅ wrapperにidがあるので、FinalCTA_SP側にid reserveは持たせない */}
                 <section id="reserve">
                   <FinalCTA_SP />
                 </section>
 
                 <FooterSP />
-                 </div>
-              </>
-            }
-          />
+              </div>
+            </>
+          }
+        />
 
-          <Route
-            path="/news"
-            element={
-              <>
-                <Seo
-                  title="NEWS"
-                  description="ヨリソイの営業情報・空き状況・お知らせをまとめています。"
-                  path="/news"
-                />
-                <NewsListSP />
-              </>
-            }
-          />
+        <Route
+          path="/news"
+          element={
+            <>
+              <Seo
+                title="NEWS"
+                description={NEWS_DESCRIPTION}
+                path="/news"
+              />
+              <NewsListSP />
+            </>
+          }
+        />
 
-          <Route path="/news/:id" element={<NewsDetailSP />} />
+        <Route path="/news/:id" element={<NewsDetailSP />} />
 
-          <Route path="*" element={<Navigate to="/" replace />} />
-         
-        </Routes>
-      </main>
-    </BrowserRouter>
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </main>
   );
 }

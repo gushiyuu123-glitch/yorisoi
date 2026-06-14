@@ -124,21 +124,28 @@ export default function HeroSP() {
         "
       >
         <div>
-          <h1
-            ref={titleRef}
-            aria-label={`${LINE1} ${LINE2}`}
-            className="
-              mt-[7.3vh]
-              text-[clamp(24px,6.6vw,28px)]
-              leading-[1.22]
-              tracking-[0.005em]
-              font-medium
-              text-[rgba(46,42,39,0.94)]
-            "
-          >
-            <span className="block whitespace-nowrap">{splitLine(LINE1)}</span>
-            <span className="block whitespace-nowrap mt-[0.28em]">{splitLine(LINE2)}</span>
-          </h1>
+    <h1
+  ref={titleRef}
+  aria-label={`${LINE1} ${LINE2}`}
+  className="
+    mt-[7.3vh]
+    text-[clamp(24px,6.6vw,28px)]
+    leading-[1.22]
+    tracking-[0.005em]
+    font-medium
+    text-[rgba(46,42,39,0.94)]
+  "
+>
+  <span className="block whitespace-nowrap">{splitLine(LINE1)}</span>
+  <span className="block whitespace-nowrap mt-[0.28em]">{splitLine(LINE2)}</span>
+</h1>
+
+<p className="sr-only">
+  ヨリソイ Hair＆Spaは、沖縄県浦添市内間にあるメンズ専門理容室です。
+  メンズカット、フェード、メンズパーマ、シェービング、眉シェービング、ヘッドスパ、白髪ぼかしに対応しています。
+  朝7時から営業し、半個室の2席で店主が最初から最後まで担当します。
+  駐車場があり、浦添・那覇エリアから通いやすい理容室です。
+</p>
         </div>
 
         <div className="flex-1" />

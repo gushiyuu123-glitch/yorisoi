@@ -1,29 +1,31 @@
 // src/components_sp/NavYorisoiFloatingSP.jsx
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import gsap from "gsap";
 
 export default function NavYorisoiFloatingSP() {
   const navRef = useRef(null);
   const [active, setActive] = useState("");
+  const [keyboardOpen, setKeyboardOpen] = useState(false);
 
   const navigate = useNavigate();
-  const { pathname } = useLocation();
+  const { pathname, hash } = useLocation();
 
-  const reduce =
-    typeof window !== "undefined"
-      ? window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false
-      : false;
+  const reduce = useMemo(() => {
+    if (typeof window === "undefined") return false;
+    return (
+      window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false
+    );
+  }, []);
 
-  // ✅ 予約 → お知らせ（/news）
   const list = useMemo(
     () => [
-      { label: "お店", key: "about", target: "#about" },
-      { label: "店主", key: "profile", target: "#profile" },
-      { label: "メニュー", key: "menu", target: "#menu" },
-      { label: "地図", key: "access", target: "#access" },
-      { label: "お知らせ", key: "news", target: "/news" },
-    ],
+  { label: "お店", key: "about", target: "#about" },
+  { label: "メニュー", key: "menu", target: "#menu" },
+  { label: "店主", key: "profile", target: "#profile" },
+  { label: "地図", key: "access", target: "#access" },
+  { label: "お知らせ", key: "news", target: "/news" },
+],
     []
   );
 
@@ -64,43 +66,93 @@ export default function NavYorisoiFloatingSP() {
     ),
   };
 
-  // 初回フェードは “一回だけ・薄く”
+  // 初回フェード：軽め
   useEffect(() => {
     if (reduce) return;
+
     const items = navRef.current?.querySelectorAll?.(".nav-sp-item");
     if (!items?.length) return;
 
     gsap.killTweensOf(items);
+
     gsap.fromTo(
       items,
-      { opacity: 0, y: 6 },
+      { opacity: 0, y: 5 },
       {
         opacity: 1,
         y: 0,
-        duration: 0.52,
+        duration: 0.42,
         ease: "power3.out",
-        stagger: 0.04,
-        delay: 0.55,
+        stagger: 0.035,
+        delay: 0.45,
       }
     );
 
     return () => gsap.killTweensOf(items);
   }, [reduce]);
 
-  // ✅ /news（お知らせページ）では「お知らせ」をアクティブにする
+  // iPhone Safari：キーボード表示時の下ナビ暴れ防止
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const vv = window.visualViewport;
+    if (!vv) return;
+
+    let raf = 0;
+
+    const checkKeyboard = () => {
+      cancelAnimationFrame(raf);
+
+      raf = requestAnimationFrame(() => {
+        const diff = window.innerHeight - vv.height;
+        setKeyboardOpen(diff > 170);
+      });
+    };
+
+    checkKeyboard();
+
+    vv.addEventListener("resize", checkKeyboard, { passive: true });
+
+    return () => {
+      cancelAnimationFrame(raf);
+      vv.removeEventListener("resize", checkKeyboard);
+    };
+  }, []);
+
+  // /news系では「お知らせ」をアクティブ
   useEffect(() => {
     if (pathname === "/news" || pathname.startsWith("/news/")) {
       setActive("/news");
       return;
     }
-    // / 以外はハイライト無し
+
     if (pathname !== "/") {
       setActive("");
-      return;
     }
   }, [pathname]);
 
-  // 現在地ハイライト（IntersectionObserver）— / のときだけ
+  // 別ページから /#about などで戻ってきた時のスクロール補正
+  useEffect(() => {
+    if (pathname !== "/" || !hash) return;
+
+    let raf = 0;
+
+    raf = requestAnimationFrame(() => {
+      const el = document.querySelector(hash);
+      if (!el) return;
+
+      el.scrollIntoView({
+        behavior: "auto",
+        block: "start",
+      });
+
+      setActive(hash);
+    });
+
+    return () => cancelAnimationFrame(raf);
+  }, [pathname, hash]);
+
+  // 現在地ハイライト：LPトップのときだけ
   useEffect(() => {
     if (pathname !== "/") return;
 
@@ -115,55 +167,91 @@ export default function NavYorisoiFloatingSP() {
           .sort(
             (a, b) =>
               (b.intersectionRatio ?? 0) - (a.intersectionRatio ?? 0) ||
-              (a.boundingClientRect?.top ?? 0) - (b.boundingClientRect?.top ?? 0)
+              (a.boundingClientRect?.top ?? 0) -
+                (b.boundingClientRect?.top ?? 0)
           );
 
-        if (visible[0]) setActive(`#${visible[0].target.id}`);
+        if (visible[0]) {
+          setActive(`#${visible[0].target.id}`);
+        }
       },
-      { threshold: [0.18, 0.28, 0.38], rootMargin: "-20% 0px -55% 0px" }
+      {
+        threshold: [0.18, 0.28, 0.38],
+        rootMargin: "-22% 0px -58% 0px",
+      }
     );
 
-    els.forEach((e) => obs.observe(e));
+    els.forEach((el) => obs.observe(el));
+
     return () => obs.disconnect();
   }, [pathname]);
 
-  const go = (target) => {
-    // /news などのルート
-    if (target.startsWith("/")) {
-      navigate(target);
-      return;
-    }
-    // LP内 hash
-    if (pathname !== "/") {
-      navigate({ pathname: "/", hash: target }, { replace: true });
-      return;
-    }
-    navigate({ hash: target }, { replace: true });
-  };
+  const go = useCallback(
+    (target) => {
+      // /news
+      if (target.startsWith("/")) {
+        navigate(target);
+        return;
+      }
+
+      // 別ページからLP内セクションへ
+      if (pathname !== "/") {
+        navigate({ pathname: "/", hash: target });
+        return;
+      }
+
+      // 同一ページ内スクロール
+      const el = document.querySelector(target);
+
+      if (el) {
+        el.scrollIntoView({
+          behavior: reduce ? "auto" : "smooth",
+          block: "start",
+        });
+
+        window.history.replaceState(null, "", target);
+        setActive(target);
+      }
+    },
+    [navigate, pathname, reduce]
+  );
 
   return (
-    <nav
-      ref={navRef}
-      className="
-        fixed bottom-0 left-0 right-0 z-[80]
-        bg-[linear-gradient(
-          to_top,
-          rgba(247,244,239,0.94) 0%,
-          rgba(247,244,239,0.88) 40%,
-          rgba(247,244,239,0.74) 74%,
-          rgba(247,244,239,0.58) 100%
-        )]
-        backdrop-blur-[10px]
-        [@media(pointer:coarse)]:backdrop-blur-0
-        border-t border-[rgba(96,78,62,0.13)]
-        px-[4vw]
-        pt-[10px]
-        pb-[calc(10px+env(safe-area-inset-bottom))]
-        flex justify-between
-        [transform:translateZ(0)]
-      "
-      aria-label="ページ内ナビゲーション"
-    >
+<nav
+  ref={navRef}
+  className={`
+    fixed left-0 right-0 z-[80]
+
+    bg-[linear-gradient(
+      to_top,
+      rgba(247,244,239,0.86)_0%,
+      rgba(247,244,239,0.78)_54%,
+      rgba(247,244,239,0.62)_100%
+    )]
+    supports-[backdrop-filter]:bg-[rgba(247,244,239,0.72)]
+    supports-[backdrop-filter]:backdrop-blur-[5px]
+    supports-[backdrop-filter]:backdrop-saturate-[1.08]
+
+    border-t border-[rgba(255,255,255,0.46)]
+    shadow-[0_-10px_28px_rgba(62,47,35,0.065),inset_0_1px_0_rgba(255,255,255,0.58)]
+
+    px-[4.2vw]
+    pt-[9px]
+    pb-[calc(9px+env(safe-area-inset-bottom))]
+
+    flex justify-between
+
+    transition-[opacity,transform] duration-200 ease-out
+    [transform:translate3d(0,0,0)]
+    [contain:paint]
+
+    ${keyboardOpen ? "opacity-0 translate-y-[16px] pointer-events-none" : "opacity-100 translate-y-0"}
+  `}
+  style={{
+    bottom: "max(6px, env(safe-area-inset-bottom))",
+  }}
+  aria-label="ページ内ナビゲーション"
+>
       {list.map((item) => {
         const isActive = active === item.target;
 
@@ -174,12 +262,21 @@ export default function NavYorisoiFloatingSP() {
             onClick={() => go(item.target)}
             aria-current={isActive ? "location" : undefined}
             className={`
-              nav-sp-item relative flex flex-col items-center
-              w-[17vw] text-[11.2px] tracking-[0.10em] font-medium
+              nav-sp-item
+              relative flex flex-col items-center justify-center
+              w-[17vw]
+              text-[11.2px]
+              tracking-[0.085em]
+              font-medium
               select-none
-              ${isActive ? "text-[rgba(96,78,62,0.95)]" : "text-[rgba(96,78,62,0.66)]"}
+              touch-manipulation
+
+              transition-[color,opacity,transform] duration-150
+
+              ${isActive ? "text-[rgba(96,78,62,0.96)]" : "text-[rgba(96,78,62,0.62)]"}
+
               active:opacity-[0.82]
-              active:scale-[0.93]
+              active:scale-[0.94]
             `}
           >
             <svg
@@ -189,21 +286,28 @@ export default function NavYorisoiFloatingSP() {
               strokeWidth="1.28"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="w-[21px] h-[21px] mb-[3px] opacity-[0.86]"
+              className={`
+                w-[21px] h-[21px] mb-[3px]
+                transition-opacity duration-150
+                ${isActive ? "opacity-100" : "opacity-[0.76]"}
+              `}
               aria-hidden="true"
             >
               {Icons[item.key]}
             </svg>
 
-            <span>{item.label}</span>
+            <span className="leading-none whitespace-nowrap">
+              {item.label}
+            </span>
 
             {isActive && (
-              <div
+              <span
                 className="
-                  absolute bottom-0 left-1/2 -translate-x-1/2
-                  w-[22px] h-[1.7px]
-                  bg-[rgba(96,78,62,0.34)]
+                  absolute left-1/2 -translate-x-1/2
+                  bottom-[-6px]
+                  w-[20px] h-[1.6px]
                   rounded-full
+                  bg-[rgba(96,78,62,0.34)]
                 "
                 aria-hidden="true"
               />

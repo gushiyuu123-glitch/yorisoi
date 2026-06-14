@@ -1,13 +1,14 @@
-// src/pages/NewsDetail.jsx
-import { useEffect, useMemo, useState } from "react";
+// src/pages_sp/NewsDetailSP.jsx
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useLocation, useParams, Link } from "react-router-dom";
 import { Helmet } from "react-helmet-async";
+import gsap from "gsap";
 import Seo from "../components/Seo";
 
 const BASE = "https://pqhxs89idk.microcms.io/api/v1/news";
 const HOTPEPPER = "https://beauty.hotpepper.jp/slnH000706136/";
 
-// ✅ Seo.jsx と揃える（canonical/og:url も安定させる）
+// ✅ Seo.jsxと合わせる（絶対URLを安定生成）
 const SITE_URL = "https://yorisoi-nine.vercel.app";
 const DEFAULT_OG = `${SITE_URL}/yorisoi/ogp1.png`;
 
@@ -17,7 +18,6 @@ function formatDate(iso) {
   return d.toLocaleDateString("ja-JP").replace(/\//g, ".");
 }
 
-/** bodyがHTMLでも壊れない：改行を残してプレーン化 */
 function toPlainTextWithBreaks(value) {
   if (!value || typeof value !== "string") return "";
   return value
@@ -28,7 +28,6 @@ function toPlainTextWithBreaks(value) {
     .trim();
 }
 
-/** 説明文：本文の先頭を自然に切り出す（臭いテンプレ文を避ける） */
 function buildExcerpt(text, max = 120) {
   if (!text) return "";
   const one = text.replace(/\s+/g, " ").trim();
@@ -36,10 +35,13 @@ function buildExcerpt(text, max = 120) {
   return one.slice(0, max).trim() + "…";
 }
 
-export default function NewsDetail() {
+export default function NewsDetailSP() {
   const { id } = useParams();
   const loc = useLocation();
-  const [news, setNews] = useState(null);
+  const sectionRef = useRef(null);
+  const hasAnimatedRef = useRef(false);
+
+  const [item, setItem] = useState(null);
   const [status, setStatus] = useState("loading"); // loading | ok | error
 
   const apiKey = import.meta.env.VITE_MICROCMS_API_KEY;
@@ -57,16 +59,17 @@ export default function NewsDetail() {
           signal: ac.signal,
           headers: { "X-MICROCMS-API-KEY": apiKey },
         });
+
         if (!res.ok) throw new Error(`NEWS detail fetch failed: ${res.status}`);
 
         const data = await res.json();
         if (ignore) return;
 
-        setNews(data);
+        setItem(data);
         setStatus("ok");
       } catch (err) {
         if (ignore) return;
-        console.error(err);
+        console.error("NEWS DETAIL fetch error:", err);
         setStatus("error");
       }
     }
@@ -78,29 +81,26 @@ export default function NewsDetail() {
     };
   }, [id, apiKey]);
 
-  const bodyText = useMemo(() => toPlainTextWithBreaks(news?.body), [news]);
+  const bodyText = useMemo(() => toPlainTextWithBreaks(item?.body), [item]);
   const excerpt = useMemo(() => buildExcerpt(bodyText, 120), [bodyText]);
 
-  // canonical / og:url を “絶対URL” に固定（window依存を排除）
+  // ✅ mainEntityOfPage / canonical を window依存せず固定
   const pagePath = loc?.pathname || `/news/${id}`;
   const pageUrl = `${SITE_URL}${pagePath}`;
 
-  // OGP image（記事画像があれば優先）
-  const ogImage = news?.image?.url || DEFAULT_OG;
+  const ogImage = item?.image?.url || DEFAULT_OG;
+
+  const published = item?.date || item?.publishedAt || item?.createdAt;
+  const modified = item?.updatedAt || published;
 
   // JSON-LD（記事が取れた時だけ）
   const jsonLd = useMemo(() => {
-    if (status !== "ok" || !news?.title) return null;
-
-    // microCMSのフィールド名が違う可能性もあるので保険
-    const published = news?.date || news?.publishedAt || news?.createdAt;
-    const modified = news?.updatedAt || published;
-
+    if (status !== "ok" || !item?.title) return null;
     return {
       "@context": "https://schema.org",
       "@type": "NewsArticle",
       mainEntityOfPage: pageUrl,
-      headline: news.title,
+      headline: item.title,
       datePublished: published,
       dateModified: modified,
       image: ogImage ? [ogImage] : undefined,
@@ -108,146 +108,178 @@ export default function NewsDetail() {
       publisher: {
         "@type": "Organization",
         name: "ヨリソイ Hair＆Spa",
-        logo: {
-          "@type": "ImageObject",
-          url: DEFAULT_OG,
-        },
+        logo: { "@type": "ImageObject", url: DEFAULT_OG },
       },
       description: excerpt || undefined,
     };
-  }, [status, news, pageUrl, ogImage, excerpt]);
+  }, [status, item, pageUrl, published, modified, ogImage, excerpt]);
 
-  // ============== states ==============
+  // GSAP：1回だけ / 短く / blur極薄
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el || status !== "ok" || !item) return;
+    if (hasAnimatedRef.current) return;
+
+    const reduce =
+      window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;
+    if (reduce) return;
+
+    hasAnimatedRef.current = true;
+
+    const targets = el.querySelectorAll(".nw-detail");
+    if (!targets.length) return;
+
+    gsap.fromTo(
+      targets,
+      { opacity: 0, y: 12, filter: "blur(0.14px)" },
+      {
+        opacity: 1,
+        y: 0,
+        filter: "blur(0px)",
+        duration: 0.56,
+        ease: "power3.out",
+        stagger: 0.06,
+      }
+    );
+  }, [status, item]);
+
+  // ===== Loading =====
   if (status === "loading") {
     return (
-      <main className="w-full bg-[#f7f4ef] py-[18vh] px-[6vw]">
-        {/* ✅ loading中は固定のSEO（重すぎない） */}
+      <section className="w-full bg-[#f7f4ef] min-h-[100svh] pt-[18vh] px-[6vw]">
         <Seo title="NEWS" description="お知らせを読み込み中です。" path={pagePath} />
-        <div className="mx-auto max-w-[760px]">
-          <div className="h-[12px] w-[120px] bg-[rgba(96,78,62,0.10)]" />
-          <div className="mt-5 h-[18px] w-[82%] bg-[rgba(96,78,62,0.12)]" />
-          <div className="mt-8 h-[220px] w-full bg-[rgba(96,78,62,0.08)]" />
-          <div className="mt-8 h-[12px] w-[92%] bg-[rgba(96,78,62,0.10)]" />
+        <div className="mx-auto max-w-[520px]">
+          <div className="h-[12px] w-[110px] bg-[rgba(96,78,62,0.10)]" />
+          <div className="mt-4 h-[16px] w-[86%] bg-[rgba(96,78,62,0.12)]" />
+          <div className="mt-6 h-[220px] w-full bg-[rgba(96,78,62,0.08)]" />
+          <div className="mt-6 h-[12px] w-[92%] bg-[rgba(96,78,62,0.10)]" />
           <div className="mt-3 h-[12px] w-[88%] bg-[rgba(96,78,62,0.10)]" />
         </div>
-      </main>
+      </section>
     );
   }
 
-  if (status === "error" || !news) {
+  // ===== Error =====
+  if (status === "error" || !item) {
     return (
-      <main className="w-full bg-[#f7f4ef] py-[18vh] px-[6vw]">
+      <section className="w-full bg-[#f7f4ef] min-h-[100svh] pt-[18vh] px-[6vw]">
         <Seo
           title="NEWS"
           description="お知らせの読み込みに失敗しました。"
           path={pagePath}
           noindex={true}
         />
-        <div className="mx-auto max-w-[760px]">
-          <p className="text-[15px] leading-[1.9] text-[rgba(96,78,62,0.72)]">
+        <div className="mx-auto max-w-[520px]">
+          <p className="text-[14px] leading-[1.9] text-[rgba(96,78,62,0.72)]">
             読み込みに失敗しました。時間をおいて再度お試しください。
           </p>
           <div className="mt-10">
             <Link
               to="/news"
-              className="inline-block text-[14px] tracking-[0.18em] text-[#5d4c3f] border-b border-[#5d4c3f]/40 pb-[3px] hover:opacity-60 transition"
+              className="inline-block text-[14px] tracking-[0.18em] text-[#5d4c3f] border-b border-[#5d4c3f]/40 pb-[3px]"
             >
               一覧へ戻る
             </Link>
           </div>
         </div>
-      </main>
+      </section>
     );
   }
 
-  const published = news?.date || news?.publishedAt || news?.createdAt;
-  const modified = news?.updatedAt || published;
-
+  // ===== OK =====
   return (
-    <main className="w-full bg-[#f7f4ef] py-[18vh] px-[6vw]" aria-label="NEWS詳細">
-      {/* ✅ 記事SEO：title/description/canonical/OGP を確定 */}
+    <section
+      ref={sectionRef}
+      className="
+        w-full bg-[#f7f4ef]
+        min-h-[100svh]
+        pt-[16vh]
+        px-[6vw]
+        pb-[calc(14vh+110px+env(safe-area-inset-bottom))]
+      "
+      aria-label="NEWS詳細"
+    >
+      {/* ✅ 記事SEO */}
       <Seo
-        title={news.title}
-        description={excerpt || `ヨリソイ Hair＆Spa のお知らせ「${news.title}」`}
+        title={item.title}
+        description={excerpt || `ヨリソイ Hair＆Spa のお知らせ「${item.title}」`}
         path={pagePath}
         image={ogImage}
         type="article"
       />
 
-      {/* ✅ “更新してる感” をGoogleに渡す（活動アピール） */}
+      {/* ✅ 活動してる感（publish/modified） + JSON-LD を head に */}
       <Helmet>
-        {published ? <meta property="article:published_time" content={published} /> : null}
-        {modified ? <meta property="article:modified_time" content={modified} /> : null}
-
-        {/* ✅ JSON-LD（headへ） */}
+        {published ? (
+          <meta property="article:published_time" content={published} />
+        ) : null}
+        {modified ? (
+          <meta property="article:modified_time" content={modified} />
+        ) : null}
         {jsonLd ? (
           <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
         ) : null}
       </Helmet>
 
-      <article className="mx-auto max-w-[760px] space-y-7">
-        {/* 戻る */}
+      <article className="mx-auto max-w-[520px] space-y-6">
         <Link
           to="/news"
-          className="inline-block text-[13px] text-[rgba(96,78,62,0.62)] border-b border-[rgba(96,78,62,0.30)] pb-[2px] hover:opacity-70 transition"
+          className="nw-detail inline-block text-[12px] text-[rgba(96,78,62,0.62)] border-b border-[rgba(96,78,62,0.30)] pb-[2px] hover:opacity-70 transition"
         >
           一覧へ戻る
         </Link>
 
-        {/* 日付 */}
-        <p className="text-[13px] tracking-[0.08em] text-[rgba(96,78,62,0.62)]">
+        <p className="nw-detail text-[12px] tracking-[0.08em] text-[rgba(96,78,62,0.62)]">
           {formatDate(published)}
         </p>
 
-        {/* タイトル */}
-        <h1 className="text-[clamp(22px,2.6vw,30px)] text-[#5d4c3f] font-medium leading-[1.55]">
-          {news.title}
+        <h1 className="nw-detail text-[21px] font-medium leading-[1.55] text-[#5d4c3f]">
+          {item.title}
         </h1>
 
-        {/* 画像：記事感を保つ */}
-        {news.image?.url && (
+        {item.image?.url && (
           <img
-            src={news.image.url}
-            alt={`${news.title}｜ヨリソイ Hair＆Spa`}
+            src={item.image.url}
+            alt={`${item.title}｜ヨリソイ Hair＆Spa`}
             loading="lazy"
             decoding="async"
             className="
-              w-full object-cover
+              nw-detail w-full object-cover
               rounded-[6px]
-              shadow-[0_8px_22px_rgba(0,0,0,0.08)]
+              shadow-[0_8px_20px_rgba(0,0,0,0.10)]
               [filter:brightness(1.02)_contrast(0.95)]
-              aspect-[16/9]
+              aspect-[4/3]
             "
           />
         )}
 
-        {/* 本文（プレーン化＋改行維持） */}
         <div
           className="
-            text-[16.5px]
-            leading-[2.0]
-            text-[rgba(96,78,62,0.76)]
+            nw-detail
+            text-[15px]
+            leading-[1.95]
+            text-[rgba(96,78,62,0.78)]
             whitespace-pre-line
           "
         >
           {bodyText}
         </div>
 
-        {/* 導線 */}
-        <div className="pt-10 border-t border-[rgba(96,78,62,0.12)]">
-          <p className="text-[14px] leading-[1.9] text-[rgba(96,78,62,0.72)] mb-4">
+        <div className="nw-detail pt-8 border-t border-[rgba(96,78,62,0.10)] text-center">
+          <p className="text-[13px] text-[rgba(96,78,62,0.70)] mb-3">
             ご予約・メニューの詳細は下記よりご確認ください。
           </p>
+
           <a
             href={HOTPEPPER}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-block text-[14px] tracking-[0.18em] text-[#5d4c3f] border-b border-[#5d4c3f]/40 pb-[3px] hover:opacity-60 transition"
+            className="inline-block text-[13px] tracking-[0.22em] text-[#5d4c3f] border-b border-[#5d4c3f]/40 pb-[4px] hover:opacity-60 transition"
           >
             HOT PEPPER で予約する
           </a>
         </div>
       </article>
-    </main>
+    </section>
   );
 }

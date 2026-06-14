@@ -3,17 +3,26 @@ import { Reveal } from "../components/Reveal";
 
 export default function AboutSP() {
   return (
-    <section
-      id="about-sp"
+    <div
       className="
-        w-full bg-base
+        relative w-full overflow-hidden bg-base
         pt-[18vh]
         px-[6vw]
-         pb-[calc(76px+env(safe-area-inset-bottom))]
+        pb-[calc(76px+env(safe-area-inset-bottom))]
       "
       aria-label="ヨリソイについて"
     >
-      <div className="mx-auto max-w-[520px]">
+      <div
+        aria-hidden="true"
+        className="
+          pointer-events-none absolute left-[-24vw] top-[8vh]
+          h-[34vh] w-[58vw] rounded-full
+          bg-[radial-gradient(circle,rgba(255,255,255,0.72)_0%,rgba(255,255,255,0.24)_48%,rgba(255,255,255,0)_72%)]
+          blur-[28px] opacity-[0.72]
+        "
+      />
+
+      <div className="relative z-[2] mx-auto max-w-[520px]">
         <Reveal
           delay={0.0}
           y={12}
@@ -30,7 +39,13 @@ export default function AboutSP() {
           />
         </Reveal>
 
-        <Reveal delay={0.05} y={12} blur={0.14} duration={0.62} className="overflow-hidden mb-3">
+        <Reveal
+          delay={0.05}
+          y={12}
+          blur={0.14}
+          duration={0.62}
+          className="overflow-hidden mb-3"
+        >
           <div style={{ width: "min(68vw, 240px)", minWidth: 170 }}>
             <img
               src="/yorisoi/about.svg"
@@ -44,11 +59,17 @@ export default function AboutSP() {
 
         <Reveal
           as="p"
+          data-kicker
           delay={0.10}
           y={12}
           blur={0.14}
           duration={0.62}
-          className="text-[11px] tracking-[0.24em] text-[rgba(96,78,62,0.50)] mb-3"
+          className="
+            text-[11px]
+            tracking-[0.24em]
+            text-[rgba(96,78,62,0.50)]
+            mb-3
+          "
         >
           安心のつくり方
         </Reveal>
@@ -65,7 +86,7 @@ export default function AboutSP() {
             tracking-[0.005em]
             text-[#5d4c3f]
             font-medium
-            mb-6
+            mb-7
           "
         >
           話さなくても、
@@ -73,7 +94,6 @@ export default function AboutSP() {
           伝わるように。
         </Reveal>
 
-        {/* ✅ 本文：クライアント指定のコンセプト文に差し替え */}
         <Reveal
           delay={0.20}
           y={12}
@@ -83,7 +103,6 @@ export default function AboutSP() {
             text-[15px]
             leading-[1.95]
             text-[rgba(96,78,62,0.80)]
-            space-y-5
           "
         >
           <p>
@@ -91,16 +110,23 @@ export default function AboutSP() {
           </p>
         </Reveal>
 
-        <Reveal delay={0.28} y={12} blur={0.12} duration={0.62} className="mt-10 w-full">
+        <Reveal
+          delay={0.28}
+          y={12}
+          blur={0.12}
+          duration={0.62}
+          className="mt-11 mx-[-6vw]"
+        >
           <img
             src="/yorisoi/about2.png"
-            alt="半個室の落ち着いた空間"
+            alt="ヨリソイ Hair＆Spaの落ち着いた半個室空間"
             loading="lazy"
             decoding="async"
             className="
-              w-full rounded-[6px] object-cover
-              shadow-[0_6px_20px_rgba(0,0,0,0.12)]
-              [filter:brightness(1.02)_contrast(0.95)]
+              w-full object-cover
+              rounded-none
+              shadow-[0_8px_24px_rgba(72,55,40,0.10)]
+              [filter:brightness(1.02)_contrast(0.95)_saturate(0.96)]
             "
           />
         </Reveal>
@@ -122,6 +148,6 @@ export default function AboutSP() {
           </p>
         </Reveal>
       </div>
-    </section>
+    </div>
   );
 }

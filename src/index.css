@@ -3,24 +3,46 @@
 @tailwind utilities;
 
 /* ---------------------------------------
-   裕人仕様：質感 × 可読性 × 安定性
-   - smooth scroll はデフォOFF（Lenis/GSAPと競合しやすい）
-   - reduce-motion でフェード＆スクロールを必ず無効化
-   - FadeUp は “付いた瞬間に再生” を維持しつつ、負荷と副作用を軽減
+   YORISOI / 裕人仕様：質感 × 可読性 × 安定性
+   - smooth scroll はCSSでは常時ONにしない
+   - reduce-motion でフェード＆スクロールを無効化
+   - SPは読みやすさ優先
+   - iPhone Safariの固定UI・下ナビ干渉を軽減
 ---------------------------------------- */
 
 html {
   -webkit-text-size-adjust: 100%;
   text-rendering: optimizeLegibility;
-  /* scroll-behavior: smooth;  ←デフォOFF（必要ならJSでアンカーのみ制御推奨） */
+  scroll-behavior: auto;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
 }
 
 body {
   @apply bg-base text-text font-jp antialiased;
   @apply leading-relax tracking-cozy;
 
+  margin: 0;
+  overflow-x: hidden;
+
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  background: #f7f3ec;
+}
+
+/* タップ時の青/灰色ハイライトを少し抑える */
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  font: inherit;
 }
 
 /* 画像：ドラッグ禁止 + 行間ゴミ除去 + なめらか表示 */
@@ -33,13 +55,15 @@ img {
   -webkit-user-drag: none;
 }
 
-/* reduce-motion：強制的に動きとスムースを止める */
+/* ---------------------------------------
+   reduce-motion
+---------------------------------------- */
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
   }
 
-  /* 基本：全アニメ/トランジションを止める（事故防止） */
   *,
   *::before,
   *::after {
@@ -48,7 +72,6 @@ img {
     scroll-behavior: auto !important;
   }
 
-  /* フェード系は “見える状態” に固定（アクセシビリティと酔い対策） */
   .fade-up,
   .fade-up-delay {
     opacity: 1 !important;
@@ -58,65 +81,97 @@ img {
 }
 
 /* ---------------------------------------
-   Fade Up（裕人の “静かで自然なフェード”）
-   - duration は裕人の体感帯(0.62〜0.68s)
-   - blur は 0.3px以下。長時間保持しない（負荷時間を短く）
+   Fade Up
+   - PCはごく薄いblurで質感
+   - SP/coarseはblurなしで安定優先
 ---------------------------------------- */
 
 .fade-up,
 .fade-up-delay {
   opacity: 0;
   transform: translateY(16px);
-
-  /* will-changeは“重いfilter”を外す（メモリと合成コストを抑える） */
   will-change: opacity, transform;
 }
 
-/* ベース：速め（裕人帯） */
 .fade-up {
   animation: fadeUp 0.66s cubic-bezier(0.25, 0.7, 0.3, 1) forwards;
 }
 
-/* 少しだけ遅らせる（やりすぎない） */
 .fade-up-delay {
   animation: fadeUp 0.66s cubic-bezier(0.25, 0.7, 0.3, 1) forwards 0.18s;
 }
 
-/* 自然なフェードアップ（blurは“最初だけ”で切る） */
 @keyframes fadeUp {
   0% {
     opacity: 0;
     transform: translateY(16px);
     filter: blur(0.3px);
   }
+
   35% {
     filter: blur(0px);
   }
+
   100% {
     opacity: 1;
     transform: translateY(0);
     filter: blur(0px);
   }
 }
-/* src/index.css */
 
-/* SP typography override（崩れない版） */
+/* SP / touch端末ではfilterを使わない */
+@media (pointer: coarse) {
+  .fade-up {
+    animation-name: fadeUpSP;
+  }
+
+  .fade-up-delay {
+    animation-name: fadeUpSP;
+  }
+
+  @keyframes fadeUpSP {
+    0% {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+/* ---------------------------------------
+   SP typography override
+   - Heroは data-sp-root 外なので対象外
+   - 下ナビに隠れない余白もここで確保
+---------------------------------------- */
+
 @media (max-width: 768px) {
-  /* 本文（読む情報）だけ上げる */
-  [data-sp-root] section:not(#hero)
+  body {
+    padding-bottom: calc(82px + env(safe-area-inset-bottom));
+  }
+
+  [data-sp-root] {
+    padding-bottom: calc(24px + env(safe-area-inset-bottom));
+  }
+
+  /* 本文：読む情報だけ上げる */
+  [data-sp-root] section
     :where(p, li, dd, dt, label):not([data-kicker]):not([data-no-scale]) {
     font-size: clamp(16px, 4.2vw, 18px) !important;
     line-height: 1.9 !important;
   }
 
-  /* ラベル/注釈（小さく残す情報） */
-  [data-sp-root] section:not(#hero) [data-kicker] {
+  /* ラベル/注釈 */
+  [data-sp-root] section [data-kicker] {
     font-size: clamp(12px, 3.4vw, 14px) !important;
     line-height: 1.75 !important;
   }
 
-  /* 価格など“デザイン上このサイズ固定” */
-  [data-sp-root] section:not(#hero) [data-no-scale] {
+  /* 価格・数字・デザイン固定要素 */
+  [data-sp-root] section [data-no-scale] {
     font-size: revert !important;
     line-height: revert !important;
   }

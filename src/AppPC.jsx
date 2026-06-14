@@ -1,8 +1,7 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+// src/AppPC.jsx
+import { Routes, Route, Navigate } from "react-router-dom";
 
-import ScrollToTop from "./components/ScrollToTop";
-import HashScroll from "./components/HashScroll";
-import Seo from "./components/Seo"; // ✅ 追加
+import Seo from "./components/Seo";
 
 // ---- LP（固定ページ） ----
 import Hero from "./sections/Hero";
@@ -16,6 +15,7 @@ import Access from "./sections/Access";
 import FinalCTA from "./sections/FinalCTA";
 import Footer from "./sections/Footer";
 import FAQ from "./sections/FAQ";
+
 import LogoYorisoiFloating from "./components/LogoYorisoiFloating";
 import ReserveFloating from "./components/ReserveFloating";
 
@@ -24,96 +24,99 @@ import NewsTop from "./pages/NewsTop";
 import NewsList from "./pages/NewsList";
 import NewsDetail from "./pages/NewsDetail";
 
+const TOP_TITLE =
+  "浦添・内間のメンズ専門理容室｜メンズカット・パーマ・朝7時から";
+
+const TOP_DESCRIPTION =
+  "沖縄県浦添市内間のメンズ専門理容室ヨリソイ Hair＆Spa。メンズカット、フェード、メンズパーマ、眉シェービング、顔剃り、ヘッドスパ、白髪ぼかしに対応。朝7時から、マンツーマン×半個室、駐車場あり。";
+
+const NEWS_DESCRIPTION =
+  "ヨリソイ Hair＆Spaの営業情報・メニュー・ホームページ更新などのお知らせを掲載しています。ご来店前の確認にご利用ください。";
+
 export default function AppPC() {
   return (
-    <BrowserRouter>
-      <ScrollToTop />
-      <HashScroll />
+    <main>
+      <LogoYorisoiFloating />
+      <ReserveFloating />
 
-      <main>
-        <LogoYorisoiFloating />
-        <ReserveFloating />
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <>
+              <Seo
+                title={TOP_TITLE}
+                description={TOP_DESCRIPTION}
+                path="/"
+              />
 
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <>
-                {/* ✅ TOPのSEO（KWは本文でも効くが、headも強くする） */}
-                <Seo
-                  title="浦添のメンズ専門理容室。朝7時から。"
-                  description="沖縄県浦添市内間のメンズ専門理容室ヨリソイ Hair＆Spa。静かで落ち着く1対1の空間で、似合わせ×再現性を重視したメンズカット。フェード/パーマ/シェービング/ヘッドスパ対応。駐車場あり。"
-                  path="/"
-                />
+              <section id="home">
+                <Hero />
+              </section>
 
-                <section id="home">
-                  <Hero />
-                </section>
+              <section id="about">
+                <About />
+              </section>
 
-                <section id="about">
-                  <About />
-                </section>
+              <section id="profile">
+                <Profile />
+              </section>
 
-                <section id="profile">
-                  <Profile />
-                </section>
+              <section id="news">
+                <NewsTop />
+              </section>
 
-                <section id="news">
-                  <NewsTop />
-                </section>
+              <section id="concept">
+                <Concept />
+              </section>
 
-                <section id="concept">
-                  <Concept />
-                </section>
+              <section id="menu">
+                <Menu />
+              </section>
 
-                <section id="menu">
-                  <Menu />
-                </section>
+              <section id="gallery">
+                <Gallery />
+              </section>
 
-                <section id="gallery">
-                  <Gallery />
-                </section>
+              <section id="review">
+                <Review />
+              </section>
 
-                <section id="review">
-                  <Review />
-                </section>
-<section id="faq">
-  <FAQ />
-</section>
-                <section id="access">
-                  <Access />
-                </section>
+              <section id="faq">
+                <FAQ />
+              </section>
 
-                {/* ✅ ここにidがあるので、FinalCTA側にid reserveは持たせない */}
-                <section id="reserve">
-                  <FinalCTA />
-                </section>
+              <section id="access">
+                <Access />
+              </section>
 
-                <Footer />
-              </>
-            }
-          />
+              <section id="reserve">
+                <FinalCTA />
+              </section>
 
-          <Route
-            path="/news"
-            element={
-              <>
-                <Seo
-                  title="NEWS"
-                  description="ヨリソイの営業情報・空き状況・お知らせをまとめています。"
-                  path="/news"
-                />
-                <NewsList />
-              </>
-            }
-          />
+              <Footer />
+            </>
+          }
+        />
 
-          {/* ✅ 詳細は NewsDetail 内で動的にSeoを出す（次の章） */}
-          <Route path="/news/:id" element={<NewsDetail />} />
+        <Route
+          path="/news"
+          element={
+            <>
+              <Seo
+                title="NEWS"
+                description={NEWS_DESCRIPTION}
+                path="/news"
+              />
+              <NewsList />
+            </>
+          }
+        />
 
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </main>
-    </BrowserRouter>
+        <Route path="/news/:id" element={<NewsDetail />} />
+
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </main>
   );
 }
