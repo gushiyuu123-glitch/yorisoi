@@ -416,11 +416,6 @@ export default function NavYorisoiFloating({
                     </ul>
                   </nav>
 
-                  <div className="mt-auto pt-10">
-                    <p className="text-[11px] leading-[1.7] text-[rgba(96,78,62,0.52)]">
-                      ※ Heroの構図を守るため、Hero外ではMENUに畳んでいます。
-                    </p>
-                  </div>
                 </div>
               </div>
             </div>

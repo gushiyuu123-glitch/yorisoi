@@ -461,6 +461,8 @@ export default function Menu() {
           予約内容はHotPepper側で確定します。
         </p>
       </div>
+
     </section>
   );
 }
+
