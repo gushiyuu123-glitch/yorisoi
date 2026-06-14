@@ -5,30 +5,54 @@ import HandwrittenSvgTitle from "../components/HandwrittenSvgTitle";
 
 const MICROCMS_DOMAIN = import.meta.env.VITE_MICROCMS_SERVICE_DOMAIN;
 const MICROCMS_KEY = import.meta.env.VITE_MICROCMS_API_KEY;
-const MICROCMS_MENU_API_ID = import.meta.env.VITE_MICROCMS_MENU_API_ID ?? "menu";
+const MICROCMS_MENU_API_ID =
+  import.meta.env.VITE_MICROCMS_MENU_API_ID || "menu";
 
 const RESERVE_URL =
   "https://beauty.hotpepper.jp/CSP/bt/reserve/?storeId=H000706136";
 
-async function fetchMenuPatch({ signal } = {}) {
-  if (!MICROCMS_DOMAIN || !MICROCMS_KEY) return null;
+const NAME_KEYS = ["title", "menuName", "name", "menu", "label", "メニュー名"];
+const PRICE_KEYS = ["price", "fee", "amount", "価格"];
+const NOTE_KEYS = ["note", "sub", "caption", "補足"];
 
-  const url = `https://${MICROCMS_DOMAIN}.microcms.io/api/v1/${MICROCMS_MENU_API_ID}`;
+const ARRAY_KEYS = {
+  featured: [
+    "featured",
+    "popular",
+    "pickup",
+    "pickUp",
+    "pickupMenu",
+    "popularMenu",
+    "popularMenus",
+    "recommend",
+    "recommended",
+    "人気枠",
+    "人気メニュー",
+    "おすすめ",
+  ],
+  cut: ["cut", "cuts", "cutMenu", "cutMenus", "カット"],
+  perm: ["perm", "perms", "permMenu", "permMenus", "パーマ"],
+  color: ["color", "colors", "colorMenu", "colorMenus", "カラー"],
+  spa: [
+    "spa",
+    "face",
+    "spaFace",
+    "spa_face",
+    "spaMenu",
+    "spaMenus",
+    "スパ",
+    "フェイス",
+    "スパ・フェイス",
+    "スパフェイス",
+  ],
+};
 
-  const res = await fetch(url, {
-    method: "GET",
-    headers: {
-      "X-MICROCMS-API-KEY": MICROCMS_KEY,
-    },
-    signal,
-  });
-
-  if (!res.ok) return null;
-  return res.json();
+function uniq(arr) {
+  return [...new Set(arr.filter(Boolean))];
 }
 
 function pickStr(obj, keys) {
-  if (!obj) return undefined;
+  if (!obj || typeof obj !== "object") return undefined;
 
   for (const key of keys) {
     const value = obj?.[key];
@@ -36,9 +60,145 @@ function pickStr(obj, keys) {
     if (typeof value === "string" && value.trim() !== "") {
       return value.trim();
     }
+
+    if (typeof value === "number" && Number.isFinite(value)) {
+      return String(value);
+    }
   }
 
   return undefined;
+}
+
+function pickArray(obj, keys) {
+  if (!obj || typeof obj !== "object") return [];
+
+  for (const key of keys) {
+    const value = obj?.[key];
+
+    if (Array.isArray(value)) {
+      return value;
+    }
+  }
+
+  return [];
+}
+
+function unwrapMicroCmsPayload(raw) {
+  if (!raw) return null;
+
+  if (Array.isArray(raw)) {
+    return raw[0] ?? null;
+  }
+
+  if (typeof raw !== "object") {
+    return null;
+  }
+
+  if (Array.isArray(raw.contents)) {
+    return raw.contents[0] ?? null;
+  }
+
+  if (raw.data && typeof raw.data === "object") {
+    return unwrapMicroCmsPayload(raw.data);
+  }
+
+  return raw;
+}
+
+function normalizeRows(rows) {
+  if (!Array.isArray(rows)) return [];
+
+  return rows
+    .filter((row) => row && typeof row === "object")
+    .map((row) => ({ ...row }));
+}
+
+function normalizeMenuPayload(raw) {
+  const source = unwrapMicroCmsPayload(raw);
+
+  if (!source || typeof source !== "object") {
+    return null;
+  }
+
+  return {
+    ...source,
+    featured: normalizeRows(pickArray(source, ARRAY_KEYS.featured)),
+    cut: normalizeRows(pickArray(source, ARRAY_KEYS.cut)),
+    perm: normalizeRows(pickArray(source, ARRAY_KEYS.perm)),
+    color: normalizeRows(pickArray(source, ARRAY_KEYS.color)),
+    spa: normalizeRows(pickArray(source, ARRAY_KEYS.spa)),
+  };
+}
+
+async function fetchMicroCmsByApiId(apiId, { signal } = {}) {
+  const cleanApiId = String(apiId || "")
+    .trim()
+    .replace(/^\/+|\/+$/g, "");
+
+  if (!cleanApiId) return null;
+
+  const joiner = cleanApiId.includes("?") ? "&" : "?";
+  const url = `https://${MICROCMS_DOMAIN}.microcms.io/api/v1/${cleanApiId}${joiner}limit=1`;
+
+  const res = await fetch(url, {
+    method: "GET",
+    headers: {
+      "X-MICROCMS-API-KEY": MICROCMS_KEY,
+    },
+    cache: "no-store",
+    signal,
+  });
+
+  if (!res.ok) {
+    console.warn("MENU SP CMS fetch failed:", {
+      apiId: cleanApiId,
+      status: res.status,
+    });
+    return null;
+  }
+
+  const raw = await res.json();
+  const normalized = normalizeMenuPayload(raw);
+
+  console.log("MENU SP CMS DATA:", {
+    apiId: cleanApiId,
+    raw,
+    normalized,
+  });
+
+  return normalized;
+}
+
+async function fetchMenuPatch({ signal } = {}) {
+  if (!MICROCMS_DOMAIN || !MICROCMS_KEY) {
+    console.warn("MENU SP CMS missing env:", {
+      domain: MICROCMS_DOMAIN,
+      hasKey: Boolean(MICROCMS_KEY),
+      apiId: MICROCMS_MENU_API_ID,
+    });
+    return null;
+  }
+
+  const apiIds = uniq([MICROCMS_MENU_API_ID, "menu", "menuPatch"]);
+
+  for (const apiId of apiIds) {
+    try {
+      const data = await fetchMicroCmsByApiId(apiId, { signal });
+
+      if (data) {
+        return data;
+      }
+    } catch (error) {
+      if (error?.name === "AbortError") throw error;
+
+      console.warn("MENU SP CMS fetch error:", {
+        apiId,
+        error,
+      });
+    }
+  }
+
+  return null;
 }
 
 const FEATURED = [
@@ -203,7 +363,9 @@ function FeaturedRowSP({ item, index }) {
         </p>
       </div>
 
-      <p className="text-[14px] leading-[1.75] text-ink/62">{item.note}</p>
+      {!!item.note && (
+        <p className="text-[14px] leading-[1.75] text-ink/62">{item.note}</p>
+      )}
     </article>
   );
 }
@@ -231,16 +393,11 @@ function AccordionSP({ group, openKey, setOpenKey }) {
       >
         <div className="flex items-start justify-between gap-5">
           <div className="min-w-0">
-            <p
-              data-kicker
-              className="mb-1 text-[11px] tracking-[0.18em] text-ink/45"
-            >
+            <p data-kicker className="mb-1 text-[11px] tracking-[0.18em] text-ink/45">
               {group.en}
             </p>
 
-            <h3 className="text-[18px] font-medium text-ink/90">
-              {group.title}
-            </h3>
+            <h3 className="text-[18px] font-medium text-ink/90">{group.title}</h3>
 
             {!!summary && (
               <p className="mt-2 text-[14px] leading-[1.75] text-ink/60">
@@ -268,7 +425,7 @@ function AccordionSP({ group, openKey, setOpenKey }) {
           <div className="pb-5">
             {group.items.map(([name, price], index) => (
               <div
-                key={`${group.key}-${index}`}
+                key={`${group.key}-${index}-${name}`}
                 className="
                   grid grid-cols-[1fr_auto]
                   gap-5
@@ -280,10 +437,7 @@ function AccordionSP({ group, openKey, setOpenKey }) {
                   {name}
                 </span>
 
-                <span
-                  data-no-scale
-                  className="shrink-0 text-[15px] font-semibold text-ink/88"
-                >
+                <span data-no-scale className="shrink-0 text-[15px] font-semibold text-ink/88">
                   {price}
                 </span>
               </div>
@@ -303,8 +457,16 @@ export default function MenuSP() {
     const ac = new AbortController();
 
     fetchMenuPatch({ signal: ac.signal })
-      .then((data) => setCms(data))
-      .catch(() => {});
+      .then((data) => {
+        if (!ac.signal.aborted) {
+          setCms(data);
+        }
+      })
+      .catch((error) => {
+        if (error?.name !== "AbortError") {
+          console.warn("MENU SP CMS set error:", error);
+        }
+      });
 
     return () => ac.abort();
   }, []);
@@ -312,11 +474,12 @@ export default function MenuSP() {
   const featuredUI = useMemo(() => {
     return FEATURED.map((item, index) => {
       const patch = cms?.featured?.[index];
+
       if (!patch) return item;
 
-      const title = pickStr(patch, ["title", "menuName", "name"]) ?? item.title;
-      const price = pickStr(patch, ["price"]) ?? item.price;
-      const note = pickStr(patch, ["note", "sub", "caption"]) ?? item.note;
+      const title = pickStr(patch, NAME_KEYS) ?? item.title;
+      const price = pickStr(patch, PRICE_KEYS) ?? item.price;
+      const note = pickStr(patch, NOTE_KEYS) ?? item.note;
 
       return { ...item, title, price, note };
     });
@@ -325,6 +488,7 @@ export default function MenuSP() {
   const groupsUI = useMemo(() => {
     return GROUPS.map((group) => {
       const rows = cms?.[group.key];
+
       if (!Array.isArray(rows) || rows.length === 0) return group;
 
       const patched = group.items.map(([name, price], index) => {
@@ -332,8 +496,8 @@ export default function MenuSP() {
 
         if (!row) return [name, price];
 
-        const nextName = pickStr(row, ["name", "menuName", "title"]) ?? name;
-        const nextPrice = pickStr(row, ["price"]) ?? price;
+        const nextName = pickStr(row, NAME_KEYS) ?? name;
+        const nextPrice = pickStr(row, PRICE_KEYS) ?? price;
 
         return [nextName, nextPrice];
       });
@@ -341,8 +505,8 @@ export default function MenuSP() {
       for (let i = group.items.length; i < rows.length; i += 1) {
         const row = rows[i];
 
-        const nextName = pickStr(row, ["name", "menuName", "title"]);
-        const nextPrice = pickStr(row, ["price"]);
+        const nextName = pickStr(row, NAME_KEYS);
+        const nextPrice = pickStr(row, PRICE_KEYS);
 
         if (nextName && nextPrice) {
           patched.push([nextName, nextPrice]);
@@ -370,7 +534,7 @@ export default function MenuSP() {
       </p>
 
       <div className="mx-auto max-w-[560px]">
-        <Reveal y={12} blur={0.10} duration={0.62}>
+        <Reveal y={12} blur={0.1} duration={0.62}>
           <header className="mb-11">
             <div className="mb-5 overflow-hidden">
               <div
@@ -395,10 +559,7 @@ export default function MenuSP() {
               </div>
             </div>
 
-            <p
-              data-kicker
-              className="mb-4 text-[12px] tracking-[0.30em] text-ink/55"
-            >
+            <p data-kicker className="mb-4 text-[12px] tracking-[0.30em] text-ink/55">
               料金
             </p>
 
@@ -415,20 +576,14 @@ export default function MenuSP() {
           </header>
         </Reveal>
 
-        <Reveal delay={0.06} y={12} blur={0.10} duration={0.62}>
+        <Reveal delay={0.06} y={12} blur={0.1} duration={0.62}>
           <section className="mb-[9vh]" aria-labelledby="menu-sp-pickup">
             <div className="mb-4">
-              <p
-                data-kicker
-                className="mb-1.5 text-[11px] tracking-[0.24em] text-ink/46"
-              >
+              <p data-kicker className="mb-1.5 text-[11px] tracking-[0.24em] text-ink/46">
                 PICK UP
               </p>
 
-              <h3
-                id="menu-sp-pickup"
-                className="text-[20px] font-medium text-ink/90"
-              >
+              <h3 id="menu-sp-pickup" className="text-[20px] font-medium text-ink/90">
                 人気メニュー
               </h3>
             </div>
@@ -441,30 +596,20 @@ export default function MenuSP() {
               "
             >
               {featuredUI.map((item, index) => (
-                <FeaturedRowSP
-                  key={item.label ?? index}
-                  item={item}
-                  index={index}
-                />
+                <FeaturedRowSP key={item.label ?? index} item={item} index={index} />
               ))}
             </div>
           </section>
         </Reveal>
 
-        <Reveal delay={0.08} y={12} blur={0.10} duration={0.62}>
+        <Reveal delay={0.08} y={12} blur={0.1} duration={0.62}>
           <section className="mb-[9vh]" aria-labelledby="menu-sp-all">
             <div className="mb-4">
-              <p
-                data-kicker
-                className="mb-1.5 text-[11px] tracking-[0.22em] text-ink/46"
-              >
+              <p data-kicker className="mb-1.5 text-[11px] tracking-[0.22em] text-ink/46">
                 ALL MENU
               </p>
 
-              <h3
-                id="menu-sp-all"
-                className="text-[20px] font-medium text-ink/90"
-              >
+              <h3 id="menu-sp-all" className="text-[20px] font-medium text-ink/90">
                 その他のメニュー
               </h3>
             </div>
@@ -482,7 +627,7 @@ export default function MenuSP() {
           </section>
         </Reveal>
 
-        <Reveal delay={0.10} y={12} blur={0.08} duration={0.62}>
+        <Reveal delay={0.1} y={12} blur={0.08} duration={0.62}>
           <div className="text-center">
             <a
               href={RESERVE_URL}
@@ -511,10 +656,7 @@ export default function MenuSP() {
               空席を確認して予約する
             </a>
 
-            <p
-              data-kicker
-              className="mt-5 text-[12px] leading-[1.8] text-ink/46"
-            >
+            <p data-kicker className="mt-5 text-[12px] leading-[1.8] text-ink/46">
               ※ 表示価格は税込です。
               <br />
               メニュー・価格は変更になる場合があります。

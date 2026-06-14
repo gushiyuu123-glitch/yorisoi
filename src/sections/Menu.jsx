@@ -12,34 +12,212 @@ const RESERVE_URL =
 
 const MICROCMS_DOMAIN = import.meta.env.VITE_MICROCMS_SERVICE_DOMAIN;
 const MICROCMS_KEY = import.meta.env.VITE_MICROCMS_API_KEY;
-const MICROCMS_MENU_API_ID = import.meta.env.VITE_MICROCMS_MENU_API_ID ?? "menu";
+const MICROCMS_MENU_API_ID =
+  import.meta.env.VITE_MICROCMS_MENU_API_ID || "menu";
 
-async function fetchMenuPatch({ signal } = {}) {
-  if (!MICROCMS_DOMAIN || !MICROCMS_KEY) return null;
+/**
+ * microCMS側のフィールドID揺れを吸収
+ * スクショ上の表示名が日本語でも、実際のfieldIdが menuName / price / note などの場合があるため広めに拾う。
+ */
+const NAME_KEYS = ["title", "menuName", "name", "menu", "label", "メニュー名"];
+const PRICE_KEYS = ["price", "fee", "amount", "価格"];
+const NOTE_KEYS = ["note", "sub", "caption", "補足"];
+const DESC_KEYS = ["desc", "description", "body", "text", "説明"];
 
-  const url = `https://${MICROCMS_DOMAIN}.microcms.io/api/v1/${MICROCMS_MENU_API_ID}`;
+const ARRAY_KEYS = {
+  featured: [
+    "featured",
+    "popular",
+    "pickup",
+    "pickUp",
+    "pickupMenu",
+    "popularMenu",
+    "popularMenus",
+    "recommend",
+    "recommended",
+    "人気枠",
+    "人気メニュー",
+    "おすすめ",
+  ],
+  cut: ["cut", "cuts", "cutMenu", "cutMenus", "カット"],
+  perm: ["perm", "perms", "permMenu", "permMenus", "パーマ"],
+  color: ["color", "colors", "colorMenu", "colorMenus", "カラー"],
+  spa: [
+    "spa",
+    "face",
+    "spaFace",
+    "spa_face",
+    "spaMenu",
+    "spaMenus",
+    "スパ",
+    "フェイス",
+    "スパ・フェイス",
+    "スパフェイス",
+  ],
+};
 
-  const res = await fetch(url, {
-    method: "GET",
-    headers: { "X-MICROCMS-API-KEY": MICROCMS_KEY },
-    signal,
-  });
-
-  if (!res.ok) return null;
-  return res.json();
+function uniq(arr) {
+  return [...new Set(arr.filter(Boolean))];
 }
 
 function pickStr(obj, keys) {
-  if (!obj) return undefined;
+  if (!obj || typeof obj !== "object") return undefined;
 
   for (const key of keys) {
     const value = obj?.[key];
+
     if (typeof value === "string" && value.trim() !== "") {
       return value.trim();
+    }
+
+    if (typeof value === "number" && Number.isFinite(value)) {
+      return String(value);
     }
   }
 
   return undefined;
+}
+
+function pickArray(obj, keys) {
+  if (!obj || typeof obj !== "object") return [];
+
+  for (const key of keys) {
+    const value = obj?.[key];
+
+    if (Array.isArray(value)) {
+      return value;
+    }
+  }
+
+  return [];
+}
+
+/**
+ * microCMSが
+ * - オブジェクトAPI: { featured: [...] }
+ * - リストAPI: { contents: [{ featured: [...] }] }
+ * のどちらでも動くようにする。
+ */
+function unwrapMicroCmsPayload(raw) {
+  if (!raw) return null;
+
+  if (Array.isArray(raw)) {
+    return raw[0] ?? null;
+  }
+
+  if (typeof raw !== "object") {
+    return null;
+  }
+
+  if (Array.isArray(raw.contents)) {
+    return raw.contents[0] ?? null;
+  }
+
+  if (raw.data && typeof raw.data === "object") {
+    return unwrapMicroCmsPayload(raw.data);
+  }
+
+  return raw;
+}
+
+function normalizeRows(rows) {
+  if (!Array.isArray(rows)) return [];
+
+  return rows
+    .filter((row) => row && typeof row === "object")
+    .map((row) => ({ ...row }));
+}
+
+function normalizeMenuPayload(raw) {
+  const source = unwrapMicroCmsPayload(raw);
+
+  if (!source || typeof source !== "object") {
+    return null;
+  }
+
+  return {
+    ...source,
+    featured: normalizeRows(pickArray(source, ARRAY_KEYS.featured)),
+    cut: normalizeRows(pickArray(source, ARRAY_KEYS.cut)),
+    perm: normalizeRows(pickArray(source, ARRAY_KEYS.perm)),
+    color: normalizeRows(pickArray(source, ARRAY_KEYS.color)),
+    spa: normalizeRows(pickArray(source, ARRAY_KEYS.spa)),
+  };
+}
+
+async function fetchMicroCmsByApiId(apiId, { signal } = {}) {
+  const cleanApiId = String(apiId || "")
+    .trim()
+    .replace(/^\/+|\/+$/g, "");
+
+  if (!cleanApiId) return null;
+
+  const joiner = cleanApiId.includes("?") ? "&" : "?";
+  const url = `https://${MICROCMS_DOMAIN}.microcms.io/api/v1/${cleanApiId}${joiner}limit=1`;
+
+  const res = await fetch(url, {
+    method: "GET",
+    headers: {
+      "X-MICROCMS-API-KEY": MICROCMS_KEY,
+    },
+    cache: "no-store",
+    signal,
+  });
+
+  if (!res.ok) {
+    console.warn("MENU CMS fetch failed:", {
+      apiId: cleanApiId,
+      status: res.status,
+    });
+    return null;
+  }
+
+  const raw = await res.json();
+  const normalized = normalizeMenuPayload(raw);
+
+  console.log("MENU CMS DATA:", {
+    apiId: cleanApiId,
+    raw,
+    normalized,
+  });
+
+  return normalized;
+}
+
+async function fetchMenuPatch({ signal } = {}) {
+  if (!MICROCMS_DOMAIN || !MICROCMS_KEY) {
+    console.warn("MENU CMS missing env:", {
+      domain: MICROCMS_DOMAIN,
+      hasKey: Boolean(MICROCMS_KEY),
+      apiId: MICROCMS_MENU_API_ID,
+    });
+    return null;
+  }
+
+  /**
+   * スクショ的にエンドポイントは /apis/menu/... に見える。
+   * ただし環境変数に menuPatch を入れていた場合も救うため fallback を持たせる。
+   */
+  const apiIds = uniq([MICROCMS_MENU_API_ID, "menu", "menuPatch"]);
+
+  for (const apiId of apiIds) {
+    try {
+      const data = await fetchMicroCmsByApiId(apiId, { signal });
+
+      if (data) {
+        return data;
+      }
+    } catch (error) {
+      if (error?.name === "AbortError") throw error;
+
+      console.warn("MENU CMS fetch error:", {
+        apiId,
+        error,
+      });
+    }
+  }
+
+  return null;
 }
 
 const FEATURED = [
@@ -180,19 +358,21 @@ function FeaturedRow({ item, index }) {
             {item.label}
           </p>
 
-          <span
-            className="
-              inline-flex items-center
-              border border-[rgba(124,78,91,0.16)]
-              bg-[rgba(124,78,91,0.045)]
-              px-2.5 py-[3px]
-              text-[10px]
-              tracking-[0.10em]
-              text-[#7c4e5b]/78
-            "
-          >
-            {item.note}
-          </span>
+          {!!item.note && (
+            <span
+              className="
+                inline-flex items-center
+                border border-[rgba(124,78,91,0.16)]
+                bg-[rgba(124,78,91,0.045)]
+                px-2.5 py-[3px]
+                text-[10px]
+                tracking-[0.10em]
+                text-[#7c4e5b]/78
+              "
+            >
+              {item.note}
+            </span>
+          )}
         </div>
 
         <h4
@@ -207,9 +387,11 @@ function FeaturedRow({ item, index }) {
           {item.title}
         </h4>
 
-        <p className="mt-2.5 max-w-[560px] text-[13.5px] leading-[1.85] text-ink/62">
-          {item.desc}
-        </p>
+        {!!item.desc && (
+          <p className="mt-2.5 max-w-[560px] text-[13.5px] leading-[1.85] text-ink/62">
+            {item.desc}
+          </p>
+        )}
       </div>
 
       <p
@@ -258,9 +440,7 @@ function AccordionItem({ group, openKey, setOpenKey }) {
               {group.title.toUpperCase()}
             </p>
 
-            <h3 className="text-[18px] font-medium text-ink/90">
-              {group.jp}
-            </h3>
+            <h3 className="text-[18px] font-medium text-ink/90">{group.jp}</h3>
 
             {!!summary && (
               <p className="mt-2 text-[13px] leading-[1.75] text-ink/58">
@@ -288,7 +468,7 @@ function AccordionItem({ group, openKey, setOpenKey }) {
           <div className="pb-5">
             {group.items.map(([name, price], index) => (
               <div
-                key={`${group.key}-${index}`}
+                key={`${group.key}-${index}-${name}`}
                 className="
                   grid grid-cols-[1fr_auto]
                   gap-8
@@ -299,10 +479,7 @@ function AccordionItem({ group, openKey, setOpenKey }) {
                 "
               >
                 <span className="text-ink/82">{name}</span>
-                <span
-                  data-no-scale
-                  className="shrink-0 font-semibold text-ink/88"
-                >
+                <span data-no-scale className="shrink-0 font-semibold text-ink/88">
                   {price}
                 </span>
               </div>
@@ -324,8 +501,16 @@ export default function Menu() {
     const ac = new AbortController();
 
     fetchMenuPatch({ signal: ac.signal })
-      .then((data) => setCms(data))
-      .catch(() => {});
+      .then((data) => {
+        if (!ac.signal.aborted) {
+          setCms(data);
+        }
+      })
+      .catch((error) => {
+        if (error?.name !== "AbortError") {
+          console.warn("MENU CMS set error:", error);
+        }
+      });
 
     return () => ac.abort();
   }, []);
@@ -336,10 +521,10 @@ export default function Menu() {
 
       if (!patch) return item;
 
-      const title = pickStr(patch, ["title", "menuName", "name"]) ?? item.title;
-      const price = pickStr(patch, ["price"]) ?? item.price;
-      const note = pickStr(patch, ["note", "sub", "caption"]) ?? item.note;
-      const desc = pickStr(patch, ["desc", "description"]) ?? item.desc;
+      const title = pickStr(patch, NAME_KEYS) ?? item.title;
+      const price = pickStr(patch, PRICE_KEYS) ?? item.price;
+      const note = pickStr(patch, NOTE_KEYS) ?? item.note;
+      const desc = pickStr(patch, DESC_KEYS) ?? item.desc;
 
       return { ...item, title, price, note, desc };
     });
@@ -356,8 +541,8 @@ export default function Menu() {
 
         if (!row) return [name, price];
 
-        const nextName = pickStr(row, ["name", "menuName", "title"]) ?? name;
-        const nextPrice = pickStr(row, ["price"]) ?? price;
+        const nextName = pickStr(row, NAME_KEYS) ?? name;
+        const nextPrice = pickStr(row, PRICE_KEYS) ?? price;
 
         return [nextName, nextPrice];
       });
@@ -365,8 +550,8 @@ export default function Menu() {
       for (let i = group.items.length; i < rows.length; i += 1) {
         const row = rows[i];
 
-        const nextName = pickStr(row, ["name", "menuName", "title"]);
-        const nextPrice = pickStr(row, ["price"]);
+        const nextName = pickStr(row, NAME_KEYS);
+        const nextPrice = pickStr(row, PRICE_KEYS);
 
         if (nextName && nextPrice) {
           patched.push([nextName, nextPrice]);
@@ -467,10 +652,7 @@ export default function Menu() {
             </div>
           </div>
 
-          <p
-            data-kicker
-            className="mb-3 text-[11px] tracking-[0.30em] text-ink/52"
-          >
+          <p data-kicker className="mb-3 text-[11px] tracking-[0.30em] text-ink/52">
             料金 / PRICE
           </p>
 
@@ -495,17 +677,11 @@ export default function Menu() {
         <section className="mn mb-[9vh]" aria-labelledby="menu-pickup-title">
           <div className="mb-5 grid grid-cols-[auto_1fr_auto] items-end gap-5">
             <div>
-              <p
-                data-kicker
-                className="mb-2 text-[11px] tracking-[0.23em] text-ink/44"
-              >
+              <p data-kicker className="mb-2 text-[11px] tracking-[0.23em] text-ink/44">
                 PICK UP
               </p>
 
-              <h3
-                id="menu-pickup-title"
-                className="text-[20px] font-medium text-ink/90"
-              >
+              <h3 id="menu-pickup-title" className="text-[20px] font-medium text-ink/90">
                 人気メニュー
               </h3>
             </div>
@@ -564,17 +740,11 @@ export default function Menu() {
           <div className="mx-auto max-w-[820px]">
             <div className="mb-5 grid grid-cols-[auto_1fr_auto] items-end gap-5">
               <div>
-                <p
-                  data-kicker
-                  className="mb-2 text-[11px] tracking-[0.23em] text-ink/44"
-                >
+                <p data-kicker className="mb-2 text-[11px] tracking-[0.23em] text-ink/44">
                   ALL MENU
                 </p>
 
-                <h3
-                  id="menu-all-title"
-                  className="text-[20px] font-medium text-ink/90"
-                >
+                <h3 id="menu-all-title" className="text-[20px] font-medium text-ink/90">
                   その他のメニュー
                 </h3>
               </div>
@@ -599,8 +769,6 @@ export default function Menu() {
                 />
               ))}
             </div>
-
-      
           </div>
         </section>
 
@@ -639,10 +807,7 @@ export default function Menu() {
             <span className="font-semibold">空席を確認して予約する</span>
           </a>
 
-          <p
-            data-kicker
-            className="mt-5 text-[11.5px] leading-[1.8] text-ink/44"
-          >
+          <p data-kicker className="mt-5 text-[11.5px] leading-[1.8] text-ink/44">
             ※ 表示価格は税込です。内容は変更になる場合があります。
             <br />
             予約内容はHotPepper側で確定します。
