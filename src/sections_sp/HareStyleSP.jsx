@@ -255,11 +255,7 @@ export default function HareStyleSP() {
                 STYLE SAMPLE
               </p>
 
-              {canSwipe && (
-                <p className="text-[12px] tracking-[0.06em] text-ink/46">
-                  横にスワイプ
-                </p>
-              )}
+            
             </div>
 
             <div
