@@ -23,14 +23,53 @@ export default function HareStyle() {
     <section
       id="hare-style"
       className="
+        relative isolate
         w-full bg-base
         pt-[18vh] pb-[14vh] px-[4vw]
         overflow-hidden
       "
-      aria-label="メンズヘアスタイル"
+      aria-labelledby="hare-style-title"
     >
+      <p className="sr-only">
+        ヨリソイ Hair＆Spaのメンズヘアスタイル。パーマ、フェード、スペインカール、
+        ニュアンスパーマなどの施術スタイルを写真で紹介しています。
+      </p>
+
+      {/* background air */}
+      <div aria-hidden="true" className="absolute inset-0 -z-10 pointer-events-none">
+        <div
+          className="
+            absolute inset-0
+            bg-[radial-gradient(circle_at_72%_4%,rgba(255,253,249,0.72),rgba(255,253,249,0.12)_46%,rgba(247,243,236,0.98)_100%)]
+          "
+        />
+
+        <div
+          className="
+            absolute right-[4vw] top-[8vh]
+            text-[clamp(74px,8vw,132px)]
+            leading-none
+            tracking-[-0.10em]
+            text-ink/[0.024]
+            font-serif
+          "
+        >
+          STYLE
+        </div>
+      </div>
+
       {/* TITLE */}
-      <div className="mx-auto max-w-[820px] mb-14">
+      <div className="mx-auto max-w-[900px] mb-14">
+        <div
+          aria-hidden="true"
+          className="mb-9 flex items-center gap-5"
+        >
+          <span className="text-[11px] tracking-[0.26em] text-ink/38">
+            04 / STYLE
+          </span>
+          <span className="h-px flex-1 bg-[linear-gradient(to_right,rgba(96,78,62,0.16),rgba(96,78,62,0.03),rgba(96,78,62,0))]" />
+        </div>
+
         <Reveal
           as="p"
           delay={0.0}
@@ -44,19 +83,22 @@ export default function HareStyle() {
 
         <Reveal
           as="h2"
+          id="hare-style-title"
           delay={0.06}
           y={14}
           blur={0.16}
           duration={0.68}
           className="
-            text-[clamp(26px,3vw,34px)]
+            text-[clamp(27px,3vw,36px)]
             text-ink/90
-            leading-[1.45]
+            leading-[1.46]
             font-medium
-            max-w-[760px]
+            max-w-[780px]
+            tracking-[-0.01em]
           "
         >
-          パーマも、フェードも。<br />
+          パーマも、フェードも。
+          <br />
           翌朝の支度が短く済む形を、写真で見せます。
         </Reveal>
 
@@ -65,9 +107,10 @@ export default function HareStyle() {
           y={14}
           blur={0.14}
           duration={0.68}
-          className="mt-6 text-[15px] leading-[1.95] text-ink/76 max-w-[760px]"
+          className="mt-6 text-[15px] leading-[1.95] text-ink/72 max-w-[760px]"
         >
-          実際に施術したスタイルを掲載しています。<br />
+          実際に施術したスタイルを掲載しています。
+          <br />
           「雰囲気」よりも、扱いやすさが残る例を基準に。
         </Reveal>
       </div>
@@ -75,87 +118,155 @@ export default function HareStyle() {
       {/* 横スクロール（自動ループ） */}
       <Reveal delay={0.16} y={14} blur={0.14} duration={0.68}>
         <div className="relative w-full overflow-hidden mb-[10vh]">
+          <div className="mx-auto max-w-[1480px] mb-5 px-[1vw]">
+            <div className="flex items-end justify-between gap-6 border-t border-ink/10 pt-4">
+              <p className="text-[11px] tracking-[0.26em] text-ink/44">
+                STYLE SAMPLE
+              </p>
+
+              <p className="text-[11px] tracking-[0.18em] text-ink/36">
+                AUTO SCROLL
+              </p>
+            </div>
+          </div>
+
           <div
-            aria-hidden
+            aria-hidden="true"
             className="
-              pointer-events-none absolute inset-y-0 left-0 w-[8vw] z-10
+              pointer-events-none absolute inset-y-0 left-0 w-[9vw] z-10
               bg-[linear-gradient(to_right,rgba(247,243,236,1),rgba(247,243,236,0))]
             "
           />
+
           <div
-            aria-hidden
+            aria-hidden="true"
             className="
-              pointer-events-none absolute inset-y-0 right-0 w-[8vw] z-10
+              pointer-events-none absolute inset-y-0 right-0 w-[9vw] z-10
               bg-[linear-gradient(to_left,rgba(247,243,236,1),rgba(247,243,236,0))]
             "
           />
 
           <div
             className="
-              flex gap-[3vw]
+              flex gap-[2.4vw]
               whitespace-nowrap
               will-change-transform
               animate-styleLoop
             "
           >
-            {loop.map((s) => (
-              <figure
-                key={s._key}
-                aria-hidden={s._dup ? "true" : "false"}
-                className="
-                  relative
-                  min-w-[66vw] sm:min-w-[46vw] lg:min-w-[28vw]
-                  max-w-[380px]
-                  aspect-[4/5]
-                  overflow-hidden
-                  rounded-[6px]
-                  border border-ink/10
-                  shadow-[0_10px_28px_rgba(0,0,0,0.09)]
-                  bg-surface
-                "
-              >
-                <img
-                  src={s.img}
-                  alt={s._dup ? "" : s.name}
-                  draggable={false}
-                  className="
-                    w-full h-full object-cover
-                    scale-[1.02]
-                    select-none pointer-events-none
-                    [filter:brightness(1.01)_contrast(0.96)]
-                  "
-                  loading="lazy"
-                  decoding="async"
-                />
+            {loop.map((s, index) => {
+              const no = String((index % styles.length) + 1).padStart(2, "0");
 
-                <div
+              return (
+                <figure
+                  key={s._key}
+                  aria-hidden={s._dup ? "true" : "false"}
                   className="
-                    absolute left-0 top-0
-                    px-3 py-2
-                    text-[10px]
-                    tracking-[0.24em]
-                    text-[rgba(255,255,255,0.90)]
-                    bg-[rgba(46,42,39,0.26)]
-                    backdrop-blur-[2px]
+                    group relative
+                    min-w-[66vw] sm:min-w-[46vw] lg:min-w-[27vw]
+                    max-w-[380px]
+                    aspect-[4/5]
+                    overflow-hidden
+                    rounded-[2px]
+                    border border-ink/10
+                    shadow-[0_10px_26px_rgba(72,55,40,0.085)]
+                    bg-surface
                   "
                 >
-                  {s.tag}
-                </div>
+                  <img
+                    src={s.img}
+                    alt={s._dup ? "" : s.name}
+                    draggable={false}
+                    className="
+                      w-full h-full object-cover
+                      scale-[1.02]
+                      select-none pointer-events-none
+                      [filter:brightness(1.01)_contrast(0.97)_saturate(0.98)]
+                      transition-transform duration-[1200ms] ease-out
+                      group-hover:scale-[1.045]
+                    "
+                    loading="lazy"
+                    decoding="async"
+                  />
 
-                <figcaption
-                  className="
-                    absolute bottom-0 left-0 right-0
-                    px-4 py-3
-                    text-[15px]
-                    font-medium
-                    text-[rgba(255,255,255,0.92)]
-                    bg-[linear-gradient(to_top,rgba(46,42,39,0.56),rgba(46,42,39,0.00))]
-                  "
-                >
-                  {s.name}
-                </figcaption>
-              </figure>
-            ))}
+                  {/* text readability */}
+                  <div
+                    aria-hidden="true"
+                    className="
+                      absolute inset-0
+                      bg-[linear-gradient(to_top,rgba(18,15,13,0.78),rgba(18,15,13,0.30)_42%,rgba(18,15,13,0.06)_72%,rgba(18,15,13,0.00))]
+                    "
+                  />
+
+                  <div
+                    aria-hidden="true"
+                    className="
+                      absolute inset-0
+                      shadow-[inset_0_-105px_90px_rgba(18,15,13,0.30)]
+                    "
+                  />
+
+                  <div className="absolute left-0 top-0 z-10 flex items-center">
+                    <div
+                      className="
+                        px-3 py-2
+                        text-[10px]
+                        tracking-[0.24em]
+                        text-white
+                        bg-[rgba(18,15,13,0.42)]
+                        backdrop-blur-[2px]
+                        drop-shadow-[0_1px_7px_rgba(0,0,0,0.55)]
+                      "
+                    >
+                      {s.tag}
+                    </div>
+
+                    <div
+                      className="
+                        px-3 py-2
+                        text-[10px]
+                        tracking-[0.20em]
+                        text-white/78
+                        drop-shadow-[0_1px_7px_rgba(0,0,0,0.55)]
+                      "
+                    >
+                      STYLE {no}
+                    </div>
+                  </div>
+
+                  <figcaption
+                    className="
+                      absolute bottom-0 left-0 right-0 z-10
+                      px-4 py-4
+                    "
+                  >
+                    <p
+                      className="
+                        mb-1.5
+                        text-[10px]
+                        tracking-[0.22em]
+                        text-white/72
+                        drop-shadow-[0_1px_7px_rgba(0,0,0,0.65)]
+                      "
+                    >
+                      HAIR STYLE
+                    </p>
+
+                    <h3
+                      className="
+                        text-[15.5px]
+                        leading-[1.42]
+                        font-medium
+                        text-white
+                        drop-shadow-[0_2px_12px_rgba(0,0,0,0.75)]
+                      "
+                    >
+                      {s.name}
+                    </h3>
+                  </figcaption>
+                </figure>
+              );
+            })}
           </div>
         </div>
       </Reveal>
@@ -172,11 +283,20 @@ export default function HareStyle() {
               text-[15px]
               text-ink/82
               tracking-[0.06em]
-              underline underline-offset-4
+              border-b border-ink/28
+              pb-[4px]
               hover:opacity-70 transition
+              focus-visible:outline-none
+              focus-visible:ring-2
+              focus-visible:ring-ink/15
+              focus-visible:ring-offset-4
+              focus-visible:ring-offset-base
             "
           >
             他のスタイルも見る
+            <span aria-hidden="true" className="text-ink/48">
+              →
+            </span>
           </a>
 
           <p className="mt-4 text-[12px] tracking-[0.18em] text-ink/50">
@@ -190,12 +310,17 @@ export default function HareStyle() {
           0% { transform: translateX(0); }
           100% { transform: translateX(-50%); }
         }
+
         .animate-styleLoop {
-          animation: styleLoop 28s linear infinite;
+          animation: styleLoop 34s linear infinite;
         }
+
         @media (hover:hover) {
-          .animate-styleLoop:hover { animation-play-state: paused; }
+          .animate-styleLoop:hover {
+            animation-play-state: paused;
+          }
         }
+
         @media (prefers-reduced-motion: reduce), (pointer: coarse) {
           .animate-styleLoop {
             animation: none !important;

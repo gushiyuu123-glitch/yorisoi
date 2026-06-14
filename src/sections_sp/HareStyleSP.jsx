@@ -2,6 +2,93 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Reveal } from "../components/Reveal";
 
+function StyleCardSP({ style }) {
+  return (
+    <figure
+      className="
+        relative
+        snap-start
+        min-w-[76vw]
+        max-w-[360px]
+        aspect-[4/5]
+        overflow-hidden
+        border border-ink/10
+        bg-surface
+        shadow-[0_10px_24px_rgba(72,55,40,0.10)]
+      "
+    >
+      <img
+        src={style.img}
+        alt={style.name}
+        draggable={false}
+        loading="lazy"
+        decoding="async"
+        className="
+          h-full w-full object-cover
+          scale-[1.02]
+          select-none pointer-events-none
+          [filter:brightness(1.01)_contrast(0.97)_saturate(0.98)]
+        "
+      />
+
+      <div
+        aria-hidden="true"
+        className="
+          absolute inset-0
+          bg-[linear-gradient(to_top,rgba(20,17,15,0.76),rgba(20,17,15,0.24)_42%,rgba(20,17,15,0.04)_72%,rgba(20,17,15,0.00))]
+        "
+      />
+
+      <div
+        className="
+          absolute left-0 top-0
+          px-3 py-2
+          bg-[rgba(20,17,15,0.40)]
+          text-[10px]
+          tracking-[0.24em]
+          text-white
+          backdrop-blur-[2px]
+          drop-shadow-[0_1px_6px_rgba(0,0,0,0.55)]
+        "
+      >
+        {style.tag}
+      </div>
+
+      <figcaption
+        className="
+          absolute bottom-0 left-0 right-0
+          px-4 py-4
+        "
+      >
+        <p
+          data-kicker
+          className="
+            mb-1.5
+            text-[10px]
+            tracking-[0.22em]
+            text-white/72
+            drop-shadow-[0_1px_6px_rgba(0,0,0,0.55)]
+          "
+        >
+          HAIR STYLE
+        </p>
+
+        <h3
+          className="
+            text-[15px]
+            leading-[1.45]
+            font-medium
+            text-white
+            drop-shadow-[0_2px_10px_rgba(0,0,0,0.65)]
+          "
+        >
+          {style.name}
+        </h3>
+      </figcaption>
+    </figure>
+  );
+}
+
 export default function HareStyleSP() {
   const styles = useMemo(
     () => [
@@ -30,7 +117,7 @@ export default function HareStyleSP() {
     let raf = 0;
 
     const update = () => {
-      const x = el.scrollLeft || 0;
+      const scrollLeft = el.scrollLeft || 0;
       const max = el.scrollWidth - el.clientWidth;
 
       const can = max > 6;
@@ -42,11 +129,8 @@ export default function HareStyleSP() {
         return;
       }
 
-      const atStart = x <= 6;
-      const atEnd = x >= max - 6;
-
-      setShowLeft(!atStart);
-      setShowRight(!atEnd);
+      setShowLeft(scrollLeft > 6);
+      setShowRight(scrollLeft < max - 6);
     };
 
     const onScroll = () => {
@@ -55,24 +139,25 @@ export default function HareStyleSP() {
     };
 
     update();
+
     el.addEventListener("scroll", onScroll, { passive: true });
 
     let ro;
     if ("ResizeObserver" in window) {
-      ro = new ResizeObserver(() => update());
+      ro = new ResizeObserver(update);
       ro.observe(el);
     } else {
       window.addEventListener("resize", update, { passive: true });
     }
 
-    const t = window.setTimeout(update, 220);
+    const timer = window.setTimeout(update, 240);
 
     return () => {
       cancelAnimationFrame(raf);
       el.removeEventListener("scroll", onScroll);
       ro?.disconnect?.();
       window.removeEventListener("resize", update);
-      window.clearTimeout(t);
+      window.clearTimeout(timer);
     };
   }, []);
 
@@ -80,232 +165,183 @@ export default function HareStyleSP() {
     <section
       id="hare-style-sp"
       className="
-        w-full bg-base
-        pt-[14vh] pb-[calc(10vh+env(safe-area-inset-bottom))]
+        relative isolate w-full overflow-hidden
+        bg-base
+        pt-[13vh]
         px-[6vw]
-        overflow-hidden
+        pb-[calc(10vh+env(safe-area-inset-bottom))]
       "
-      aria-label="メンズヘアスタイル"
+      aria-labelledby="hare-style-sp-title"
     >
-      {/* TITLE */}
-      <div className="mx-auto max-w-[520px] mb-10">
-        <Reveal
-          as="p"
-          delay={0.0}
-          y={12}
-          blur={0.14}
-          duration={0.62}
-          className="text-[11px] tracking-[0.32em] text-ink/55 mb-4"
-        >
-          MEN&apos;S STYLE
-        </Reveal>
+      <p className="sr-only">
+        ヨリソイ Hair＆Spaのメンズヘアスタイルです。メンズパーマ、フェード、
+        スペインカール、ツイスト、ニュアンスパーマなどの施術例を掲載しています。
+      </p>
 
-        <Reveal
-          as="h2"
-          delay={0.06}
-          y={12}
-          blur={0.14}
-          duration={0.62}
+      <div aria-hidden="true" className="absolute inset-0 z-0 pointer-events-none">
+        <div
           className="
-            text-[clamp(20px,6vw,26px)]
-            leading-[1.48]
-            tracking-[0.005em]
-            text-ink/90
-            font-medium
+            absolute inset-0
+            bg-[radial-gradient(circle_at_76%_6%,rgba(255,253,249,0.70),rgba(255,253,249,0.14)_50%,rgba(247,244,239,0.98)_100%)]
+          "
+        />
+
+        <div
+          className="
+            absolute right-[3vw] top-[8vh]
+            text-[18vw]
+            leading-none
+            tracking-[-0.10em]
+            text-ink/[0.026]
+            font-serif
           "
         >
-          パーマも、フェードも。<br />
-          手入れが軽い方向を、写真で見せます。
-        </Reveal>
-
-        <Reveal
-          delay={0.12}
-          y={12}
-          blur={0.12}
-          duration={0.62}
-          className="mt-4 text-[13.5px] leading-[1.9] text-ink/72"
-        >
-          施術例を並べています。<br />
-          仕上がりは「扱いやすさ」を優先したものです。
-        </Reveal>
+          STYLE
+        </div>
       </div>
 
-      {/* Swipe Gallery */}
-      <Reveal delay={0.18} y={12} blur={0.12} duration={0.62}>
-        <div className="relative mb-[7vh]">
-          <div
-            aria-hidden
-            className={`
-              pointer-events-none absolute inset-y-0 left-0 w-[16vw] z-10
-              bg-[linear-gradient(to_right,rgba(247,243,236,1),rgba(247,243,236,0))]
-              transition-opacity duration-300
-              ${canSwipe && showLeft ? "opacity-100" : "opacity-0"}
-            `}
-          />
-          <div
-            aria-hidden
-            className={`
-              pointer-events-none absolute inset-y-0 right-0 w-[16vw] z-10
-              bg-[linear-gradient(to_left,rgba(247,243,236,1),rgba(247,243,236,0))]
-              transition-opacity duration-300
-              ${canSwipe && showRight ? "opacity-100" : "opacity-0"}
-            `}
-          />
-
-          <div
-            aria-hidden
-            className={`
-              pointer-events-none absolute inset-y-0 left-0 w-[16vw] z-20
-              flex items-center justify-start pl-[2.5vw]
-              transition-opacity duration-300
-              ${canSwipe && showLeft ? "opacity-100" : "opacity-0"}
-            `}
+      <div className="relative z-10 mx-auto max-w-[560px]">
+        <header className="mb-9">
+          <Reveal
+            as="p"
+            data-kicker
+            y={12}
+            blur={0.12}
+            duration={0.62}
+            className="mb-4 text-[12px] tracking-[0.30em] text-ink/55"
           >
-            <span
-              className="
-                inline-flex items-center justify-center
-                w-[34px] h-[34px]
-                rounded-full
-                bg-base/70
-                border border-ink/12
-                text-ink/55
-                shadow-[0_6px_18px_rgba(0,0,0,0.06)]
-                backdrop-blur-[6px]
-                select-none
-              "
-            >
-              ←
-            </span>
-          </div>
+            MEN&apos;S STYLE
+          </Reveal>
 
-          <div
-            aria-hidden
-            className={`
-              pointer-events-none absolute inset-y-0 right-0 w-[16vw] z-20
-              flex items-center justify-end pr-[2.5vw]
-              transition-opacity duration-300
-              ${canSwipe && showRight ? "opacity-100" : "opacity-0"}
-            `}
-          >
-            <span
-              className="
-                inline-flex items-center justify-center
-                w-[34px] h-[34px]
-                rounded-full
-                bg-base/70
-                border border-ink/12
-                text-ink/55
-                shadow-[0_6px_18px_rgba(0,0,0,0.06)]
-                backdrop-blur-[6px]
-                select-none
-              "
-            >
-              →
-            </span>
-          </div>
-
-          <div
-            ref={scrollerRef}
+          <Reveal
+            as="h2"
+            id="hare-style-sp-title"
+            delay={0.06}
+            y={12}
+            blur={0.12}
+            duration={0.62}
             className="
-              -mx-[6vw] px-[6vw]
-              overflow-x-auto
-              [scrollbar-width:none]
-              [-ms-overflow-style:none]
-              [&::-webkit-scrollbar]:hidden
-              snap-x snap-mandatory
-              scroll-px-[6vw]
-              touch-pan-x
+              text-[clamp(24px,6.4vw,28px)]
+              leading-[1.52]
+              tracking-[-0.01em]
+              text-ink/90
+              font-medium
             "
-            aria-label="スタイル写真（横スワイプ）"
           >
-            <div className="flex gap-[4.5vw]">
-              {styles.map((s) => (
-                <figure
-                  key={s.name}
-                  className="
-                    relative
-                    snap-start
-                    min-w-[74vw]
-                    max-w-[360px]
-                    aspect-[4/5]
-                    overflow-hidden
-                    rounded-[6px]
-                    border border-ink/10
-                    shadow-[0_10px_28px_rgba(0,0,0,0.10)]
-                    bg-surface
-                  "
-                >
-                  <img
-                    src={s.img}
-                    alt={s.name}
-                    draggable={false}
-                    loading="lazy"
-                    decoding="async"
-                    className="
-                      w-full h-full object-cover
-                      scale-[1.02]
-                      select-none pointer-events-none
-                      [filter:brightness(1.01)_contrast(0.96)]
-                    "
-                  />
+            パーマも、フェードも。
+            <br />
+            手入れが軽い形へ。
+          </Reveal>
 
-                  <div
-                    className="
-                      absolute left-0 top-0
-                      px-3 py-2
-                      text-[10px]
-                      tracking-[0.24em]
-                      text-[rgba(255,255,255,0.90)]
-                      bg-[rgba(46,42,39,0.26)]
-                      backdrop-blur-[2px]
-                    "
-                  >
-                    {s.tag}
-                  </div>
+          <Reveal
+            delay={0.12}
+            y={12}
+            blur={0.1}
+            duration={0.62}
+            className="mt-5 text-[16px] leading-[1.9] text-ink/72"
+          >
+            施術例を写真で確認できます。
+            仕上がりは、家での扱いやすさも見ながら整えます。
+          </Reveal>
+        </header>
 
-                  <figcaption
-                    className="
-                      absolute bottom-0 left-0 right-0
-                      px-4 py-3
-                      text-[13.5px]
-                      font-medium
-                      text-[rgba(255,255,255,0.92)]
-                      bg-[linear-gradient(to_top,rgba(46,42,39,0.58),rgba(46,42,39,0.00))]
-                    "
-                  >
-                    {s.name}
-                  </figcaption>
-                </figure>
-              ))}
+        <Reveal delay={0.18} y={12} blur={0.1} duration={0.62}>
+          <div className="relative mb-[7vh]">
+            <div className="mb-4 flex items-center justify-between gap-4">
+              <p
+                data-kicker
+                className="text-[11px] tracking-[0.24em] text-ink/46"
+              >
+                STYLE SAMPLE
+              </p>
 
-              <div aria-hidden className="min-w-[6vw]" />
+              {canSwipe && (
+                <p className="text-[12px] tracking-[0.06em] text-ink/46">
+                  横にスワイプ
+                </p>
+              )}
+            </div>
+
+            <div
+              aria-hidden="true"
+              className={`
+                pointer-events-none absolute inset-y-[34px] left-0 z-10 w-[14vw]
+                bg-[linear-gradient(to_right,rgba(247,244,239,1),rgba(247,244,239,0))]
+                transition-opacity duration-300
+                ${canSwipe && showLeft ? "opacity-100" : "opacity-0"}
+              `}
+            />
+
+            <div
+              aria-hidden="true"
+              className={`
+                pointer-events-none absolute inset-y-[34px] right-0 z-10 w-[14vw]
+                bg-[linear-gradient(to_left,rgba(247,244,239,1),rgba(247,244,239,0))]
+                transition-opacity duration-300
+                ${canSwipe && showRight ? "opacity-100" : "opacity-0"}
+              `}
+            />
+
+            <div
+              ref={scrollerRef}
+              className="
+                -mx-[6vw] px-[6vw]
+                overflow-x-auto
+                [scrollbar-width:none]
+                [-ms-overflow-style:none]
+                [&::-webkit-scrollbar]:hidden
+                snap-x snap-mandatory
+                scroll-px-[6vw]
+                touch-pan-x
+              "
+              aria-label="スタイル写真（横スワイプ）"
+            >
+              <div className="flex gap-[4.2vw]">
+                {styles.map((style) => (
+                  <StyleCardSP key={style.name} style={style} />
+                ))}
+
+                <div aria-hidden="true" className="min-w-[6vw]" />
+              </div>
             </div>
           </div>
-        </div>
-      </Reveal>
+        </Reveal>
 
-      <div className="text-center">
-        <Reveal delay={0.24} y={12} blur={0.12} duration={0.62}>
-          <a
-            href="https://beauty.hotpepper.jp/slnH000706136/style/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="
-              inline-flex items-center gap-2
-              text-[14px]
-              text-ink/82
-              tracking-[0.06em]
-              underline underline-offset-4
-              active:opacity-80
-              transition
-            "
-          >
-            他のスタイルも見る <span aria-hidden className="text-ink/55">→</span>
-          </a>
+        <Reveal delay={0.22} y={12} blur={0.08} duration={0.62}>
+          <div className="text-center">
+            <a
+              href="https://beauty.hotpepper.jp/slnH000706136/style/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="
+                inline-flex items-center gap-2
+                text-[14px]
+                text-ink/82
+                tracking-[0.06em]
+                border-b border-ink/28
+                pb-[4px]
+                active:opacity-80
+                transition
+                focus-visible:outline-none
+                focus-visible:ring-2
+                focus-visible:ring-ink/15
+                focus-visible:ring-offset-4
+                focus-visible:ring-offset-base
+              "
+            >
+              他のスタイルも見る
+              <span aria-hidden="true" className="text-ink/50">
+                →
+              </span>
+            </a>
 
-          <p className="mt-4 text-[12px] tracking-[0.18em] text-ink/50">
-            ※ 最新の掲載は外部ページでご確認ください
-          </p>
+            <p
+              data-kicker
+              className="mt-4 text-[12px] tracking-[0.18em] text-ink/50"
+            >
+              ※ 最新の掲載は外部ページでご確認ください
+            </p>
+          </div>
         </Reveal>
       </div>
     </section>

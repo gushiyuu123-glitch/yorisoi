@@ -10,125 +10,107 @@ export default function HeroC() {
   const logoRef = useRef(null);
   const tagsRef = useRef(null);
   const photoRef = useRef(null);
-  const noteRef = useRef(null);
-  const lineRef = useRef(null);
-  const cardRef = useRef(null);
+  const photoInfoRef = useRef(null);
 
   useEffect(() => {
     const reduce =
       window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;
-
     if (reduce) return;
 
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({ delay: 0.12 });
 
-      tl.fromTo(
-        cardRef.current,
-        { opacity: 0, y: 18, filter: "blur(0.28px)" },
-        {
-          opacity: 1,
-          y: 0,
-          filter: "blur(0px)",
-          duration: 0.78,
-          ease: "power3.out",
-        }
-      );
-
-      tl.fromTo(
-        logoRef.current,
-        { opacity: 0, y: 9, filter: "blur(0.2px)" },
-        {
-          opacity: 1,
-          y: 0,
-          filter: "blur(0px)",
-          duration: 0.62,
-          ease: "power3.out",
-        },
-        "-=0.52"
-      );
-
-      tl.fromTo(
-        tagsRef.current,
-        { opacity: 0, y: 8, filter: "blur(0.16px)" },
-        {
-          opacity: 1,
-          y: 0,
-          filter: "blur(0px)",
-          duration: 0.56,
-          ease: "power3.out",
-        },
-        "-=0.42"
-      );
-
-      const letters = titleRef.current?.querySelectorAll?.(".char");
-
-      if (letters?.length) {
+      if (logoRef.current) {
         tl.fromTo(
-          letters,
-          { opacity: 0, y: 16, filter: "blur(0.22px)" },
+          logoRef.current,
+          { opacity: 0, y: 10, filter: "blur(0.22px)" },
           {
             opacity: 1,
             y: 0,
             filter: "blur(0px)",
-            stagger: 0.026,
-            duration: 0.72,
+            duration: 0.66,
             ease: "power3.out",
-          },
-          "-=0.2"
+          }
         );
       }
 
-      tl.fromTo(
-        subRef.current,
-        { opacity: 0, y: 12, filter: "blur(0.16px)" },
-        {
-          opacity: 1,
-          y: 0,
-          filter: "blur(0px)",
-          duration: 0.66,
-          ease: "power3.out",
-        },
-        "-=0.46"
-      );
+      if (tagsRef.current) {
+        tl.fromTo(
+          tagsRef.current,
+          { opacity: 0, y: 8, filter: "blur(0.18px)" },
+          {
+            opacity: 1,
+            y: 0,
+            filter: "blur(0px)",
+            duration: 0.56,
+            ease: "power3.out",
+          },
+          "-=0.42"
+        );
+      }
 
-      tl.fromTo(
-        noteRef.current,
-        { opacity: 0, y: 10 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.58,
-          ease: "power3.out",
-        },
-        "-=0.36"
-      );
+      const letters = titleRef.current?.querySelectorAll?.(".char");
+      if (letters?.length) {
+        tl.fromTo(
+          letters,
+          { opacity: 0, y: 14, filter: "blur(0.22px)" },
+          {
+            opacity: 1,
+            y: 0,
+            filter: "blur(0px)",
+            stagger: 0.028,
+            duration: 0.72,
+            ease: "power3.out",
+          },
+          "-=0.22"
+        );
+      }
 
-      tl.fromTo(
-        photoRef.current,
-        { opacity: 0.72, scale: 1.045, x: 16, filter: "blur(0.28px)" },
-        {
-          opacity: 1,
-          scale: 1,
-          x: 0,
-          filter: "blur(0px)",
-          duration: 1.05,
-          ease: "power3.out",
-        },
-        "-=0.95"
-      );
+      if (subRef.current) {
+        tl.fromTo(
+          subRef.current,
+          { opacity: 0, y: 12, filter: "blur(0.18px)" },
+          {
+            opacity: 1,
+            y: 0,
+            filter: "blur(0px)",
+            duration: 0.66,
+            ease: "power3.out",
+          },
+          "-=0.44"
+        );
+      }
 
-      tl.fromTo(
-        lineRef.current,
-        { scaleX: 0, transformOrigin: "left center", opacity: 0 },
-        {
-          scaleX: 1,
-          opacity: 1,
-          duration: 0.9,
-          ease: "power3.out",
-        },
-        "-=0.64"
-      );
+      if (photoRef.current) {
+        tl.fromTo(
+          photoRef.current,
+          { opacity: 0.62, filter: "blur(0.24px)", scale: 1.03, x: 10 },
+          {
+            opacity: 1,
+            filter: "blur(0px)",
+            scale: 1,
+            x: 0,
+            duration: 0.88,
+            ease: "power3.out",
+          },
+          "-=0.72"
+        );
+      }
+
+      if (photoInfoRef.current) {
+        tl.fromTo(
+          photoInfoRef.current,
+          { opacity: 0, y: 10, filter: "blur(0.14px)" },
+          {
+            opacity: 1,
+            y: 0,
+            filter: "blur(0px)",
+            duration: 0.62,
+            ease: "power3.out",
+          },
+          "-=0.48"
+        );
+      }
     }, rootRef);
 
     return () => ctx.revert();
@@ -136,8 +118,8 @@ export default function HeroC() {
 
   const splitChunk = (text) => (
     <span className="inline-block whitespace-nowrap" aria-hidden="true">
-      {Array.from(text).map((c, i) => (
-        <span key={`${c}-${i}`} className="char inline-block">
+      {text.split("").map((c, i) => (
+        <span key={i} className="char inline-block">
           {c === " " ? "\u00A0" : c}
         </span>
       ))}
@@ -156,300 +138,183 @@ export default function HeroC() {
     <section
       ref={rootRef}
       id="hero"
-      className="
-        relative min-h-[100svh] w-full overflow-hidden
-        bg-[#f7f4ef]
-        text-[#5d4c3f]
-      "
-      aria-label="ヨリソイ Hair&Spa Hero"
+      className="relative min-h-[100svh] w-full overflow-hidden bg-[#f7f4ef]"
+      aria-label="ヨリソイ Hero"
     >
       <NavYorisoiFloating bottom="10vh" />
 
       {/* left atmosphere */}
       <div
-        className="
-          pointer-events-none absolute inset-y-0 left-0 z-[0]
-          w-[68vw] overflow-hidden
-        "
+        className="absolute inset-y-0 left-0 w-[60vw] pointer-events-none z-[0] overflow-hidden"
         aria-hidden="true"
       >
         <img
           src="/yorisoi/hero1.png"
           alt=""
           className="
-            absolute inset-0 h-full w-full object-cover
-            opacity-[0.095] blur-[38px] scale-[1.24]
-            [mask-image:linear-gradient(to_right,rgba(0,0,0,1)_0%,rgba(0,0,0,0.52)_32%,rgba(0,0,0,0.16)_62%,rgba(0,0,0,0)_100%)]
+            absolute inset-0 w-full h-full object-cover
+            opacity-[0.10] blur-[40px] scale-[1.22]
+            [mask-image:linear-gradient(to_right,rgba(0,0,0,1)_0%,rgba(0,0,0,0.42)_30%,rgba(0,0,0,0.12)_56%,rgba(0,0,0,0)_100%)]
           "
           decoding="async"
         />
 
         <div
           className="
-            absolute left-[-12vw] top-[-18vh]
-            h-[64vh] w-[52vw] rounded-full
-            bg-[radial-gradient(circle,rgba(255,255,255,0.72)_0%,rgba(255,255,255,0.28)_44%,rgba(255,255,255,0)_70%)]
-            blur-[24px] opacity-[0.78]
+            absolute inset-0
+            bg-[radial-gradient(circle_at_32%_40%,rgba(255,255,255,0.32)_0%,rgba(255,255,255,0.15)_45%,rgba(255,255,255,0)_100%)]
+            opacity-[0.55] blur-[18px]
           "
         />
-
-        <div
-          className="
-            absolute left-[18vw] top-[25vh]
-            h-[52vh] w-[42vw] rounded-full
-            bg-[radial-gradient(circle,rgba(221,206,188,0.34)_0%,rgba(221,206,188,0.12)_48%,rgba(221,206,188,0)_72%)]
-            blur-[36px] opacity-[0.72]
-          "
-        />
-      </div>
-
-      {/* soft vertical editorial words */}
-      <div
-        aria-hidden="true"
-        className="
-          pointer-events-none absolute left-[3.4vw] top-[19vh] z-[4]
-          hidden xl:block
-          [writing-mode:vertical-rl]
-          text-[10px] tracking-[0.42em]
-          text-[rgba(96,78,62,0.34)]
-        "
-      >
-        PRIVATE BARBER / URASOE
-      </div>
-
-      <div
-        aria-hidden="true"
-        className="
-          pointer-events-none absolute bottom-[7.5vh] left-[3.4vw] z-[4]
-          hidden xl:block
-          text-[10px] tracking-[0.34em]
-          text-[rgba(96,78,62,0.32)]
-        "
-      >
-        OPEN 7:00
       </div>
 
       {/* right photo */}
-      <div
-        className="
-          absolute inset-y-0 right-0 z-[2]
-          w-[43vw] overflow-hidden bg-[#e9e3db]
-        "
-      >
+      <div className="absolute inset-y-0 right-0 w-[42vw] overflow-hidden z-[2] bg-[#eae6df]">
         <img
           ref={photoRef}
           src="/yorisoi/hero2.jpg"
           alt="ヨリソイ Hair&Spa の店内・施術イメージ"
-          className="
-            h-full w-full object-cover
-            [filter:brightness(1.035)_contrast(0.94)_saturate(0.94)]
-          "
+          className="h-full w-full object-cover [filter:brightness(1.03)_contrast(0.93)]"
           fetchPriority="high"
           decoding="async"
         />
-      </div>
 
-      {/* photo veil */}
-      <div
-        aria-hidden="true"
-        className="
-          absolute inset-y-0 right-0 z-[3]
-          w-[43vw]
-          bg-[linear-gradient(to_left,rgba(247,244,239,0.32)_0%,rgba(247,244,239,0.18)_34%,rgba(247,244,239,0.08)_70%,rgba(247,244,239,0)_100%)]
-        "
-      />
-
-      <div
-        aria-hidden="true"
-        className="
-          absolute inset-y-0 right-[43vw] z-[4]
-          w-[16vw]
-          bg-[linear-gradient(to_right,rgba(247,244,239,0)_0%,rgba(247,244,239,0.72)_72%,rgba(247,244,239,0.92)_100%)]
-        "
-      />
-
-      {/* fine hairline decoration */}
-      <div
-        aria-hidden="true"
-        className="
-          pointer-events-none absolute left-[8vw] right-[48vw] top-[16vh] z-[5]
-          h-[1px] overflow-hidden
-        "
-      >
+        {/* photo veil */}
         <div
-          ref={lineRef}
+          aria-hidden="true"
           className="
-            h-px w-full
-            bg-[linear-gradient(to_right,rgba(96,78,62,0)_0%,rgba(96,78,62,0.28)_18%,rgba(96,78,62,0.10)_68%,rgba(96,78,62,0)_100%)]
+            absolute inset-0 z-[1]
+            bg-[linear-gradient(to_left,rgba(255,255,255,0.38)_0%,rgba(255,255,255,0.18)_36%,rgba(255,255,255,0.07)_72%,rgba(255,255,255,0)_100%)]
           "
         />
-      </div>
 
-      {/* main copy card */}
-<div className="relative z-[10] flex min-h-[100svh] items-center pl-[8vw]">
+        <div
+          aria-hidden="true"
+          className="
+            absolute inset-0 z-[2]
+            bg-[linear-gradient(to_top,rgba(55,44,36,0.22)_0%,rgba(55,44,36,0.06)_34%,rgba(55,44,36,0)_68%)]
+          "
+        />
+
+ {/* small text on photo */}
+<div
+  ref={photoInfoRef}
+  className="pointer-events-none absolute inset-0 z-[4]"
+  aria-hidden="true"
+>
   <div
-    ref={cardRef}
     className="
-      relative max-w-[650px]
-      mt-[-4.2vh]
-      pt-[2vh]
+      absolute right-[3vw] top-[13vh]
+      [writing-mode:vertical-rl]
+      text-[10px]
+      tracking-[0.42em]
+      text-white/68
+      drop-shadow-[0_1px_8px_rgba(0,0,0,0.42)]
     "
   >
-    {/* 左にだけ細い気配。箱にはしない */}
-    <div
-      aria-hidden="true"
-      className="
-        absolute left-[-28px] top-[4px]
-        h-[82%] w-px
-        bg-[linear-gradient(
-          to_bottom,
-          rgba(96,78,62,0)_0%,
-          rgba(96,78,62,0.18)_18%,
-          rgba(96,78,62,0.12)_62%,
-          rgba(96,78,62,0)_100%
-        )]
-      "
-    />
+    PRIVATE BARBER / URASOE
+  </div>
 
-    <div className="relative mb-5 flex items-center gap-2.5">
-      <svg
-        className="h-[18px] w-[18px] text-[rgba(96,78,62,0.54)]"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.35"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        aria-hidden="true"
-      >
-        <circle cx="6" cy="6" r="3" />
-        <circle cx="6" cy="18" r="3" />
-        <line x1="20" y1="4" x2="8.12" y2="10.12" />
-        <line x1="8.12" y1="13.88" x2="20" y2="20" />
-      </svg>
+  <div
+    className="
+      absolute right-[3vw] bottom-[8vh]
+      w-[min(330px,74%)]
+      border-t border-white/26
+      pt-4
+      text-right
+      text-white/78
+      drop-shadow-[0_1px_8px_rgba(0,0,0,0.42)]
+    "
+  >
+    <p className="mb-2 text-[10px] tracking-[0.32em] text-white/58">
+      SHOP INFORMATION
+    </p>
 
-      <div
-        ref={logoRef}
-        className="
-          text-[19px] font-light
-          tracking-[0.36em]
-          text-[rgba(96,78,62,0.82)]
-        "
-      >
-        ヨリソイ
-        <span
-          className="
-            ml-2 text-[12px] tracking-[0.28em]
-            text-[rgba(96,78,62,0.58)]
-          "
-        >
-          Hair&Spa
-        </span>
-      </div>
-
-      <div
-        className="
-          h-px w-[118px]
-          translate-y-[0.5px]
-          border-t border-dashed border-[rgba(96,78,62,0.30)]
-        "
-        aria-hidden="true"
-      />
-    </div>
-
-    <ul
-      ref={tagsRef}
-      className="
-        mb-8 flex flex-wrap
-        gap-x-3.5 gap-y-2
-        text-[12px]
-        tracking-[0.18em]
-        text-[rgba(96,78,62,0.62)]
-      "
-      aria-label="店舗の特徴"
-    >
-      {TAGS.map((tag) => (
-        <li key={tag} className="whitespace-nowrap">
-          [{tag}]
-        </li>
-      ))}
-    </ul>
-
-    <h1
-      ref={titleRef}
-      aria-label={`${LINE_1} ${LINE_2}`}
-      className="
-        max-w-[560px]
-        text-[clamp(34px,3.65vw,50px)]
-        font-medium
-        leading-[1.2]
-        tracking-[0.005em]
-        text-[#5d4c3f]
-      "
-    >
-      {splitChunk(LINE_1)}
+    <p className="text-[12px] leading-[1.9] tracking-[0.08em]">
+      URASOE / OPEN 7:00
       <br />
-      {splitChunk(LINE_2)}
-    </h1>
-
-    <div ref={subRef} className="mt-7 max-w-[540px]">
-      <p
-        className="
-          text-[15.5px]
-          leading-[1.95]
-          tracking-[0.015em]
-          text-[rgba(93,76,63,0.78)]
-        "
-      >
-        {SUB_1}
-        <br />
-        {SUB_2}
-      </p>
-    </div>
-
-    {/* 情報もカードにしない。細い区切りだけ */}
-    <div
-      ref={noteRef}
-      className="
-        mt-9 max-w-[540px]
-        border-t border-[rgba(96,78,62,0.13)]
-        pt-5
-        text-[12px]
-        leading-[1.95]
-        tracking-[0.08em]
-        text-[rgba(96,78,62,0.56)]
-      "
-    >
-      <div className="grid grid-cols-[74px_1fr] gap-x-4 gap-y-1.5">
-        <span className="text-[rgba(96,78,62,0.70)]">URASOE</span>
-        <span>沖縄県浦添市内間2丁目20-3</span>
-
-        <span className="text-[rgba(96,78,62,0.70)]">TIME</span>
-        <span>7:00 — 19:00 / 毎週月曜定休</span>
-      </div>
-    </div>
+      CUT / PERM / SHAVING
+    </p>
   </div>
 </div>
+        </div>
+   
 
-      {/* bottom atmosphere */}
-      <div
-        aria-hidden="true"
-        className="
-          pointer-events-none absolute bottom-0 left-0 right-0 z-[6]
-          h-[18vh]
-          bg-[linear-gradient(to_top,rgba(247,244,239,0.96)_0%,rgba(247,244,239,0.58)_48%,rgba(247,244,239,0)_100%)]
-        "
-      />
+      {/* left copy */}
+      <div className="relative z-[10] pt-[18vh] pl-[8vw] max-w-[620px]">
+        <div className="relative mb-4 flex items-center gap-2">
+          <svg
+            className="w-[18px] h-[18px] text-[rgba(96,78,62,0.55)]"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.4"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <circle cx="6" cy="6" r="3" />
+            <circle cx="6" cy="18" r="3" />
+            <line x1="20" y1="4" x2="8.12" y2="10.12" />
+            <line x1="8.12" y1="13.88" x2="20" y2="20" />
+          </svg>
 
-      <div
-        aria-hidden="true"
-        className="
-          pointer-events-none absolute bottom-[5.8vh] left-[8vw] z-[7]
-          text-[10px] tracking-[0.36em]
-          text-[rgba(96,78,62,0.30)]
-        "
-      >
-        CUT / PERM / SHAVING / HEAD SPA
+          <div
+            ref={logoRef}
+            className="text-[19px] tracking-[0.36em] text-[rgba(96,78,62,0.80)] font-light"
+          >
+            ヨリソイ
+            <span className="ml-2 text-[12px] tracking-[0.28em] text-[rgba(96,78,62,0.62)]">
+              Hair&Spa
+            </span>
+          </div>
+
+          <div className="h-[1px] w-[120px] border-t border-dashed border-[rgba(96,78,62,0.35)] translate-y-[0.5px]" />
+        </div>
+
+        <ul
+          ref={tagsRef}
+          className="
+            mb-7
+            flex flex-wrap
+            gap-x-3 gap-y-1.5
+            text-[12px]
+            tracking-[0.18em]
+            text-[rgba(96,78,62,0.62)]
+          "
+          aria-label="店舗の特徴"
+        >
+          {TAGS.map((t) => (
+            <li key={t} className="whitespace-nowrap">
+              [{t}]
+            </li>
+          ))}
+        </ul>
+
+        <h1
+          ref={titleRef}
+          aria-label={`${LINE_1} ${LINE_2}`}
+          className="
+            text-[clamp(30px,3.4vw,44px)]
+            leading-[1.22]
+            font-medium
+            text-[#5d4c3f]
+            max-w-[520px]
+            tracking-[0.005em]
+          "
+        >
+          {splitChunk(LINE_1)}
+          <br />
+          {splitChunk(LINE_2)}
+        </h1>
+
+        <div ref={subRef} className="mt-6 max-w-[520px]">
+          <p className="text-[15px] leading-[1.9] tracking-[0.01em] text-[rgba(93,76,63,0.78)]">
+            {SUB_1}
+            <br />
+            {SUB_2}
+          </p>
+        </div>
       </div>
     </section>
   );

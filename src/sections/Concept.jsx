@@ -8,30 +8,30 @@ export default function Concept() {
       {
         kicker: "POINT 01",
         title: "半個室の2席で、落ち着いて進める。",
-        desc: "周りが気になりにくい空間で、最初から最後までひとりが担当します。",
-        sub: ["席数は2席", "ひとりが通しで担当"],
+        desc: "周りが気になりにくい空間で、最初から最後まで店主が担当します。",
+        sub: ["席数は2席", "店主が通しで担当"],
         img: "/yorisoi/concept-room.png",
-        alt: "ヨリソイの店内（半個室の席）",
+        alt: "ヨリソイ Hair＆Spaの半個室の店内",
         cap: "SCENE 01 / ROOM",
         aspect: "aspect-[16/10]",
       },
       {
         kicker: "POINT 02",
         title: "先に把握して、方向を決める。",
-        desc: "直したい点と日頃のスタイリングを先に聞き取り、\nその人向きの形を見立てます。",
+        desc: "直したい点と日頃の手入れを先に聞き取り、\n骨格や毛流れを見ながら、その人に合う形を見立てます。",
         sub: ["途中で変わってOK", "必要なことから順に進める"],
         img: "/yorisoi/concept-cut1.png",
-        alt: "施術前に確認している様子",
+        alt: "ヨリソイ Hair＆Spaで施術前に髪型を確認している様子",
         cap: "SCENE 02 / CUT",
         aspect: "aspect-[16/10]",
       },
       {
         kicker: "POINT 03",
-        title: "翌朝の手順が、少なくなる形へ。",
-        desc: "乾かして手ぐしで形が出るように。セットに時間をかけずに済む仕上がりを目指します。",
+        title: "翌朝の手入れが、ラクになる形へ。",
+        desc: "乾かして手ぐしで形が出るように。\nセットに時間をかけずに済む仕上がりを目指します。",
         sub: ["乾かして形が出る", "髪質・骨格に応じて調整"],
         img: "/yorisoi/concept-home.png",
-        alt: "自宅で髪を支度している様子",
+        alt: "自宅で髪を整える男性の朝の支度",
         cap: "SCENE 03 / HOME",
         aspect: "aspect-[4/3]",
       },
@@ -43,14 +43,19 @@ export default function Concept() {
     <section
       id="concept"
       className="
-        relative w-full bg-base
+        relative isolate w-full overflow-hidden
+        bg-base
         pt-[18vh] pb-[18vh] px-[8vw]
-        overflow-hidden
       "
-      aria-label="コンセプト"
+      aria-labelledby="concept-title"
     >
-      {/* 背景：鳥は“気配”に留める */}
-      <div aria-hidden className="absolute inset-0 -z-10">
+      <p className="sr-only">
+        ヨリソイ Hair＆Spaが任せやすい理由です。半個室の2席、店主によるマンツーマン対応、
+        施術前の確認、骨格や毛流れに合わせたメンズカット、朝の手入れがしやすい仕上がりについて紹介しています。
+      </p>
+
+      {/* 背景：鳥は気配だけ */}
+      <div aria-hidden="true" className="absolute inset-0 z-0 pointer-events-none">
         <img
           src="/yorisoi/bird.png"
           alt=""
@@ -61,34 +66,41 @@ export default function Concept() {
             [filter:brightness(1.05)_contrast(0.92)]
           "
         />
+
         <div
           className="
             absolute inset-0
-            bg-[radial-gradient(circle_at_28%_22%,rgba(255,253,249,0.72),rgba(255,253,249,0.16)_62%,rgba(247,244,239,0.93)_100%)]
+            bg-[radial-gradient(circle_at_28%_22%,rgba(255,253,249,0.72),rgba(255,253,249,0.16)_62%,rgba(247,244,239,0.95)_100%)]
           "
         />
       </div>
 
-      <div className="mx-auto max-w-[1280px]">
-        {/* 見出し */}
+      <div className="relative z-10 mx-auto max-w-[1280px]">
         <header className="max-w-[860px]">
           <Reveal
             as="p"
+            data-kicker
             y={12}
             blur={0.14}
             duration={0.62}
-            className="text-[13px] tracking-[0.32em] text-ink/55 mb-4"
+            className="mb-4 text-[13px] tracking-[0.32em] text-ink/55"
           >
             CONCEPT
           </Reveal>
 
           <Reveal
             as="h2"
+            id="concept-title"
             delay={0.06}
             y={12}
             blur={0.14}
             duration={0.62}
-            className="text-[clamp(26px,3vw,34px)] leading-[1.42] text-ink/90 font-medium"
+            className="
+              text-[clamp(28px,3vw,36px)]
+              leading-[1.42]
+              text-ink/90
+              font-medium
+            "
           >
             任せやすい理由を、3つにまとめました。
           </Reveal>
@@ -98,9 +110,15 @@ export default function Concept() {
             y={12}
             blur={0.14}
             duration={0.62}
-            className="mt-8 text-[15.5px] leading-[2.0] text-ink/78"
+            className="
+              mt-8
+              text-[15.8px]
+              leading-[2.05]
+              text-ink/78
+              max-w-[760px]
+            "
           >
-          空間で落ち着けて、先に方向が決まって、最後は手がかからない仕上がりへ。
+            空間で落ち着けて、先に方向が決まって、最後は手がかからない仕上がりへ。
             <br />
             この順番が、いちばん自然だと思っています。
           </Reveal>
@@ -110,49 +128,64 @@ export default function Concept() {
             y={10}
             blur={0.12}
             duration={0.58}
-            className="mt-10 h-px w-[62%] bg-ink/14"
-            aria-hidden
+            className="
+              mt-10
+              h-px
+              w-[62%]
+              bg-[linear-gradient(to_right,rgba(96,78,62,0.18),rgba(96,78,62,0.04),rgba(96,78,62,0))]
+            "
+            aria-hidden="true"
           />
         </header>
 
-        {/* POINT */}
         <div className="mt-[10vh] space-y-[12vh]">
-          {POINTS.map((p, i) => {
-            const flip = i === 1;
+          {POINTS.map((point, index) => {
+            const flip = index === 1;
+
             const bleed = flip
               ? "md:-ml-[8vw] md:pr-[2vw]"
               : "md:-mr-[8vw] md:pl-[2vw]";
+
+            const textOrder = flip ? "md:order-2" : "md:order-1";
+            const imageOrder = flip ? "md:order-1" : "md:order-2";
             const textAlign = flip ? "md:text-right" : "md:text-left";
             const subAlign = flip ? "md:justify-end" : "";
             const seamAlign = flip ? "md:ml-auto" : "";
 
             return (
-              <div key={p.kicker} className="pt-14 border-t border-ink/12">
+              <section
+                key={point.kicker}
+                className="pt-14 border-t border-ink/12"
+                aria-labelledby={`concept-point-${index + 1}`}
+              >
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-y-8 md:gap-x-10 items-start">
-                  {/* TEXT */}
-                  <div
-                    className={`md:col-span-4 ${
-                      flip ? "md:order-2" : "md:order-1"
-                    } ${textAlign}`}
-                  >
+                  <div className={`md:col-span-4 ${textOrder} ${textAlign}`}>
                     <Reveal
+                      as="p"
+                      data-kicker
                       y={12}
                       blur={0.14}
                       duration={0.62}
-                      className="text-[11px] tracking-[0.28em] text-ink/55 mb-3"
+                      className="mb-3 text-[11px] tracking-[0.28em] text-ink/55"
                     >
-                      {p.kicker}
+                      {point.kicker}
                     </Reveal>
 
                     <Reveal
+                      as="h3"
+                      id={`concept-point-${index + 1}`}
                       delay={0.06}
                       y={12}
                       blur={0.14}
                       duration={0.62}
-                      as="h3"
-                      className="text-[18px] leading-[1.7] text-ink/90 font-medium"
+                      className="
+                        text-[19px]
+                        leading-[1.7]
+                        text-ink/90
+                        font-medium
+                      "
                     >
-                      {p.title}
+                      {point.title}
                     </Reveal>
 
                     <Reveal
@@ -160,9 +193,15 @@ export default function Concept() {
                       y={12}
                       blur={0.14}
                       duration={0.62}
-                      className="mt-3 text-[14.8px] leading-[1.95] text-ink/76 whitespace-pre-line"
+                      className="
+                        mt-3
+                        text-[15px]
+                        leading-[1.98]
+                        text-ink/76
+                        whitespace-pre-line
+                      "
                     >
-                      {p.desc}
+                      {point.desc}
                     </Reveal>
 
                     <Reveal
@@ -170,12 +209,19 @@ export default function Concept() {
                       y={10}
                       blur={0.12}
                       duration={0.58}
-                      className={`mt-6 flex flex-wrap gap-x-4 gap-y-2 text-[12.5px] tracking-[0.06em] text-ink/62 ${subAlign}`}
+                      className={`
+                        mt-6
+                        flex flex-wrap gap-x-4 gap-y-2
+                        text-[12.8px]
+                        tracking-[0.06em]
+                        text-ink/62
+                        ${subAlign}
+                      `}
                     >
-                      {p.sub.map((s, idx) => (
-                        <span key={idx} className="inline-flex items-center gap-2">
-                          <span className="h-[1px] w-[10px] bg-ink/28" aria-hidden />
-                          {s}
+                      {point.sub.map((text) => (
+                        <span key={text} className="inline-flex items-center gap-2">
+                          <span className="h-px w-[10px] bg-ink/28" aria-hidden="true" />
+                          {text}
                         </span>
                       ))}
                     </Reveal>
@@ -186,48 +232,41 @@ export default function Concept() {
                       blur={0.12}
                       duration={0.54}
                       className={`mt-10 h-px w-[72%] bg-ink/14 ${seamAlign}`}
-                      aria-hidden
+                      aria-hidden="true"
                     />
                   </div>
 
-                  {/* IMAGE */}
-                  <figure
-                    className={`${
-                      flip
-                        ? "md:col-span-8 md:order-1"
-                        : "md:col-span-8 md:order-2"
-                    } ${bleed}`}
-                  >
+                  <figure className={`md:col-span-8 ${imageOrder} ${bleed}`}>
                     <Reveal y={12} blur={0.12} duration={0.62}>
                       <img
-                        src={p.img}
-                        alt={p.alt}
+                        src={point.img}
+                        alt={point.alt}
                         loading="lazy"
                         decoding="async"
                         className={`
                           w-full object-cover
-                          rounded-[6px]
+                          rounded-[4px]
                           border border-ink/10
-                          shadow-[0_10px_26px_rgba(0,0,0,0.08)]
-                          [filter:brightness(1.02)_contrast(0.95)]
-                          ${p.aspect}
+                          shadow-[0_10px_26px_rgba(72,55,40,0.08)]
+                          [filter:brightness(1.02)_contrast(0.95)_saturate(0.97)]
+                          ${point.aspect}
                         `}
                       />
                     </Reveal>
 
                     <Reveal
+                      as="figcaption"
                       delay={0.06}
                       y={10}
                       blur={0.10}
                       duration={0.56}
-                      as="figcaption"
                       className="mt-3 text-[11px] tracking-[0.20em] text-ink/58"
                     >
-                      {p.cap}
+                      {point.cap}
                     </Reveal>
                   </figure>
                 </div>
-              </div>
+              </section>
             );
           })}
         </div>

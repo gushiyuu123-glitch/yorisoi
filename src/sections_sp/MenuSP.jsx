@@ -3,36 +3,41 @@ import { useEffect, useMemo, useState } from "react";
 import { Reveal } from "../components/Reveal";
 import HandwrittenSvgTitle from "../components/HandwrittenSvgTitle";
 
-const PAPER = "/yorisoi/menu-paper2.png"; // ✅ PCと同じ紙
-
 const MICROCMS_DOMAIN = import.meta.env.VITE_MICROCMS_SERVICE_DOMAIN;
 const MICROCMS_KEY = import.meta.env.VITE_MICROCMS_API_KEY;
 const MICROCMS_MENU_API_ID = import.meta.env.VITE_MICROCMS_MENU_API_ID ?? "menu";
 
 const RESERVE_URL =
   "https://beauty.hotpepper.jp/CSP/bt/reserve/?storeId=H000706136";
-const COUPON_URL = "https://beauty.hotpepper.jp/slnH000706136/coupon/";
 
 async function fetchMenuPatch({ signal } = {}) {
   if (!MICROCMS_DOMAIN || !MICROCMS_KEY) return null;
 
   const url = `https://${MICROCMS_DOMAIN}.microcms.io/api/v1/${MICROCMS_MENU_API_ID}`;
-  const r = await fetch(url, {
+
+  const res = await fetch(url, {
     method: "GET",
-    headers: { "X-MICROCMS-API-KEY": MICROCMS_KEY },
+    headers: {
+      "X-MICROCMS-API-KEY": MICROCMS_KEY,
+    },
     signal,
   });
 
-  if (!r.ok) return null;
-  return r.json();
+  if (!res.ok) return null;
+  return res.json();
 }
 
 function pickStr(obj, keys) {
   if (!obj) return undefined;
-  for (const k of keys) {
-    const v = obj?.[k];
-    if (typeof v === "string" && v.trim() !== "") return v;
+
+  for (const key of keys) {
+    const value = obj?.[key];
+
+    if (typeof value === "string" && value.trim() !== "") {
+      return value.trim();
+    }
   }
+
   return undefined;
 }
 
@@ -41,29 +46,25 @@ const FEATURED = [
     label: "POPULAR 01",
     title: "カット・シャンプー＋眉シェービング",
     price: "¥4,280",
-    desc: "迷ったらこれから。顔まわりの印象をまとめたい方に選ばれています。",
-    note: "人気No.1",
+    note: "迷ったらまずこれ",
   },
   {
     label: "POPULAR 02",
     title: "カット・シャンプー＋眉・顔全体シェービング",
     price: "¥4,800",
-    desc: "顔まわりまできちんと仕上げて、印象を引き締めたい方向け。",
-    note: "極上清潔感",
+    note: "清潔感を整えたい方へ",
   },
   {
     label: "POPULAR 03",
     title: "極上ヘッドスパ＋カットシャンプー（60分）",
     price: "¥5,880",
-    desc: "疲れをほぐしながら、頭まわりまで軽くしたい日に。",
-    note: "癒し時間",
+    note: "頭まわりまですっきり",
   },
   {
     label: "POPULAR 04",
     title: "トップふんわり ボリュームUPパーマ",
     price: "¥9,980",
-    desc: "トップの立ち上がりが気になる方へ。大人向けの自然なパーマ。",
-    note: "自然な仕上がり",
+    note: "自然なボリューム感",
   },
 ];
 
@@ -114,13 +115,97 @@ const GROUPS = [
 ];
 
 function groupSummary(group) {
-  if (typeof group?.summary === "string" && group.summary.trim())
-    return group.summary.trim();
   const first = group?.items?.[0];
   if (!first) return "";
+
   const [name, price] = first;
   if (!name || !price) return "";
+
   return `${name} ${price}〜`;
+}
+
+function PlusIcon({ open }) {
+  return (
+    <span
+      className={`
+        relative block h-[18px] w-[18px] shrink-0
+        after:absolute after:left-1/2 after:top-1/2 after:h-px after:w-[14px]
+        after:-translate-x-1/2 after:-translate-y-1/2 after:bg-ink/70
+        before:absolute before:left-1/2 before:top-1/2 before:h-[14px] before:w-px
+        before:-translate-x-1/2 before:-translate-y-1/2 before:bg-ink/70
+        before:transition-transform before:duration-300
+        ${open ? "before:scale-y-0" : ""}
+      `}
+      aria-hidden="true"
+    />
+  );
+}
+
+function FeaturedRowSP({ item, index }) {
+  const no = String(index + 1).padStart(2, "0");
+
+  return (
+    <article
+      className="
+        relative
+        py-5 pl-5 pr-1
+        border-t border-ink/10
+        bg-[linear-gradient(90deg,rgba(255,255,255,0.34),rgba(255,255,255,0.12),rgba(255,255,255,0))]
+      "
+    >
+      <span
+        aria-hidden="true"
+        className="
+          absolute left-0 top-5
+          h-[calc(100%-40px)] w-px
+          bg-[linear-gradient(to_bottom,rgba(124,78,91,0.44),rgba(124,78,91,0.08))]
+        "
+      />
+
+      <div className="mb-2 flex items-start justify-between gap-5">
+        <div className="min-w-0">
+          <p
+            data-kicker
+            className="
+              mb-1.5
+              text-[11px]
+              tracking-[0.20em]
+              text-ink/44
+            "
+          >
+            POPULAR {no}
+          </p>
+
+          <h3
+            className="
+              text-[16.5px]
+              leading-[1.62]
+              font-medium
+              text-ink/90
+            "
+          >
+            {item.title}
+          </h3>
+        </div>
+
+        <p
+          data-no-scale
+          className="
+            shrink-0
+            pt-[21px]
+            text-[18px]
+            font-semibold
+            tracking-[0.01em]
+            text-[#6f4853]
+          "
+        >
+          {item.price}
+        </p>
+      </div>
+
+      <p className="text-[14px] leading-[1.75] text-ink/62">{item.note}</p>
+    </article>
+  );
 }
 
 function AccordionSP({ group, openKey, setOpenKey }) {
@@ -132,65 +217,73 @@ function AccordionSP({ group, openKey, setOpenKey }) {
       <button
         type="button"
         onClick={() => setOpenKey(isOpen ? null : group.key)}
-        className="w-full flex items-start justify-between gap-5 py-4 text-left"
+        className="
+          w-full
+          py-5
+          text-left
+          focus-visible:outline-none
+          focus-visible:ring-2
+          focus-visible:ring-ink/15
+          focus-visible:ring-offset-4
+          focus-visible:ring-offset-base
+        "
         aria-expanded={isOpen}
       >
-        <div className="min-w-0">
-          <p
-            data-kicker
-            className="text-[clamp(11px,3.1vw,12px)] tracking-[0.18em] text-ink/45 mb-1"
-          >
-            {group.en}
-          </p>
-
-          <h3 className="text-[clamp(17px,4.4vw,18px)] text-ink/90 font-medium">
-            {group.title}
-          </h3>
-
-          {!!summary && (
+        <div className="flex items-start justify-between gap-5">
+          <div className="min-w-0">
             <p
               data-kicker
-              className="mt-2 text-[clamp(13px,3.6vw,14.5px)] leading-[1.75] text-ink/62"
+              className="mb-1 text-[11px] tracking-[0.18em] text-ink/45"
             >
-              <span className="mr-2 text-ink/40" aria-hidden>
-                └
-              </span>
-              {summary}
+              {group.en}
             </p>
-          )}
-        </div>
 
-        <span
-          className={`
-            relative block w-[16px] h-[16px] shrink-0 mt-[3px]
-            after:absolute after:left-1/2 after:top-1/2 after:w-[12px] after:h-[1px]
-            after:bg-ink/70 after:-translate-x-1/2 after:-translate-y-1/2
-            before:absolute before:left-1/2 before:top-1/2 before:w-[1px] before:h-[12px]
-            before:bg-ink/70 before:-translate-x-1/2 before:-translate-y-1/2
-            ${isOpen ? "before:scale-y-0" : ""}
-            transition-all duration-300
-          `}
-          aria-hidden="true"
-        />
+            <h3 className="text-[18px] font-medium text-ink/90">
+              {group.title}
+            </h3>
+
+            {!!summary && (
+              <p className="mt-2 text-[14px] leading-[1.75] text-ink/60">
+                目安：{summary}
+              </p>
+            )}
+          </div>
+
+          <div className="mt-[4px] flex shrink-0 items-center gap-3">
+            <span className="text-[13px] text-ink/50">
+              {isOpen ? "閉じる" : "見る"}
+            </span>
+            <PlusIcon open={isOpen} />
+          </div>
+        </div>
       </button>
 
       <div
         className={`
           grid transition-[grid-template-rows,opacity] duration-500 ease-out
-          ${isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-85"}
+          ${isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-80"}
         `}
       >
         <div className="overflow-hidden">
-          <div className="pb-4">
-            {group.items.map(([name, price], i) => (
+          <div className="pb-5">
+            {group.items.map(([name, price], index) => (
               <div
-                key={`${group.key}-${i}`}
-                className="flex justify-between gap-4 py-2.5 border-b border-ink/10"
+                key={`${group.key}-${index}`}
+                className="
+                  grid grid-cols-[1fr_auto]
+                  gap-5
+                  border-b border-ink/10
+                  py-3
+                "
               >
-                <span className="text-[clamp(14px,3.9vw,15px)] leading-[1.75] text-ink/82 pr-3">
+                <span className="text-[15px] leading-[1.75] text-ink/82">
                   {name}
                 </span>
-                <span className="shrink-0 text-[clamp(14px,3.9vw,15px)] font-medium text-ink/88">
+
+                <span
+                  data-no-scale
+                  className="shrink-0 text-[15px] font-semibold text-ink/88"
+                >
                   {price}
                 </span>
               </div>
@@ -202,117 +295,88 @@ function AccordionSP({ group, openKey, setOpenKey }) {
   );
 }
 
-function FeaturedCellSP({ item }) {
-  return (
-    <article className="spCell bg-[rgba(255,255,255,0.22)] px-4 py-4">
-      <div className="flex items-start justify-between gap-4 mb-2.5">
-        <div className="min-w-0">
-          <p data-kicker className="text-[10px] tracking-[0.18em] text-ink/52 mb-1.5">
-            {item.label}
-          </p>
-          <h3 className="text-[clamp(15px,4.0vw,16px)] leading-[1.5] text-ink/88 font-semibold">
-            {item.title}
-          </h3>
-        </div>
-
-        <div className="shrink-0 text-right">
-          <p data-kicker className="text-[clamp(11px,3.2vw,12px)] text-ink/56 mb-0.5">
-            {item.note}
-          </p>
-          <p data-no-scale className="text-[17.5px] tracking-[0.01em] text-ink/88 font-bold">
-            {item.price}
-          </p>
-        </div>
-      </div>
-
-      {/* ここは“読む情報”なので大きくなってOK */}
-      <p className="text-[13.2px] leading-[1.75] text-ink/80">{item.desc}</p>
-
-      <div className="mt-3">
-        <span
-          data-kicker
-          className="
-            inline-block
-            text-[9.5px]
-            tracking-[0.22em]
-            text-ink/60
-            border border-ink/20
-            bg-[rgba(255,255,255,0.30)]
-            px-2.5 py-[3px]
-          "
-        >
-          RECOMMENDED
-        </span>
-      </div>
-    </article>
-  );
-}
-
 export default function MenuSP() {
   const [openKey, setOpenKey] = useState(null);
   const [cms, setCms] = useState(null);
 
   useEffect(() => {
     const ac = new AbortController();
+
     fetchMenuPatch({ signal: ac.signal })
       .then((data) => setCms(data))
       .catch(() => {});
+
     return () => ac.abort();
   }, []);
 
   const featuredUI = useMemo(() => {
-    return FEATURED.map((it, i) => {
-      const p = cms?.featured?.[i];
-      if (!p) return it;
+    return FEATURED.map((item, index) => {
+      const patch = cms?.featured?.[index];
+      if (!patch) return item;
 
-      const title = pickStr(p, ["title", "menuName", "name"]) ?? it.title;
-      const price = pickStr(p, ["price"]) ?? it.price;
-      const note = pickStr(p, ["note", "sub", "caption"]) ?? it.note;
-      const desc = pickStr(p, ["desc", "description"]) ?? it.desc;
+      const title = pickStr(patch, ["title", "menuName", "name"]) ?? item.title;
+      const price = pickStr(patch, ["price"]) ?? item.price;
+      const note = pickStr(patch, ["note", "sub", "caption"]) ?? item.note;
 
-      return { ...it, title, price, note, desc };
+      return { ...item, title, price, note };
     });
   }, [cms]);
 
   const groupsUI = useMemo(() => {
-    return GROUPS.map((g) => {
-      const rows = cms?.[g.key];
-      if (!Array.isArray(rows) || rows.length === 0) return g;
+    return GROUPS.map((group) => {
+      const rows = cms?.[group.key];
+      if (!Array.isArray(rows) || rows.length === 0) return group;
 
-      const patched = g.items.map(([name, price], i) => {
-        const r = rows[i];
-        if (!r) return [name, price];
+      const patched = group.items.map(([name, price], index) => {
+        const row = rows[index];
 
-        const n = pickStr(r, ["name", "menuName", "title"]) ?? name;
-        const p = pickStr(r, ["price"]) ?? price;
-        return [n, p];
+        if (!row) return [name, price];
+
+        const nextName = pickStr(row, ["name", "menuName", "title"]) ?? name;
+        const nextPrice = pickStr(row, ["price"]) ?? price;
+
+        return [nextName, nextPrice];
       });
 
-      for (let i = g.items.length; i < rows.length; i++) {
-        const r = rows[i];
-        const n = pickStr(r, ["name", "menuName", "title"]);
-        const p = pickStr(r, ["price"]);
-        if (n && p) patched.push([n, p]);
+      for (let i = group.items.length; i < rows.length; i += 1) {
+        const row = rows[i];
+
+        const nextName = pickStr(row, ["name", "menuName", "title"]);
+        const nextPrice = pickStr(row, ["price"]);
+
+        if (nextName && nextPrice) {
+          patched.push([nextName, nextPrice]);
+        }
       }
 
-      return { ...g, items: patched };
+      return { ...group, items: patched };
     });
   }, [cms]);
 
   return (
     <section
       id="menu-sp"
-      className="w-full bg-base pt-[18vh] pb-[16vh] px-[6vw]"
+      className="
+        w-full bg-base
+        pt-[18vh]
+        px-[6vw]
+        pb-[16vh]
+      "
       aria-label="メニュー"
     >
+      <p className="sr-only">
+        ヨリソイ Hair＆Spaのメニュー料金です。メンズカット、眉シェービング、
+        顔全体シェービング、メンズパーマ、白髪ぼかし、ヘッドスパなどの料金を掲載しています。
+      </p>
+
       <div className="mx-auto max-w-[560px]">
-        <Reveal y={12} blur={0.12} duration={0.62}>
-          <div className="mb-10">
+        <Reveal y={12} blur={0.10} duration={0.62}>
+          <header className="mb-11">
             <div className="mb-5 overflow-hidden">
               <div
                 style={{
-                  width: "min(72vw, 300px)",
-                  minWidth: 190,
+                  width: "min(66vw, 280px)",
+                  minWidth: 180,
                   opacity: 0.9,
                   filter: "contrast(0.92) saturate(0.92)",
                 }}
@@ -331,76 +395,78 @@ export default function MenuSP() {
               </div>
             </div>
 
-            <p data-kicker className="text-[11px] tracking-[0.32em] text-ink/55 mb-4">
+            <p
+              data-kicker
+              className="mb-4 text-[12px] tracking-[0.30em] text-ink/55"
+            >
               料金
             </p>
 
-            <h2 className="text-[clamp(20px,5.8vw,26px)] leading-[1.55] text-ink/90 font-medium">
-              迷いを減らすために、
+            <h2 className="text-[clamp(24px,6.4vw,28px)] leading-[1.55] font-medium text-ink/90">
+              迷ったら、
               <br />
-              よく選ばれるメニューを
-              <br />
-              先に並べました。
+              まず人気メニューから。
             </h2>
 
-            <p className="mt-4 text-[13.5px] leading-[1.9] text-ink/70">
-              上は「人気メニュー」、下は「カテゴリ別一覧」です。最新の内容・空席はHotPepperでご確認ください。
+            <p className="mt-5 text-[16px] leading-[1.9] text-ink/72">
+              よく選ばれるメニューを先にまとめています。
+              その他の料金は、下のカテゴリから確認できます。
             </p>
-          </div>
+          </header>
         </Reveal>
 
-        <Reveal delay={0.06} y={12} blur={0.12} duration={0.62}>
-          <div className="mb-[9vh]">
-            <div className="mb-5">
-              <p data-kicker className="text-[11px] tracking-[0.24em] text-ink/46 mb-1.5">
+        <Reveal delay={0.06} y={12} blur={0.10} duration={0.62}>
+          <section className="mb-[9vh]" aria-labelledby="menu-sp-pickup">
+            <div className="mb-4">
+              <p
+                data-kicker
+                className="mb-1.5 text-[11px] tracking-[0.24em] text-ink/46"
+              >
                 PICK UP
               </p>
-              <h3 className="text-[18px] text-ink/90 font-medium">人気メニュー</h3>
-              <p data-kicker className="mt-2 text-[clamp(13px,3.6vw,14px)] text-ink/56">
-                よく選ばれるものから見やすく
-              </p>
+
+              <h3
+                id="menu-sp-pickup"
+                className="text-[20px] font-medium text-ink/90"
+              >
+                人気メニュー
+              </h3>
             </div>
 
-            <div className="spFeatured relative overflow-hidden border border-ink/12">
-              <img
-                src={PAPER}
-                alt=""
-                aria-hidden="true"
-                className="
-                  absolute inset-0 w-full h-full object-cover
-                  opacity-[0.40]
-                  scale-[1.06]
-                "
-                loading="lazy"
-                decoding="async"
-              />
-              <div
-                aria-hidden="true"
-                className="
-                  absolute inset-0
-                  bg-[radial-gradient(circle_at_28%_18%,rgba(255,253,249,0.72),rgba(255,253,249,0.50)_56%,rgba(255,253,249,0.62)_100%)]
-                "
-              />
-              <div aria-hidden="true" className="absolute inset-0 shadow-[0_14px_30px_rgba(0,0,0,0.07)]" />
-
-              <div className="relative p-[clamp(12px,4vw,18px)]">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-px bg-ink/12 border border-ink/12">
-                  {featuredUI.map((item, idx) => (
-                    <FeaturedCellSP key={item.label ?? idx} item={item} />
-                  ))}
-                </div>
-              </div>
+            <div
+              className="
+                relative
+                border-b border-ink/10
+                bg-[radial-gradient(circle_at_12%_0%,rgba(255,255,255,0.44),rgba(255,255,255,0)_58%)]
+              "
+            >
+              {featuredUI.map((item, index) => (
+                <FeaturedRowSP
+                  key={item.label ?? index}
+                  item={item}
+                  index={index}
+                />
+              ))}
             </div>
-          </div>
+          </section>
         </Reveal>
 
-        <Reveal delay={0.08} y={12} blur={0.12} duration={0.62}>
-          <div className="mb-[9vh]">
-            <div className="mb-5">
-              <p data-kicker className="text-[11px] tracking-[0.22em] text-ink/46 mb-2">
+        <Reveal delay={0.08} y={12} blur={0.10} duration={0.62}>
+          <section className="mb-[9vh]" aria-labelledby="menu-sp-all">
+            <div className="mb-4">
+              <p
+                data-kicker
+                className="mb-1.5 text-[11px] tracking-[0.22em] text-ink/46"
+              >
                 ALL MENU
               </p>
-              <h3 className="text-[20px] text-ink/90 font-medium">その他のメニュー</h3>
+
+              <h3
+                id="menu-sp-all"
+                className="text-[20px] font-medium text-ink/90"
+              >
+                その他のメニュー
+              </h3>
             </div>
 
             <div className="border-b border-ink/10">
@@ -413,55 +479,45 @@ export default function MenuSP() {
                 />
               ))}
             </div>
-          </div>
+          </section>
         </Reveal>
 
-        <Reveal delay={0.10} y={12} blur={0.10} duration={0.62}>
+        <Reveal delay={0.10} y={12} blur={0.08} duration={0.62}>
           <div className="text-center">
             <a
               href={RESERVE_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="
-                inline-flex items-center justify-center
-                px-8 py-3.5
-                rounded-full
-                bg-[rgba(228,170,188,0.22)]
-                text-[#7c4e5b]
-                text-[13.5px]
+                inline-flex w-full max-w-[360px]
+                items-center justify-center
+                px-7 py-4
+                bg-[rgba(124,78,91,0.74)]
+                text-white
+                text-[15px]
+                font-medium
                 tracking-[0.08em]
-                shadow-[0_5px_16px_rgba(0,0,0,0.06)]
-                active:scale-[0.985]
-                transition-all
+                shadow-[0_8px_22px_rgba(72,55,40,0.10)]
+                active:scale-[0.99]
+                transition
+                focus-visible:outline-none
+                focus-visible:ring-2
+                focus-visible:ring-[rgba(124,78,91,0.24)]
+                focus-visible:ring-offset-4
+                focus-visible:ring-offset-base
               "
-              aria-label="HotPepperで空席確認して予約する"
+              aria-label="HotPepperで空席を確認して予約する"
             >
               空席を確認して予約する
             </a>
 
-            <div className="mt-4">
-              <a
-                href={COUPON_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="
-                  inline-flex items-center gap-2
-                  text-[13px]
-                  text-ink/72
-                  tracking-[0.04em]
-                  underline underline-offset-4 decoration-ink/25
-                  active:opacity-80
-                  transition
-                "
-              >
-                クーポンを見る
-              </a>
-            </div>
-
-            <p data-kicker className="text-[11px] mt-5 leading-[1.7] text-ink/45">
-              ※ メニュー・価格・クーポン内容は変動する場合があります。
+            <p
+              data-kicker
+              className="mt-5 text-[12px] leading-[1.8] text-ink/46"
+            >
+              ※ 表示価格は税込です。
               <br />
-              最新情報はHotPepperをご確認ください。
+              メニュー・価格は変更になる場合があります。
             </p>
           </div>
         </Reveal>
