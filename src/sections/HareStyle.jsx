@@ -92,18 +92,25 @@ function StyleCard({ style, index, total }) {
           px-4 py-4
         "
       >
-        <p
-          className="
-            mb-1.5
-            text-[10px]
-            tracking-[0.22em]
-            text-white/72
-            drop-shadow-[0_1px_7px_rgba(0,0,0,0.65)]
-          "
-        >
-          HAIR STYLE
-        </p>
-
+<p
+  className="
+    relative z-20
+    mb-1.5
+    inline-block
+    text-[10px]
+    tracking-[0.22em]
+    font-semibold
+    !text-white
+    opacity-100
+  "
+  style={{
+    color: "rgba(255,255,255,0.86)",
+    textShadow:
+      "0 1px 2px rgba(0,0,0,0.95), 0 4px 14px rgba(0,0,0,0.85)",
+  }}
+>
+  HAIR STYLE
+</p>
         <h3
           className="
             text-[15.5px]
@@ -258,22 +265,20 @@ export default function HareStyle() {
             </div>
           </div>
 
-          <div
-            aria-hidden="true"
-            className="
-              pointer-events-none absolute inset-y-0 left-0 w-[9vw] z-10
-              bg-[linear-gradient(to_right,rgba(247,243,236,1),rgba(247,243,236,0))]
-            "
-          />
-
-          <div
-            aria-hidden="true"
-            className="
-              pointer-events-none absolute inset-y-0 right-0 w-[9vw] z-10
-              bg-[linear-gradient(to_left,rgba(247,243,236,1),rgba(247,243,236,0))]
-            "
-          />
-
+   <div
+  aria-hidden="true"
+  className="
+    pointer-events-none absolute inset-y-0 left-0 w-[6vw] z-10
+    bg-[linear-gradient(to_right,rgba(247,243,236,0.74),rgba(247,243,236,0.28)_44%,rgba(247,243,236,0))]
+  "
+/>
+<div
+  aria-hidden="true"
+  className="
+    pointer-events-none absolute inset-y-0 right-0 w-[6vw] z-10
+    bg-[linear-gradient(to_left,rgba(247,243,236,0.74),rgba(247,243,236,0.28)_44%,rgba(247,243,236,0))]
+  "
+/>
           <div
             className="
               flex gap-[2.4vw]
