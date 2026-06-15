@@ -1,23 +1,157 @@
 // src/sections/HareStyle.jsx
+import { useEffect, useMemo, useState } from "react";
 import { Reveal } from "../components/Reveal";
+import {
+  FALLBACK_HAIRSTYLES,
+  fetchHairstyles,
+} from "../lib/hairstylesClient";
+
+const STYLE_URL = "https://beauty.hotpepper.jp/slnH000706136/style/";
+
+function StyleCard({ style, index, total }) {
+  const no = String((index % total) + 1).padStart(2, "0");
+
+  return (
+    <figure
+      aria-hidden={style._dup ? "true" : "false"}
+      className="
+        group relative
+        min-w-[66vw] sm:min-w-[46vw] lg:min-w-[27vw]
+        max-w-[380px]
+        aspect-[4/5]
+        overflow-hidden
+        rounded-[2px]
+        border border-ink/10
+        shadow-[0_10px_26px_rgba(72,55,40,0.085)]
+        bg-surface
+      "
+    >
+      <img
+        src={style.img}
+        alt={style._dup ? "" : style.name}
+        draggable={false}
+        className="
+          w-full h-full object-cover
+          scale-[1.02]
+          select-none pointer-events-none
+          [filter:brightness(1.01)_contrast(0.97)_saturate(0.98)]
+          transition-transform duration-[1200ms] ease-out
+          group-hover:scale-[1.045]
+        "
+        loading="lazy"
+        decoding="async"
+      />
+
+      <div
+        aria-hidden="true"
+        className="
+          absolute inset-0
+          bg-[linear-gradient(to_top,rgba(18,15,13,0.78),rgba(18,15,13,0.30)_42%,rgba(18,15,13,0.06)_72%,rgba(18,15,13,0.00))]
+        "
+      />
+
+      <div
+        aria-hidden="true"
+        className="
+          absolute inset-0
+          shadow-[inset_0_-105px_90px_rgba(18,15,13,0.30)]
+        "
+      />
+
+      <div className="absolute left-0 top-0 z-10 flex items-center">
+        <div
+          className="
+            px-3 py-2
+            text-[10px]
+            tracking-[0.24em]
+            text-white
+            bg-[rgba(18,15,13,0.42)]
+            backdrop-blur-[2px]
+            drop-shadow-[0_1px_7px_rgba(0,0,0,0.55)]
+          "
+        >
+          {style.tag}
+        </div>
+
+        <div
+          className="
+            px-3 py-2
+            text-[10px]
+            tracking-[0.20em]
+            text-white/78
+            drop-shadow-[0_1px_7px_rgba(0,0,0,0.55)]
+          "
+        >
+          STYLE {no}
+        </div>
+      </div>
+
+      <figcaption
+        className="
+          absolute bottom-0 left-0 right-0 z-10
+          px-4 py-4
+        "
+      >
+        <p
+          className="
+            mb-1.5
+            text-[10px]
+            tracking-[0.22em]
+            text-white/72
+            drop-shadow-[0_1px_7px_rgba(0,0,0,0.65)]
+          "
+        >
+          HAIR STYLE
+        </p>
+
+        <h3
+          className="
+            text-[15.5px]
+            leading-[1.42]
+            font-medium
+            text-white
+            drop-shadow-[0_2px_12px_rgba(0,0,0,0.75)]
+          "
+        >
+          {style.name}
+        </h3>
+      </figcaption>
+    </figure>
+  );
+}
 
 export default function HareStyle() {
-  const styles = [
-    { name: "スペインカール", img: "/yorisoi/style/spanish.png", tag: "PERM" },
-    { name: "ツイスト＆ニュアンス", img: "/yorisoi/style/twist-nuance.png", tag: "PERM" },
-    { name: "ニュアンスパーマ", img: "/yorisoi/style/nuance.png", tag: "PERM" },
-    { name: "スパイラルパーマ", img: "/yorisoi/style/spiral.png", tag: "PERM" },
-    { name: "波巻きパーマ", img: "/yorisoi/style/karma.png", tag: "PERM" },
-    { name: "ローフェード", img: "/yorisoi/style/lowfade.png", tag: "CUT" },
-    { name: "2ブロフェードスタイル", img: "/yorisoi/style/2bro.png", tag: "CUT" },
-    { name: "プードルパーマ", img: "/yorisoi/style/poodle.png", tag: "PERM" },
-  ];
+  const [cmsStyles, setCmsStyles] = useState([]);
 
-  const loop = [...styles, ...styles].map((s, i) => ({
-    ...s,
-    _dup: i >= styles.length,
-    _key: `${s.name}-${i}`,
-  }));
+  useEffect(() => {
+    const ac = new AbortController();
+
+    fetchHairstyles({ signal: ac.signal })
+      .then((data) => {
+        if (!ac.signal.aborted) {
+          setCmsStyles(Array.isArray(data) ? data : []);
+        }
+      })
+      .catch((error) => {
+        if (error?.name !== "AbortError") {
+          console.warn("HAIR STYLE CMS set error:", error);
+        }
+      });
+
+    return () => ac.abort();
+  }, []);
+
+  const styles = useMemo(() => {
+    return cmsStyles.length > 0 ? cmsStyles : FALLBACK_HAIRSTYLES;
+  }, [cmsStyles]);
+
+  const loop = useMemo(() => {
+    return [...styles, ...styles].map((style, index) => ({
+      ...style,
+      _dup: index >= styles.length,
+      _key: `${style.id || style.name}-${index}`,
+    }));
+  }, [styles]);
 
   return (
     <section
@@ -35,7 +169,6 @@ export default function HareStyle() {
         ニュアンスパーマなどの施術スタイルを写真で紹介しています。
       </p>
 
-      {/* background air */}
       <div aria-hidden="true" className="absolute inset-0 -z-10 pointer-events-none">
         <div
           className="
@@ -58,12 +191,8 @@ export default function HareStyle() {
         </div>
       </div>
 
-      {/* TITLE */}
       <div className="mx-auto max-w-[900px] mb-14">
-        <div
-          aria-hidden="true"
-          className="mb-9 flex items-center gap-5"
-        >
+        <div aria-hidden="true" className="mb-9 flex items-center gap-5">
           <span className="text-[11px] tracking-[0.26em] text-ink/38">
             04 / STYLE
           </span>
@@ -115,7 +244,6 @@ export default function HareStyle() {
         </Reveal>
       </div>
 
-      {/* 横スクロール（自動ループ） */}
       <Reveal delay={0.16} y={14} blur={0.14} duration={0.68}>
         <div className="relative w-full overflow-hidden mb-[10vh]">
           <div className="mx-auto max-w-[1480px] mb-5 px-[1vw]">
@@ -125,7 +253,7 @@ export default function HareStyle() {
               </p>
 
               <p className="text-[11px] tracking-[0.18em] text-ink/36">
-                AUTO SCROLL
+                CMS UPDATED
               </p>
             </div>
           </div>
@@ -154,128 +282,22 @@ export default function HareStyle() {
               animate-styleLoop
             "
           >
-            {loop.map((s, index) => {
-              const no = String((index % styles.length) + 1).padStart(2, "0");
-
-              return (
-                <figure
-                  key={s._key}
-                  aria-hidden={s._dup ? "true" : "false"}
-                  className="
-                    group relative
-                    min-w-[66vw] sm:min-w-[46vw] lg:min-w-[27vw]
-                    max-w-[380px]
-                    aspect-[4/5]
-                    overflow-hidden
-                    rounded-[2px]
-                    border border-ink/10
-                    shadow-[0_10px_26px_rgba(72,55,40,0.085)]
-                    bg-surface
-                  "
-                >
-                  <img
-                    src={s.img}
-                    alt={s._dup ? "" : s.name}
-                    draggable={false}
-                    className="
-                      w-full h-full object-cover
-                      scale-[1.02]
-                      select-none pointer-events-none
-                      [filter:brightness(1.01)_contrast(0.97)_saturate(0.98)]
-                      transition-transform duration-[1200ms] ease-out
-                      group-hover:scale-[1.045]
-                    "
-                    loading="lazy"
-                    decoding="async"
-                  />
-
-                  {/* text readability */}
-                  <div
-                    aria-hidden="true"
-                    className="
-                      absolute inset-0
-                      bg-[linear-gradient(to_top,rgba(18,15,13,0.78),rgba(18,15,13,0.30)_42%,rgba(18,15,13,0.06)_72%,rgba(18,15,13,0.00))]
-                    "
-                  />
-
-                  <div
-                    aria-hidden="true"
-                    className="
-                      absolute inset-0
-                      shadow-[inset_0_-105px_90px_rgba(18,15,13,0.30)]
-                    "
-                  />
-
-                  <div className="absolute left-0 top-0 z-10 flex items-center">
-                    <div
-                      className="
-                        px-3 py-2
-                        text-[10px]
-                        tracking-[0.24em]
-                        text-white
-                        bg-[rgba(18,15,13,0.42)]
-                        backdrop-blur-[2px]
-                        drop-shadow-[0_1px_7px_rgba(0,0,0,0.55)]
-                      "
-                    >
-                      {s.tag}
-                    </div>
-
-                    <div
-                      className="
-                        px-3 py-2
-                        text-[10px]
-                        tracking-[0.20em]
-                        text-white/78
-                        drop-shadow-[0_1px_7px_rgba(0,0,0,0.55)]
-                      "
-                    >
-                      STYLE {no}
-                    </div>
-                  </div>
-
-                  <figcaption
-                    className="
-                      absolute bottom-0 left-0 right-0 z-10
-                      px-4 py-4
-                    "
-                  >
-                    <p
-                      className="
-                        mb-1.5
-                        text-[10px]
-                        tracking-[0.22em]
-                        text-white/72
-                        drop-shadow-[0_1px_7px_rgba(0,0,0,0.65)]
-                      "
-                    >
-                      HAIR STYLE
-                    </p>
-
-                    <h3
-                      className="
-                        text-[15.5px]
-                        leading-[1.42]
-                        font-medium
-                        text-white
-                        drop-shadow-[0_2px_12px_rgba(0,0,0,0.75)]
-                      "
-                    >
-                      {s.name}
-                    </h3>
-                  </figcaption>
-                </figure>
-              );
-            })}
+            {loop.map((style, index) => (
+              <StyleCard
+                key={style._key}
+                style={style}
+                index={index}
+                total={styles.length}
+              />
+            ))}
           </div>
         </div>
       </Reveal>
 
-      {/* 外部リンク */}
       <div className="text-center">
         <Reveal delay={0.20} y={12} blur={0.12} duration={0.62}>
           <a
-            href="https://beauty.hotpepper.jp/slnH000706136/style/"
+            href={STYLE_URL}
             target="_blank"
             rel="noopener noreferrer"
             className="
@@ -283,39 +305,41 @@ export default function HareStyle() {
               text-[15px]
               text-ink/82
               tracking-[0.06em]
-              border-b border-ink/28
-              pb-[4px]
-              hover:opacity-70 transition
+              border-b border-ink/24
+              pb-1
+              transition
+              hover:text-ink
+              hover:border-ink/48
               focus-visible:outline-none
               focus-visible:ring-2
               focus-visible:ring-ink/15
               focus-visible:ring-offset-4
               focus-visible:ring-offset-base
             "
+            aria-label="HotPepper Beautyでヘアスタイル写真を見る"
           >
-            他のスタイルも見る
-            <span aria-hidden="true" className="text-ink/48">
-              →
-            </span>
+            HotPepperでスタイルを見る
+            <span aria-hidden="true">↗</span>
           </a>
-
-          <p className="mt-4 text-[12px] tracking-[0.18em] text-ink/50">
-            ※ 最新の掲載は外部ページでご確認ください
-          </p>
         </Reveal>
       </div>
 
       <style>{`
         @keyframes styleLoop {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
+          0% {
+            transform: translate3d(0, 0, 0);
+          }
+
+          100% {
+            transform: translate3d(-50%, 0, 0);
+          }
         }
 
         .animate-styleLoop {
           animation: styleLoop 34s linear infinite;
         }
 
-        @media (hover:hover) {
+        @media (hover: hover) {
           .animate-styleLoop:hover {
             animation-play-state: paused;
           }

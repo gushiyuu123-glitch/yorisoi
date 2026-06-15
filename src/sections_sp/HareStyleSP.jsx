@@ -1,6 +1,12 @@
 // src/sections_sp/HareStyleSP.jsx
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Reveal } from "../components/Reveal";
+import {
+  FALLBACK_HAIRSTYLES,
+  fetchHairstyles,
+} from "../lib/hairstylesClient";
+
+const STYLE_URL = "https://beauty.hotpepper.jp/slnH000706136/style/";
 
 function StyleCardSP({ style }) {
   return (
@@ -55,70 +61,79 @@ function StyleCardSP({ style }) {
         {style.tag}
       </div>
 
-     <figcaption
-  className="
-    absolute bottom-0 left-0 right-0
-    px-4 pt-12 pb-4
-    bg-[linear-gradient(to_top,rgba(8,7,6,0.88)_0%,rgba(8,7,6,0.58)_52%,rgba(8,7,6,0.00)_100%)]
-  "
->
-  <p
-    className="
-      mb-2
-      inline-block
-      text-[10.5px]
-      tracking-[0.26em]
-      font-semibold
-      !text-white
-      opacity-100
-    "
-    style={{
-      textShadow:
-        "0 1px 2px rgba(0,0,0,0.95), 0 4px 14px rgba(0,0,0,0.85)",
-    }}
-  >
-    HAIR STYLE
-  </p>
+      <figcaption
+        className="
+          absolute bottom-0 left-0 right-0
+          px-4 pt-12 pb-4
+          bg-[linear-gradient(to_top,rgba(8,7,6,0.88)_0%,rgba(8,7,6,0.58)_52%,rgba(8,7,6,0.00)_100%)]
+        "
+      >
+        <p
+          className="
+            mb-2
+            inline-block
+            text-[10.5px]
+            tracking-[0.26em]
+            font-semibold
+            !text-white
+            opacity-100
+          "
+          style={{
+            textShadow:
+              "0 1px 2px rgba(0,0,0,0.95), 0 4px 14px rgba(0,0,0,0.85)",
+          }}
+        >
+          HAIR STYLE
+        </p>
 
-  <h3
-    className="
-      text-[15px]
-      leading-[1.45]
-      font-medium
-      !text-white
-      opacity-100
-    "
-    style={{
-      textShadow:
-        "0 2px 4px rgba(0,0,0,0.9), 0 6px 18px rgba(0,0,0,0.7)",
-    }}
-  >
-    {style.name}
-  </h3>
-</figcaption>
+        <h3
+          className="
+            text-[15px]
+            leading-[1.45]
+            font-medium
+            !text-white
+            opacity-100
+          "
+          style={{
+            textShadow:
+              "0 2px 4px rgba(0,0,0,0.9), 0 6px 18px rgba(0,0,0,0.7)",
+          }}
+        >
+          {style.name}
+        </h3>
+      </figcaption>
     </figure>
   );
 }
 
 export default function HareStyleSP() {
-  const styles = useMemo(
-    () => [
-      { name: "スペインカール", img: "/yorisoi/style/spanish.png", tag: "PERM" },
-      { name: "ツイスト＆ニュアンス", img: "/yorisoi/style/twist-nuance.png", tag: "PERM" },
-      { name: "ニュアンスパーマ", img: "/yorisoi/style/nuance.png", tag: "PERM" },
-      { name: "スパイラルパーマ", img: "/yorisoi/style/spiral.png", tag: "PERM" },
-      { name: "波巻きパーマ", img: "/yorisoi/style/karma.png", tag: "PERM" },
-      { name: "ローフェード", img: "/yorisoi/style/lowfade.png", tag: "CUT" },
-      { name: "2ブロフェードスタイル", img: "/yorisoi/style/2bro.png", tag: "CUT" },
-      { name: "プードルパーマ", img: "/yorisoi/style/poodle.png", tag: "PERM" },
-    ],
-    []
-  );
-
   const scrollerRef = useRef(null);
 
+  const [cmsStyles, setCmsStyles] = useState([]);
   const [canSwipe, setCanSwipe] = useState(false);
   const [showRight, setShowRight] = useState(false);
+
+  useEffect(() => {
+    const ac = new AbortController();
+
+    fetchHairstyles({ signal: ac.signal })
+      .then((data) => {
+        if (!ac.signal.aborted) {
+          setCmsStyles(Array.isArray(data) ? data : []);
+        }
+      })
+      .catch((error) => {
+        if (error?.name !== "AbortError") {
+          console.warn("HAIR STYLE SP CMS set error:", error);
+        }
+      });
+
+    return () => ac.abort();
+  }, []);
+
+  const styles = useMemo(() => {
+    return cmsStyles.length > 0 ? cmsStyles : FALLBACK_HAIRSTYLES;
+  }, [cmsStyles]);
 
   const updateSwipeState = useCallback(() => {
     const el = scrollerRef.current;
@@ -135,7 +150,6 @@ export default function HareStyleSP() {
       return;
     }
 
-    // 右にまだ余白がある時だけ矢印を出す
     setShowRight(scrollLeft < max - 10);
   }, []);
 
@@ -172,6 +186,11 @@ export default function HareStyleSP() {
       window.clearTimeout(timer);
     };
   }, [updateSwipeState]);
+
+  useEffect(() => {
+    const timer = window.setTimeout(updateSwipeState, 160);
+    return () => window.clearTimeout(timer);
+  }, [styles.length, updateSwipeState]);
 
   const scrollNext = useCallback(() => {
     const el = scrollerRef.current;
@@ -228,7 +247,6 @@ export default function HareStyleSP() {
         <header className="mb-9">
           <Reveal
             as="p"
-            data-kicker
             y={12}
             blur={0.12}
             duration={0.62}
@@ -272,25 +290,23 @@ export default function HareStyleSP() {
         <Reveal delay={0.18} y={12} blur={0.1} duration={0.62}>
           <div className="relative mb-[7vh]">
             <div className="mb-4 flex items-center justify-between gap-4">
-   <p
-  className="
-    inline-block
-    text-[10px]
-    tracking-[0.36em]
-    font-light
-    text-ink/36
+              <p
+                className="
+                  inline-block
+                  text-[10px]
+                  tracking-[0.36em]
+                  font-light
+                  text-ink/36
+                  italic
+                  -skew-x-[6deg]
+                  origin-left
+                  [font-family:'Cormorant_Garamond',serif]
+                "
+              >
+                STYLE
+              </p>
 
-    italic
-    -skew-x-[6deg]
-    origin-left
-
-    [font-family:'Cormorant_Garamond',serif]
-  "
->
-  STYLE
-</p>
-
-         
+        
             </div>
 
             <div
@@ -308,8 +324,11 @@ export default function HareStyleSP() {
               aria-label="スタイル写真（横スワイプ）"
             >
               <div className="flex gap-[4.2vw]">
-                {styles.map((style) => (
-                  <StyleCardSP key={style.name} style={style} />
+                {styles.map((style, index) => (
+                  <StyleCardSP
+                    key={style.id || `${style.name}-${index}`}
+                    style={style}
+                  />
                 ))}
 
                 <div aria-hidden="true" className="min-w-[6vw]" />
@@ -375,35 +394,29 @@ export default function HareStyleSP() {
         <Reveal delay={0.22} y={12} blur={0.08} duration={0.62}>
           <div className="text-center">
             <a
-              href="https://beauty.hotpepper.jp/slnH000706136/style/"
+              href={STYLE_URL}
               target="_blank"
               rel="noopener noreferrer"
               className="
                 inline-flex items-center gap-2
                 text-[14px]
-                text-ink/82
-                tracking-[0.06em]
-                border-b border-ink/28
-                pb-[4px]
-                active:opacity-80
+                tracking-[0.055em]
+                text-ink/76
+                border-b border-ink/20
+                pb-1
                 transition
+                active:opacity-70
                 focus-visible:outline-none
                 focus-visible:ring-2
                 focus-visible:ring-ink/15
                 focus-visible:ring-offset-4
                 focus-visible:ring-offset-base
               "
+              aria-label="HotPepper Beautyでヘアスタイル写真を見る"
             >
-              他のスタイルも見る
-       
+              HotPepperでスタイルを見る
+              <span aria-hidden="true">↗</span>
             </a>
-
-            <p
-              data-kicker
-              className="mt-4 text-[12px] tracking-[0.18em] text-ink/50"
-            >
-              ※ 最新の掲載は外部ページでご確認ください
-            </p>
           </div>
         </Reveal>
       </div>
