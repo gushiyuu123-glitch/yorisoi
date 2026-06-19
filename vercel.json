@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    {
+      "source": "/news",
+      "destination": "/"
+    },
+    {
+      "source": "/news/:path*",
+      "destination": "/"
+    }
+  ]
+}
