@@ -17,13 +17,22 @@ const DEFAULT_IMAGE_ALT =
 const ensureLeadingSlash = (path = "/") =>
   String(path).startsWith("/") ? String(path) : `/${path}`;
 
-const absoluteUrl = (path = "/") => {
-  if (String(path).startsWith("http")) return path;
-  return `${SITE_URL}${ensureLeadingSlash(path)}`;
+const normalizePath = (path = "/") => {
+  const withSlash = ensureLeadingSlash(path);
+
+  if (withSlash === "/") return "/";
+
+  return withSlash.endsWith("/") ? withSlash.slice(0, -1) : withSlash;
 };
 
-const safeJson = (data) =>
-  JSON.stringify(data).replace(/</g, "\\u003c");
+const absoluteUrl = (path = "/") => {
+  if (String(path).startsWith("http")) return path;
+
+  const normalizedPath = normalizePath(path);
+  return `${SITE_URL}${normalizedPath}`;
+};
+
+const safeJson = (data) => JSON.stringify(data).replace(/</g, "\\u003c");
 
 export function makeBreadcrumbJsonLd(items = []) {
   const itemListElement = items.map((item, index) => ({
