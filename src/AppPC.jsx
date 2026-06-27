@@ -25,10 +25,12 @@ import NewsList from "./pages/NewsList";
 import NewsDetail from "./pages/NewsDetail";
 
 const TOP_TITLE =
-  "浦添・内間のメンズ専門理容室｜メンズカット・パーマ・朝7時から";
+  "浦添・内間のメンズ専門理容室｜朝7時からメンズカット・パーマ・フェード｜ヨリソイ Hair＆Spa 公式";
 
 const TOP_DESCRIPTION =
-  "沖縄県浦添市内間のメンズ専門理容室ヨリソイ Hair＆Spa。メンズカット、フェード、メンズパーマ、眉シェービング、顔剃り、ヘッドスパ、白髪ぼかしに対応。朝7時から、マンツーマン×半個室、駐車場あり。";
+  "浦添市内間のメンズ専門理容室「ヨリソイ Hair＆Spa」公式サイト。朝7時から営業。メンズカット、フェード、メンズパーマ、眉シェービング、顔剃り、ヘッドスパ、白髪ぼかしに対応。那覇・宜野湾からも通いやすい、マンツーマン×半個室の理容室です。";
+
+const NEWS_TITLE = "お知らせ・営業情報";
 
 const NEWS_DESCRIPTION =
   "ヨリソイ Hair＆Spaの営業情報・メニュー・ホームページ更新などのお知らせを掲載しています。ご来店前の確認にご利用ください。";
@@ -48,6 +50,7 @@ export default function AppPC() {
                 title={TOP_TITLE}
                 description={TOP_DESCRIPTION}
                 path="/"
+                appendSiteName={false}
               />
 
               <section id="home">
@@ -104,10 +107,15 @@ export default function AppPC() {
           element={
             <>
               <Seo
-                title="NEWS"
+                title={NEWS_TITLE}
                 description={NEWS_DESCRIPTION}
                 path="/news"
+                breadcrumbs={[
+                  { name: "ホーム", path: "/" },
+                  { name: "お知らせ", path: "/news" },
+                ]}
               />
+
               <NewsList />
             </>
           }

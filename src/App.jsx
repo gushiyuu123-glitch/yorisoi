@@ -1,43 +1,49 @@
 // src/App.jsx
 import { useEffect, useState } from "react";
 import { BrowserRouter } from "react-router-dom";
+import { Analytics } from "@vercel/analytics/react";
 
 import AppPC from "./AppPC";
 import AppSP from "./AppSP";
 import ScrollToTop from "./components/ScrollToTop";
 import HashScroll from "./components/HashScroll";
-import { Analytics } from "@vercel/analytics/react";
 
 const BREAKPOINT = 820;
 
+function getIsSP() {
+  if (typeof window === "undefined") return false;
+
+  return window.matchMedia?.(`(max-width: ${BREAKPOINT}px)`)?.matches ?? false;
+}
+
 export default function App() {
-  const [isSP, setIsSP] = useState(() => {
-    if (typeof window === "undefined") return false;
-    return window.matchMedia?.(`(max-width: ${BREAKPOINT}px)`)?.matches ?? false;
-  });
+  const [isSP, setIsSP] = useState(getIsSP);
 
   useEffect(() => {
-    if (typeof window === "undefined") return;
+    if (typeof window === "undefined") return undefined;
 
-    const mql = window.matchMedia(`(max-width: ${BREAKPOINT}px)`);
+    const mediaQuery = window.matchMedia(`(max-width: ${BREAKPOINT}px)`);
 
-    const onChange = (e) => {
-      setIsSP(e.matches);
+    const handleChange = (event) => {
+      setIsSP(event.matches);
     };
 
-    setIsSP(mql.matches);
+    // 初回表示時に現在の画面幅を反映
+    setIsSP(mediaQuery.matches);
 
-    if (mql.addEventListener) {
-      mql.addEventListener("change", onChange);
+    if (mediaQuery.addEventListener) {
+      mediaQuery.addEventListener("change", handleChange);
     } else {
-      mql.addListener(onChange);
+      // 古いSafari対策
+      mediaQuery.addListener(handleChange);
     }
 
     return () => {
-      if (mql.removeEventListener) {
-        mql.removeEventListener("change", onChange);
+      if (mediaQuery.removeEventListener) {
+        mediaQuery.removeEventListener("change", handleChange);
       } else {
-        mql.removeListener(onChange);
+        // 古いSafari対策
+        mediaQuery.removeListener(handleChange);
       }
     };
   }, []);

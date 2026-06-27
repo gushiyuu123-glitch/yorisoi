@@ -1,26 +1,28 @@
 // scripts/generate-sitemap.mjs
 import dotenv from "dotenv";
+import fs from "node:fs/promises";
+import path from "node:path";
 
 dotenv.config({ path: ".env" });
 dotenv.config({ path: ".env.local", override: true });
 dotenv.config({ path: ".env.production", override: true });
 dotenv.config({ path: ".env.production.local", override: true });
+
 const SITE_URL = "https://yorisoi-nine.vercel.app";
+
 const MICROCMS_ENDPOINT =
   "https://pqhxs89idk.microcms.io/api/v1/news?orders=-date&limit=100&fields=id,date,publishedAt,createdAt,updatedAt,title,body";
 
-const API_KEY = process.env.VITE_MICROCMS_API_KEY || process.env.MICROCMS_API_KEY;
+// サーバー側の生成スクリプトなので、本命は MICROCMS_API_KEY。
+// VITE_ はフロント露出用なので、保険として後ろに置く。
+const API_KEY = process.env.MICROCMS_API_KEY || process.env.VITE_MICROCMS_API_KEY;
 
 const STATIC_ROUTES = [
   {
     path: "/",
-    priority: "1.0",
-    changefreq: "weekly",
   },
   {
     path: "/news",
-    priority: "0.8",
-    changefreq: "weekly",
   },
 ];
 
@@ -34,35 +36,54 @@ function escapeXml(value = "") {
 }
 
 function toLastmod(value) {
-  if (!value) return new Date().toISOString();
+  if (!value) return null;
 
   // microCMS側で YYYY-MM-DD の日付だけの場合
   if (/^\d{4}-\d{2}-\d{2}$/.test(value)) {
     return `${value}T00:00:00+09:00`;
   }
 
-  const d = new Date(value);
-  if (Number.isNaN(d.getTime())) return new Date().toISOString();
+  const date = new Date(value);
 
-  return d.toISOString();
+  if (Number.isNaN(date.getTime())) return null;
+
+  return date.toISOString();
 }
 
-function isPlaceholder(item) {
-  const title = (item?.title || "").trim();
-  const body = String(item?.body || "")
+function stripHtml(value = "") {
+  return String(value)
     .replace(/<[^>]*>/g, "")
     .replace(/\s+/g, "")
     .trim();
+}
 
-  if (!item?.id) return true;
+function isPlaceholder(item) {
+  const id = String(item?.id || "").trim();
+  const title = String(item?.title || "").trim();
+  const body = stripHtml(item?.body || "");
+
+  if (!id) return true;
   if (!title && !body) return true;
 
-  const badWords = ["テスト", "test", "TEST"];
+  const normalizedTitle = title.toLowerCase();
+  const normalizedBody = body.toLowerCase();
 
-  if (badWords.includes(title)) return true;
-  if (badWords.includes(body)) return true;
+  const badWords = ["テスト", "test"];
+
+  if (badWords.some((word) => normalizedTitle === word.toLowerCase())) return true;
+  if (badWords.some((word) => normalizedBody === word.toLowerCase())) return true;
 
   return false;
+}
+
+function getItemLastmod(item, fallback = null) {
+  return (
+    toLastmod(item?.updatedAt) ||
+    toLastmod(item?.date) ||
+    toLastmod(item?.publishedAt) ||
+    toLastmod(item?.createdAt) ||
+    fallback
+  );
 }
 
 async function fetchNews() {
@@ -74,37 +95,49 @@ async function fetchNews() {
   }
 
   try {
-    const res = await fetch(MICROCMS_ENDPOINT, {
+    const response = await fetch(MICROCMS_ENDPOINT, {
       headers: {
         "X-MICROCMS-API-KEY": API_KEY,
       },
     });
 
-    if (!res.ok) {
-      throw new Error(`microCMS fetch failed: ${res.status}`);
+    if (!response.ok) {
+      throw new Error(`microCMS fetch failed: ${response.status}`);
     }
 
-    const data = await res.json();
+    const data = await response.json();
     const contents = Array.isArray(data?.contents) ? data.contents : [];
 
     return contents.filter((item) => !isPlaceholder(item));
-  } catch (err) {
-    console.error("[sitemap] Failed to fetch news:", err);
+  } catch (error) {
+    console.error("[sitemap] Failed to fetch news:", error);
     return [];
   }
 }
 
-function buildSitemapXml(urls) {
-  const body = urls
-    .map((item) => {
-      return `  <url>
-    <loc>${escapeXml(item.loc)}</loc>
-    <lastmod>${escapeXml(item.lastmod)}</lastmod>
-    <changefreq>${escapeXml(item.changefreq)}</changefreq>
-    <priority>${escapeXml(item.priority)}</priority>
+function uniqueByLoc(urls) {
+  const map = new Map();
+
+  for (const item of urls) {
+    if (!item?.loc) continue;
+    map.set(item.loc, item);
+  }
+
+  return Array.from(map.values());
+}
+
+function buildUrlXml(item) {
+  const lastmod = item.lastmod
+    ? `\n    <lastmod>${escapeXml(item.lastmod)}</lastmod>`
+    : "";
+
+  return `  <url>
+    <loc>${escapeXml(item.loc)}</loc>${lastmod}
   </url>`;
-    })
-    .join("\n");
+}
+
+function buildSitemapXml(urls) {
+  const body = urls.map(buildUrlXml).join("\n");
 
   return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -118,31 +151,31 @@ async function main() {
 
   const now = new Date().toISOString();
 
+  const latestNewsLastmod =
+    news
+      .map((item) => getItemLastmod(item))
+      .filter(Boolean)
+      .sort()
+      .at(-1) || now;
+
   const staticUrls = STATIC_ROUTES.map((route) => ({
     loc: `${SITE_URL}${route.path}`,
-    lastmod: now,
-    changefreq: route.changefreq,
-    priority: route.priority,
+    lastmod: route.path === "/news" ? latestNewsLastmod : now,
   }));
 
   const newsUrls = news.map((item) => {
-    const lastmod =
-      item?.updatedAt || item?.date || item?.publishedAt || item?.createdAt || now;
+    const id = encodeURIComponent(item.id);
+    const lastmod = getItemLastmod(item, now);
 
     return {
-      loc: `${SITE_URL}/news/${item.id}`,
-      lastmod: toLastmod(lastmod),
-      changefreq: "monthly",
-      priority: "0.7",
+      loc: `${SITE_URL}/news/${id}`,
+      lastmod,
     };
   });
 
-  const urls = [...staticUrls, ...newsUrls];
+  const urls = uniqueByLoc([...staticUrls, ...newsUrls]);
 
   const xml = buildSitemapXml(urls);
-
-  const fs = await import("node:fs/promises");
-  const path = await import("node:path");
 
   const publicDir = path.resolve(process.cwd(), "public");
   const sitemapPath = path.join(publicDir, "sitemap.xml");
@@ -150,11 +183,15 @@ async function main() {
   await fs.mkdir(publicDir, { recursive: true });
   await fs.writeFile(sitemapPath, xml, "utf8");
 
-  console.log(`[sitemap] Generated public/sitemap.xml`);
+  console.log("[sitemap] Generated public/sitemap.xml");
   console.log(`[sitemap] URLs: ${urls.length}`);
+
+  urls.forEach((url) => {
+    console.log(`[sitemap] - ${url.loc}`);
+  });
 }
 
-main().catch((err) => {
-  console.error("[sitemap] Fatal error:", err);
+main().catch((error) => {
+  console.error("[sitemap] Fatal error:", error);
   process.exit(1);
 });

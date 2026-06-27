@@ -6,10 +6,10 @@ const SITE_URL = "https://yorisoi-nine.vercel.app";
 const DEFAULT_IMAGE = `${SITE_URL}/yorisoi/ogp.png`;
 
 const DEFAULT_TITLE =
-  "浦添・内間のメンズ専門理容室｜朝7時〜・メンズカット・パーマ｜ヨリソイ Hair＆Spa";
+  "浦添・内間のメンズ専門理容室｜朝7時からメンズカット・パーマ・フェード｜ヨリソイ Hair＆Spa 公式";
 
 const DEFAULT_DESCRIPTION =
-  "沖縄県浦添市内間のメンズ専門理容室 ヨリソイ Hair＆Spa。浦添・那覇近くでメンズカット、フェード、メンズパーマ、眉シェービング、顔剃り、ヘッドスパ、白髪ぼかしに対応。朝7時から、マンツーマン×半個室、駐車場あり。";
+  "浦添市内間のメンズ専門理容室「ヨリソイ Hair＆Spa」公式サイト。朝7時から営業。メンズカット、フェード、メンズパーマ、眉シェービング、顔剃り、ヘッドスパ、白髪ぼかしに対応。那覇・宜野湾からも通いやすい、マンツーマン×半個室の理容室です。";
 
 const DEFAULT_IMAGE_ALT =
   "ヨリソイ Hair＆Spa（浦添・内間のメンズ専門理容室）";
@@ -26,21 +26,27 @@ const normalizePath = (path = "/") => {
 };
 
 const absoluteUrl = (path = "/") => {
-  if (String(path).startsWith("http")) return path;
+  const value = String(path || "/");
 
-  const normalizedPath = normalizePath(path);
+  if (value.startsWith("http://") || value.startsWith("https://")) {
+    return value;
+  }
+
+  const normalizedPath = normalizePath(value);
   return `${SITE_URL}${normalizedPath}`;
 };
 
 const safeJson = (data) => JSON.stringify(data).replace(/</g, "\\u003c");
 
 export function makeBreadcrumbJsonLd(items = []) {
-  const itemListElement = items.map((item, index) => ({
-    "@type": "ListItem",
-    position: index + 1,
-    name: item.name,
-    item: absoluteUrl(item.path || item.url || "/"),
-  }));
+  const itemListElement = items
+    .filter((item) => item?.name)
+    .map((item, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      name: item.name,
+      item: absoluteUrl(item.path || item.url || "/"),
+    }));
 
   return {
     "@context": "https://schema.org",
@@ -58,6 +64,7 @@ export function makeNewsArticleJsonLd({
   dateModified,
 }) {
   const url = absoluteUrl(path);
+  const imageUrl = absoluteUrl(image);
 
   return {
     "@context": "https://schema.org",
@@ -69,7 +76,7 @@ export function makeNewsArticleJsonLd({
     },
     headline: title,
     description,
-    image,
+    image: imageUrl,
     datePublished,
     dateModified: dateModified || datePublished,
     inLanguage: "ja-JP",
@@ -102,18 +109,28 @@ export default function Seo({
   modifiedTime,
   breadcrumbs = [],
   jsonLd = [],
+  appendSiteName = true,
 }) {
   const url = absoluteUrl(path);
-  const pageTitle = title ? `${title}｜${SITE_NAME}` : DEFAULT_TITLE;
+  const imageUrl = absoluteUrl(image);
+
+  const pageTitle = title
+    ? appendSiteName
+      ? `${title}｜${SITE_NAME}`
+      : title
+    : DEFAULT_TITLE;
+
   const pageDescription = description || DEFAULT_DESCRIPTION;
 
   const robotsContent = noindex
     ? "noindex, nofollow"
     : "index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1";
 
+  const jsonLdArray = Array.isArray(jsonLd) ? jsonLd : [jsonLd];
+
   const jsonLdList = [
     ...(breadcrumbs.length ? [makeBreadcrumbJsonLd(breadcrumbs)] : []),
-    ...(Array.isArray(jsonLd) ? jsonLd : [jsonLd]).filter(Boolean),
+    ...jsonLdArray.filter(Boolean),
   ];
 
   return (
@@ -132,8 +149,8 @@ export default function Seo({
       <meta property="og:url" content={url} />
       <meta property="og:title" content={pageTitle} />
       <meta property="og:description" content={pageDescription} />
-      <meta property="og:image" content={image} />
-      <meta property="og:image:secure_url" content={image} />
+      <meta property="og:image" content={imageUrl} />
+      <meta property="og:image:secure_url" content={imageUrl} />
       <meta property="og:image:type" content="image/png" />
       <meta property="og:image:width" content="1200" />
       <meta property="og:image:height" content="630" />
@@ -142,7 +159,7 @@ export default function Seo({
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={pageTitle} />
       <meta name="twitter:description" content={pageDescription} />
-      <meta name="twitter:image" content={image} />
+      <meta name="twitter:image" content={imageUrl} />
       <meta name="twitter:image:alt" content={imageAlt} />
 
       {type === "article" && publishedTime ? (
