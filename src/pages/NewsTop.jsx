@@ -8,9 +8,10 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
-const LIMIT = 3;
+const DISPLAY_LIMIT = 3;
+const FETCH_LIMIT = 10;
 
-const ENDPOINT = `https://pqhxs89idk.microcms.io/api/v1/news?orders=-date&limit=${LIMIT}&fields=id,title,date,body`;
+const ENDPOINT = `https://pqhxs89idk.microcms.io/api/v1/news?orders=-date&limit=${FETCH_LIMIT}&fields=id,title,date,body`;
 
 const BAND_SRC = "/yorisoi/bird1.png";
 const BAND_MIN_H = "clamp(340px,45vh,590px)";
@@ -23,10 +24,10 @@ function formatDate(value) {
     return value.replace(/-/g, ".");
   }
 
-  const d = new Date(value);
-  if (Number.isNaN(d.getTime())) return "";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
 
-  return d.toLocaleDateString("ja-JP").replace(/\//g, ".");
+  return date.toLocaleDateString("ja-JP").replace(/\//g, ".");
 }
 
 function decodeHtmlEntities(text) {
@@ -63,18 +64,27 @@ function makeExcerpt(text, max = 76) {
   return `${clean.slice(0, max).trim()}…`;
 }
 
-// テスト投稿を弾く
+// テスト投稿・空投稿を弾く
 function isPlaceholder(item, plain) {
-  const title = (item?.title || "").trim();
-  const body = (plain || "").trim();
+  const id = String(item?.id || "").trim();
+  const title = String(item?.title || "").trim();
+  const body = String(plain || "").trim();
 
-  if (!item?.id) return true;
+  if (!id) return true;
   if (!title && !body) return true;
 
-  const badWords = ["テスト", "test", "TEST"];
+  const normalizedTitle = title.toLowerCase();
+  const normalizedBody = body.toLowerCase();
 
-  if (badWords.includes(title)) return true;
-  if (badWords.includes(body)) return true;
+  const badWords = ["テスト", "test"];
+
+  if (badWords.some((word) => normalizedTitle.includes(word.toLowerCase()))) {
+    return true;
+  }
+
+  if (badWords.some((word) => normalizedBody.includes(word.toLowerCase()))) {
+    return true;
+  }
 
   return false;
 }
@@ -90,7 +100,7 @@ export default function NewsTop() {
 
   useEffect(() => {
     let ignore = false;
-    const ac = new AbortController();
+    const abortController = new AbortController();
 
     async function getNews() {
       try {
@@ -100,27 +110,30 @@ export default function NewsTop() {
 
         setStatus("loading");
 
-        const res = await fetch(ENDPOINT, {
-          signal: ac.signal,
+        const response = await fetch(ENDPOINT, {
+          signal: abortController.signal,
           headers: {
             "X-MICROCMS-API-KEY": apiKey,
           },
         });
 
-        if (!res.ok) {
-          throw new Error(`NEWS fetch failed: ${res.status}`);
+        if (!response.ok) {
+          throw new Error(`NEWS fetch failed: ${response.status}`);
         }
 
-        const data = await res.json();
+        const data = await response.json();
 
         if (ignore) return;
 
         setNews(Array.isArray(data?.contents) ? data.contents : []);
         setStatus("ok");
-      } catch (err) {
+      } catch (error) {
         if (ignore) return;
 
-        console.error("NEWS fetch error:", err);
+        // AbortControllerによる中断は通常の終了処理なので、エラー扱いしない
+        if (error?.name === "AbortError") return;
+
+        console.error("NEWS fetch error:", error);
         setNews([]);
         setStatus("error");
       }
@@ -130,7 +143,7 @@ export default function NewsTop() {
 
     return () => {
       ignore = true;
-      ac.abort();
+      abortController.abort();
     };
   }, [apiKey]);
 
@@ -139,13 +152,13 @@ export default function NewsTop() {
     const root = rootRef.current;
     const band = bandRef.current;
 
-    if (!root || !band) return;
+    if (!root || !band) return undefined;
 
     const reduce =
       window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;
     const coarse = window.matchMedia?.("(pointer: coarse)")?.matches ?? false;
 
-    if (reduce || coarse) return;
+    if (reduce || coarse) return undefined;
 
     const ctx = gsap.context(() => {
       gsap.fromTo(
@@ -182,7 +195,7 @@ export default function NewsTop() {
         };
       })
       .filter(Boolean)
-      .slice(0, LIMIT);
+      .slice(0, DISPLAY_LIMIT);
   }, [news]);
 
   const isLoading = status === "loading";
@@ -321,7 +334,7 @@ export default function NewsTop() {
 
               <Reveal
                 as="p"
-                delay={0.10}
+                delay={0.1}
                 y={10}
                 blur={0.12}
                 duration={0.56}
@@ -376,9 +389,9 @@ export default function NewsTop() {
             >
               {isLoading && (
                 <div className="space-y-10" aria-hidden="true">
-                  {[0, 1, 2].map((i) => (
+                  {[0, 1, 2].map((index) => (
                     <div
-                      key={i}
+                      key={index}
                       className="
                         pb-8
                         border-b border-[rgba(96,78,62,0.12)]
@@ -410,74 +423,81 @@ export default function NewsTop() {
 
               {status === "ok" && !isEmpty && (
                 <div className="space-y-10">
-                  {list.map((item, idx) => (
-                    <Reveal
-                      key={item.id}
-                      y={12}
-                      blur={0.14}
-                      duration={0.62}
-                      delay={Math.min(0.06 + idx * 0.05, 0.22)}
-                    >
-                      <Link
-                        to={`/news/${item.id}`}
-                        className="
-                          group block
-                          pb-8
-                          border-b border-[rgba(96,78,62,0.12)]
-                          transition
-                          focus-visible:outline-none
-                          focus-visible:ring-2
-                          focus-visible:ring-[rgba(96,78,62,0.22)]
-                          focus-visible:ring-offset-4
-                          focus-visible:ring-offset-[#f7f4ef]
-                        "
-                        aria-label={`${item.date} ${item.title}`}
+                  {list.map((item, index) => {
+                    const newsPath = `/news/${encodeURIComponent(item.id)}`;
+                    const ariaLabel = item.date
+                      ? `${item.date} ${item.title}`
+                      : item.title;
+
+                    return (
+                      <Reveal
+                        key={item.id}
+                        y={12}
+                        blur={0.14}
+                        duration={0.62}
+                        delay={Math.min(0.06 + index * 0.05, 0.22)}
                       >
-                        {!!item.date && (
+                        <Link
+                          to={newsPath}
+                          className="
+                            group block
+                            pb-8
+                            border-b border-[rgba(96,78,62,0.12)]
+                            transition
+                            focus-visible:outline-none
+                            focus-visible:ring-2
+                            focus-visible:ring-[rgba(96,78,62,0.22)]
+                            focus-visible:ring-offset-4
+                            focus-visible:ring-offset-[#f7f4ef]
+                          "
+                          aria-label={ariaLabel}
+                        >
+                          {!!item.date && (
+                            <p
+                              className="
+                                mb-2
+                                text-[13px]
+                                tracking-[0.08em]
+                                text-[rgba(96,78,62,0.62)]
+                              "
+                            >
+                              {item.date}
+                            </p>
+                          )}
+
                           <p
                             className="
                               mb-2
-                              text-[13px]
-                              tracking-[0.08em]
-                              text-[rgba(96,78,62,0.62)]
+                              text-[18px]
+                              font-medium
+                              leading-[1.65]
+                              text-[#5d4c3f]
+                              transition
+                              group-hover:opacity-75
                             "
                           >
-                            {item.date}
+                            {item.title}
                           </p>
-                        )}
 
-                        <p
-                          className="
-                            mb-2
-                            text-[18px]
-                            font-medium
-                            leading-[1.65]
-                            text-[#5d4c3f]
-                            transition
-                            group-hover:opacity-75
-                          "
-                        >
-                          {item.title}
-                        </p>
-
-                        {!!item.excerpt && (
-                          <p
-                            className="
-                              text-[14.5px]
-                              leading-[1.82]
-                              text-[rgba(96,78,62,0.72)]
-                              [display:-webkit-box]
-                              [-webkit-box-orient:vertical]
-                              [-webkit-line-clamp:2]
-                              overflow-hidden
-                            "
-                          >
-                            {item.excerpt}
-                          </p>
-                        )}
-                      </Link>
-                    </Reveal>
-                  ))}
+                          {!!item.excerpt && (
+                            <p
+                              className="
+                                text-[14.5px]
+                                leading-[1.82]
+                                text-[rgba(96,78,62,0.72)]
+                                [display:-webkit-box]
+                                [-webkit-box-orient:vertical]
+                                [-webkit-line-clamp:2]
+                                overflow-hidden
+                              "
+                            >
+                              {item.excerpt}
+                            </p>
+                          )}
+                        </Link>
+                      </Reveal>
+                    );
+                  })}
                 </div>
               )}
             </div>
